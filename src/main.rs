@@ -4,11 +4,11 @@ mod eventbrite;
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    // let eventbrite = eventbrite::EventBrite::new();
-    let user = eventbrite::user::new();
+    let search = eventbrite::search::Search::new();
 
-    let result = user.user_info().await.unwrap();
-    println!("{:?}", result);
+    search.search().await;
+    // let result = user.user_info().await.unwrap();
+    // println!("{:?}", result);
 
     // let response =
     // reqwest::blocking::get("https://www.eventbrite.ca/d/canada--toronto/tech-events/")
