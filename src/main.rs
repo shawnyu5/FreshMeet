@@ -5,7 +5,7 @@ mod eventbrite;
 async fn main() {
     dotenv().ok();
     // let eventbrite = eventbrite::EventBrite::new();
-    let user = eventbrite::user::new();
+    let user = eventbrite::user::User::new();
 
     let result = user.user_info().await.unwrap();
     println!("{:?}", result);
