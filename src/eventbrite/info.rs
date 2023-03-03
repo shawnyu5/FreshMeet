@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use serde_json::to_string_pretty;
-use std::collections::HashMap;
-use std::{env, error::Error};
+use tokio::runtime::Runtime;
+// use std::collections::HashMap;
+// use std::{env, error::Error};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Info {
@@ -87,6 +88,10 @@ impl Info {
         };
     }
 
+    /// fetch information about events by the event ID
+    ///
+    /// * `event_ids`: vector of events
+    /// * `page_size`: number of events to return. Will return 20 events by default
     pub async fn fetch(
         &self,
         event_ids: Vec<String>,
@@ -124,5 +129,34 @@ impl Info {
         println!("{}", pretty);
 
         return Ok(res);
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_fetch() {
+        let rt = Runtime::new().unwrap();
+
+        let event_ids = vec!["543298208567".to_string()];
+        rt.block_on(async {
+            let info = Info::new();
+            let result = info.fetch(event_ids.clone(), None).await;
+            assert!(result.is_ok());
+            assert!(result.as_ref().unwrap().events.len() > 0);
+            // default page size is 20
+            assert!(result.as_ref().unwrap().pagination.page_size == 20);
+        });
+
+        rt.block_on(async {
+            let info = Info::new();
+            let result = info.fetch(event_ids.clone(), Some(1)).await;
+            assert!(result.is_ok());
+            assert!(result.as_ref().unwrap().events.len() > 0);
+            // make sure we only get 1 result back
+            assert!(result.as_ref().unwrap().pagination.page_size == 1);
+        })
     }
 }
