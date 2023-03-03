@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use std::error::Error;
 
 #[derive(Serialize, Deserialize, Debug)]
 /// User object response from EventBrite API
@@ -46,7 +47,7 @@ impl User {
         };
     }
     /// Use the EventBrite API to get the user's information
-    pub async fn user_info(&self) -> Result<User, String> {
+    pub async fn user_info(&self) -> Result<User, Box<dyn Error>> {
         let url = format!(
             "{}/users/me/?token={}",
             super::utils::api_address(),
@@ -60,15 +61,14 @@ impl User {
                     return Ok(user);
                 }
                 Err(e) => {
-                    return Err(e.to_string());
+                    return Err(Box::new(e));
                 }
             },
-            reqwest::StatusCode::UNAUTHORIZED => {
-                return Err("Unauthorized".to_string());
-            }
-
             _ => {
-                return Err("Invalid response".to_string());
+                return Err(Box::new(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    "Invalid response",
+                )));
             }
         }
     }
