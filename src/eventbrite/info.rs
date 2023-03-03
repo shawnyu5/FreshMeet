@@ -119,8 +119,5 @@ impl Info {
         println!("{}", pretty);
 
         return Ok(res);
-        // let res = client.get(url).query(&query).send().await.unwrap();
-        // let text = res.text().await.unwrap();
-        // println!("{}", text);
     }
 }
