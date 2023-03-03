@@ -1,3 +1,3 @@
-# networking_accumlator
+# networking accumulator
 
-Accumlate networking events and uh... idk yet
+Accumulate networking events and uh... idk yet
