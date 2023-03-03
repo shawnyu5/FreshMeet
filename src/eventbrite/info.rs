@@ -87,12 +87,21 @@ impl Info {
         };
     }
 
-    // pub fn search() -> Result<String, Box<dyn Error>> {
-    pub async fn fetch(&self) {
-        let url = "https://www.eventbrite.ca/api/v3/destination/events/?event_ids=543298208567,518737516877,442445665897,534539430827,544868204467,529494461187,558994145537,538081445087,566705430197,490571601867,500297331787,482660429337,525130578697,398598979277,510949693287,483761693247,500675482847,524192553037,501785111777,500707007137&expand=event_sales_status,primary_venue,ticket_availability,primary_organizer,public_collections&page_size=20";
+    pub async fn fetch(&self, event_ids: Vec<String>) -> Result<Info, String> {
+        // event_ids=543298208567,518737516877,442445665897,534539430827,544868204467,529494461187,558994145537,538081445087,566705430197,490571601867,500297331787,482660429337,525130578697,398598979277,510949693287,483761693247,500675482847,524192553037,501785111777,500707007137&
+        // ?expand=event_sales_status,primary_venue,ticket_availability,primary_organizer,public_collections&page_size=20
+
+        let mut str_event_ids = "".to_string();
+        event_ids.iter().for_each(|x| {
+            str_event_ids.push_str(x);
+            str_event_ids.push_str(",");
+        });
+
+        let url = "https://www.eventbrite.ca/api/v3/destination/events/";
         let query = vec![
             ("expand", "event_sales_status,image,primary_venue,saves,ticket_availability,primary_organizer,public_collections"),
-            ("page_size", "20")
+            ("page_size", "20"),
+            ("event_ids", str_event_ids.as_str())
         ];
         let client = reqwest::Client::new();
 
@@ -105,9 +114,11 @@ impl Info {
             .json::<Info>()
             .await
             .unwrap();
+
         let pretty = to_string_pretty(&res).unwrap();
         println!("{}", pretty);
 
+        return Ok(res);
         // let res = client.get(url).query(&query).send().await.unwrap();
         // let text = res.text().await.unwrap();
         // println!("{}", text);
