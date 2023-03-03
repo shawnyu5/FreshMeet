@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::{env, error::Error};
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Search {
+pub struct Info {
     pagination: Pagination,
     events: Vec<Event>,
 }
@@ -71,10 +71,10 @@ pub struct StartSalesDate {
     utc: String,
 }
 
-impl Search {
+impl Info {
     /// create a default instance of Search object
-    pub fn new() -> Search {
-        return Search {
+    pub fn new() -> Info {
+        return Info {
             pagination: Pagination {
                 object_count: 0,
                 continuation: None,
@@ -88,7 +88,7 @@ impl Search {
     }
 
     // pub fn search() -> Result<String, Box<dyn Error>> {
-    pub async fn search(&self) {
+    pub async fn fetch(&self) {
         let url = "https://www.eventbrite.ca/api/v3/destination/events/?event_ids=543298208567,518737516877,442445665897,534539430827,544868204467,529494461187,558994145537,538081445087,566705430197,490571601867,500297331787,482660429337,525130578697,398598979277,510949693287,483761693247,500675482847,524192553037,501785111777,500707007137&expand=event_sales_status,primary_venue,ticket_availability,primary_organizer,public_collections&page_size=20";
         let query = vec![
             ("expand", "event_sales_status,image,primary_venue,saves,ticket_availability,primary_organizer,public_collections"),
@@ -102,7 +102,7 @@ impl Search {
             .send()
             .await
             .unwrap()
-            .json::<Search>()
+            .json::<Info>()
             .await
             .unwrap();
         let pretty = to_string_pretty(&res).unwrap();

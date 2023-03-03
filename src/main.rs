@@ -4,9 +4,9 @@ mod eventbrite;
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    let search = eventbrite::search::Search::new();
+    let search = eventbrite::info::Info::new();
 
-    search.search().await;
+    search.fetch().await;
     // let result = user.user_info().await.unwrap();
     // println!("{:?}", result);
 
