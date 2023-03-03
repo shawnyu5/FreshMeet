@@ -1,0 +1,3863 @@
+{
+   "pagination": {
+      "object_count": 20,
+      "continuation": null,
+      "page_count": 1,
+      "page_size": 20,
+      "has_more_items": false,
+      "page_number": 1
+   },
+   "events": [
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#844684",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F450703819%2F1391528980923%2F1%2Foriginal.20230221-025001?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=167%2C0%2C2018%2C1009&s=ecd1e3c0c8224c6476a65458287ab48e",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F450703819%2F1391528980923%2F1%2Foriginal.20230221-025001?auto=format%2Ccompress&q=75&sharp=10&s=e8fa4111d560821674dba444662c2028",
+               "width": 2378,
+               "height": 1009
+            },
+            "crop_mask": {
+               "width": 2018,
+               "height": 1009,
+               "top_left": {
+                  "y": 0,
+                  "x": 167
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "450703819"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-02-13T00:00:00",
+               "utc": "2023-02-13T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "AUD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "543298208567",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "60667620293",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=543298208567",
+         "hide_end_date": false,
+         "start_date": "2023-03-25",
+         "end_time": "17:30",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": true,
+            "is_free": true,
+            "minimum_ticket_price": {
+               "currency": "AUD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 AUD"
+            },
+            "has_available_tickets": false,
+            "maximum_ticket_price": {
+               "currency": "AUD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 AUD"
+            }
+         },
+         "end_date": "2023-03-26",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/2004",
+               "display_name": "High Tech"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/102",
+               "display_name": "Science & Technology",
+               "localized": {
+                  "display_name": "Science & Technology"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/1",
+               "display_name": "Conference"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology",
+               "display_name": "technology",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/innovation",
+               "display_name": "innovation",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/gta",
+               "display_name": "gta",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/toronto",
+               "display_name": "toronto",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/conference",
+               "display_name": "conference",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/womenintech",
+               "display_name": "womenintech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/computerscience",
+               "display_name": "computerscience",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/womeninstem",
+               "display_name": "womeninstem",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/universitystudents",
+               "display_name": "universitystudents",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/universityoftoronto",
+               "display_name": "universityoftoronto",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "543298208567",
+         "start_time": "10:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "CIBC SQUARE",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.3775405",
+               "localized_address_display": "81 Bay Street, Toronto, ON M5J 0E7",
+               "postal_code": "M5J 0E7",
+               "address_1": "81 Bay Street",
+               "address_2": "",
+               "latitude": "43.6440033",
+               "localized_multi_line_address_display": [
+                  "81 Bay Street",
+                  "Toronto, ON M5J 0E7"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "138056759"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "UofT Google Developer Student Club",
+            "profile_type": "organizer",
+            "num_followers": 10,
+            "url": "https://www.eventbrite.com/o/uoft-google-developer-student-club-60667620293",
+            "twitter": null,
+            "summary": null,
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "60667620293",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "450703819",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "138056759",
+         "checkout_flow": "widget",
+         "name": "GDSC x Microsoft: Women in Tech Conference",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.com/e/gdsc-x-microsoft-women-in-tech-conference-tickets-543298208567",
+         "hide_start_date": false,
+         "summary": "Join us at the 2023 Women in Tech Conference, hosted by UofT’s Google Developer Student Clubs, for networking, career development, and more!",
+         "is_online_event": false,
+         "eid": "egfrctgt",
+         "published": "2023-02-14T03:31:24Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#193e61",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F427130639%2F271118485943%2F1%2Foriginal.jpg?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C33%2C600%2C300&s=ff297f9b0fbe91490242cccb6936f34f",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F427130639%2F271118485943%2F1%2Foriginal.jpg?auto=format%2Ccompress&q=75&sharp=10&s=1fe2c623271c0293be73ed4931568044",
+               "width": 600,
+               "height": 338
+            },
+            "crop_mask": {
+               "width": 600,
+               "height": 300,
+               "top_left": {
+                  "y": 33,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "427130639"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2019-10-14T21:10:00",
+               "utc": "2019-10-15T01:10:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "518737516877",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "17817834839",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=518737516877",
+         "hide_end_date": false,
+         "start_date": "2023-04-03",
+         "end_time": "20:30",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "267.58",
+               "value": 26758,
+               "display": "267.58 CAD"
+            }
+         },
+         "end_date": "2023-04-03",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1001",
+               "display_name": "Startups & Small Business"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business",
+               "display_name": "business",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology",
+               "display_name": "technology",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/startup",
+               "display_name": "startup",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business_networking",
+               "display_name": "business_networking",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/startup_business",
+               "display_name": "startup_business",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/web_development",
+               "display_name": "web_development",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/website_design",
+               "display_name": "website_design",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business_professional",
+               "display_name": "business_professional",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/startup_networking",
+               "display_name": "startup_networking",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology_event",
+               "display_name": "technology_event",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "518737516877",
+         "start_time": "18:30",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Pour House Pub and Kitchen",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.4038534",
+               "localized_address_display": "182 Dupont St, Toronto, ON M5R 2E6",
+               "postal_code": "M5R 2E6",
+               "address_1": "182 Dupont St",
+               "address_2": "",
+               "latitude": "43.6757076",
+               "localized_multi_line_address_display": [
+                  "182 Dupont St",
+                  "Toronto, ON M5R 2E6"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "133698479"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Toronto Entrepreneur and Startup Network",
+            "profile_type": "organizer",
+            "num_followers": 4846,
+            "url": "https://www.eventbrite.com/o/toronto-entrepreneur-and-startup-network-17817834839",
+            "twitter": null,
+            "summary": "Toronto Entrepreneur and Startup Network\n\n\n Are you looking for co-founders, partners, coaches or core team members for your start-up? Please join us for an evening of creativity, inspiration and pass...",
+            "num_saves": null,
+            "image_id": "49557650",
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "17817834839",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "427130639",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "133698479",
+         "checkout_flow": "widget",
+         "name": "Toronto's Big Business, Tech & Entrepreneur Professional Networking Soiree",
+         "language": "en-us",
+         "url": "https://www.eventbrite.com/e/torontos-big-business-tech-entrepreneur-professional-networking-soiree-tickets-518737516877",
+         "hide_start_date": false,
+         "summary": "Toronto's Big Business, Tech & Entrepreneur Professional Networking Soriee",
+         "is_online_event": false,
+         "eid": "egbtyptc",
+         "published": "2023-01-18T13:59:24Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": null,
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F374222989%2F167645577512%2F1%2Foriginal.20221015-223439?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C0%2C2160%2C1080&s=2b178b2fc4d31cbe271187cf5ba450ca",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F374222989%2F167645577512%2F1%2Foriginal.20221015-223439?auto=format%2Ccompress&q=75&sharp=10&s=bc7d1ee2467b6b031f753e9e6f3934b6",
+               "width": 2160,
+               "height": 1080
+            },
+            "crop_mask": {
+               "width": 2160,
+               "height": 1080,
+               "top_left": {
+                  "y": 0,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "374222989"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2022-01-01T00:00:00",
+               "utc": "2022-01-01T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "442445665897",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "55210999463",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=442445665897",
+         "hide_end_date": false,
+         "start_date": "2023-05-18",
+         "end_time": "16:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 1,
+               "collections": [
+                  {
+                     "status": "live",
+                     "_type": "event_group",
+                     "name": "TECHSPO Technology Expo Global Event Series",
+                     "relative_url": "/cc/techspo-technology-expo-global-event-series-97509",
+                     "is_autocreated": false,
+                     "absolute_url": "https://www.eventbrite.com/cc/techspo-technology-expo-global-event-series-97509",
+                     "summary": "TECHSPO Technology Expos showcase the next generation of technology & innovation; Internet, Mobile, AdTech, MarTech and SaaS technologies and much, much more!",
+                     "organization_id": "167645577512",
+                     "image_id": "216739489",
+                     "id": "97509",
+                     "organizer_id": "9865804568",
+                     "event_ids": [
+                        "80750425697",
+                        "80759885993",
+                        "80765787645",
+                        "80779945993",
+                        "80785502613",
+                        "80788144515",
+                        "80890442491",
+                        "80896496599",
+                        "80903896733",
+                        "80912253729",
+                        "131288207563",
+                        "131288311875",
+                        "131288472355",
+                        "230610250467",
+                        "442444813347",
+                        "442444903617",
+                        "442445064097",
+                        "442445144337",
+                        "442445204517",
+                        "442445274727",
+                        "442445314847",
+                        "442445435207",
+                        "442445595687",
+                        "442445635807",
+                        "442445665897",
+                        "442445736107",
+                        "442445776227",
+                        "442446869497",
+                        "442446909617",
+                        "442446979827",
+                        "442447060067",
+                        "442447150337",
+                        "442454221487",
+                        "442457661777",
+                        "442459286637",
+                        "442459918527",
+                        "442460570477",
+                        "442460600567"
+                     ],
+                     "type": "collection",
+                     "slug": "techspo-technology-expo-global-event-series",
+                     "is_private": false
+                  }
+               ]
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "515.39",
+               "value": 51539,
+               "display": "515.39 CAD"
+            }
+         },
+         "end_date": "2023-05-19",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1007",
+               "display_name": "Sales & Marketing"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/3",
+               "display_name": "Tradeshow, Consumer Show, or Expo"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/marketing",
+               "display_name": "marketing",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/tech",
+               "display_name": "tech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology",
+               "display_name": "technology",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/saas",
+               "display_name": "saas",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/toronto",
+               "display_name": "toronto",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/expo",
+               "display_name": "expo",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/internet",
+               "display_name": "internet",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/tradeshow",
+               "display_name": "tradeshow",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/martech",
+               "display_name": "martech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/adtech",
+               "display_name": "adtech",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "442445665897",
+         "start_time": "09:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Marriott Downtown at CF Toronto Eaton Centre Hotel",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.382984",
+               "localized_address_display": "525 Bay St, Toronto, ON M5G 2L2",
+               "postal_code": "M5G 2L2",
+               "address_1": "525 Bay St",
+               "address_2": "",
+               "latitude": "43.6553165",
+               "localized_multi_line_address_display": [
+                  "525 Bay St",
+                  "Toronto, ON M5G 2L2"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "119390039"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "TECHSPO Technology Expo Global Series",
+            "profile_type": "organizer",
+            "num_followers": 493,
+            "url": "https://www.eventbrite.com/o/techspo-technology-expo-global-series-55210999463",
+            "twitter": "techspotweets",
+            "summary": "TECHSPO brings together developers, brands, marketers, technology providers, designers, innovators and evangelists looking to set the pace in our advanced world of technology. Showcasing the next gene...",
+            "num_saves": null,
+            "image_id": "374207819",
+            "followed_by_you": false,
+            "facebook": "techspotechnologyexpo",
+            "num_collections": null,
+            "id": "55210999463",
+            "website_url": "https://techspo.co/events/",
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "374222989",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "119390039",
+         "checkout_flow": "widget",
+         "name": "TECHSPO Toronto 2023 Technology Expo (Internet ~ AdTech ~ MarTech)",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.com/e/techspo-toronto-2023-technology-expo-internet-adtech-martech-tickets-442445665897",
+         "hide_start_date": false,
+         "summary": "TECHSPO Toronto Technology Expo (Internet ~ Mobile ~ AdTech  ~ MarTech ~ SaaS) - May 18 - 19, 2023 - Toronto, Ontario, Canada",
+         "is_online_event": false,
+         "eid": "efmwtrht",
+         "published": "2022-10-24T22:36:24Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": null,
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F441021699%2F1306744636063%2F1%2Foriginal.20230207-152734?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C13%2C1200%2C600&s=bf4f4f060ad5fc8148269cc9b42437d0",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F441021699%2F1306744636063%2F1%2Foriginal.20230207-152734?auto=format%2Ccompress&q=75&sharp=10&s=f5017dc0e46cf952c036e5e67275421d",
+               "width": 1200,
+               "height": 627
+            },
+            "crop_mask": {
+               "width": 1200,
+               "height": 600,
+               "top_left": {
+                  "y": 13,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "441021699"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-02-04T00:00:00",
+               "utc": "2023-02-04T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "534539430827",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "58039330153",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=534539430827",
+         "hide_end_date": false,
+         "start_date": "2023-03-09",
+         "end_time": "19:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 1,
+               "collections": [
+                  {
+                     "status": "live",
+                     "_type": "event_group",
+                     "name": "International Women's Day",
+                     "relative_url": "/cc/international-womens-day-1584439",
+                     "is_autocreated": false,
+                     "absolute_url": "https://www.eventbrite.com/cc/international-womens-day-1584439",
+                     "summary": "Toast is celebrating International Women's Day (all week) from March 7th-10th in a city near you!",
+                     "organization_id": "1306760476173",
+                     "image_id": "439226839",
+                     "id": "1584439",
+                     "organizer_id": "58039330153",
+                     "event_ids": [
+                        "531488976837",
+                        "534539430827"
+                     ],
+                     "type": "collection",
+                     "slug": "international-womens-day",
+                     "is_private": false
+                  }
+               ]
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "17.31",
+               "value": 1731,
+               "display": "17.31 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "17.31",
+               "value": 1731,
+               "display": "17.31 CAD"
+            }
+         },
+         "end_date": "2023-03-09",
+         "tags": [
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/102",
+               "display_name": "Science & Technology",
+               "localized": {
+                  "display_name": "Science & Technology"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/toronto",
+               "display_name": "toronto",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/womenintech",
+               "display_name": "womenintech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/dei",
+               "display_name": "dei",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/internationalwomensday",
+               "display_name": "internationalwomensday",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology_event",
+               "display_name": "technology_event",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "534539430827",
+         "start_time": "17:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "OneEleven",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.39026969999999",
+               "localized_address_display": "325 Front Street West #4th Floor, Toronto, ON M5V 2Y1",
+               "postal_code": "M5V 2Y1",
+               "address_1": "325 Front Street West",
+               "address_2": "#4th Floor",
+               "latitude": "43.6432809",
+               "localized_multi_line_address_display": [
+                  "325 Front Street West",
+                  "#4th Floor",
+                  "Toronto, ON M5V 2Y1"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "136839339"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Toast",
+            "profile_type": "organizer",
+            "num_followers": 41,
+            "url": "https://www.eventbrite.ca/o/toast-58039330153",
+            "twitter": null,
+            "summary": "For decades, women have conformed to fit into a tech workforce designed by men, for men. A workforce that holds us hostage until 5pm, criticizes us for a resume gap, and chastises us for expecting to ...",
+            "num_saves": null,
+            "image_id": "406058429",
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "58039330153",
+            "website_url": "https://www.trytoast.ca",
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "441021699",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "136839339",
+         "checkout_flow": "widget",
+         "name": "Toronto Celebrates International Women's Day with Toast",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.ca/e/toronto-celebrates-international-womens-day-with-toast-tickets-534539430827",
+         "hide_start_date": false,
+         "summary": "Join us at OneEleven Toronto for an event celebrating International Women's Day and the incredible women in Toronto's tech ecosystem.",
+         "is_online_event": false,
+         "eid": "egdxdkyx",
+         "published": "2023-02-04T18:05:05Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": null,
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F444403079%2F128151761545%2F1%2Foriginal.20230211-224855?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C0%2C2160%2C1080&s=91ac9a6cb7de1e092923bb809275f077",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F444403079%2F128151761545%2F1%2Foriginal.20230211-224855?auto=format%2Ccompress&q=75&sharp=10&s=5b13b6070ec6c867a51efe56e320daa9",
+               "width": 2160,
+               "height": 1080
+            },
+            "crop_mask": {
+               "width": 2160,
+               "height": 1080,
+               "top_left": {
+                  "y": 0,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "444403079"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-02-07T00:00:00",
+               "utc": "2023-02-07T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "544868204467",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "9354870894",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=544868204467",
+         "hide_end_date": false,
+         "start_date": "2023-03-09",
+         "end_time": "19:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": true,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            }
+         },
+         "end_date": "2023-03-09",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1001",
+               "display_name": "Startups & Small Business"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/corporate",
+               "display_name": "corporate",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/toronto",
+               "display_name": "toronto",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/canada",
+               "display_name": "canada",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/newcomers",
+               "display_name": "newcomers",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/startupvisa",
+               "display_name": "startupvisa",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/startuphereto",
+               "display_name": "startuphereto",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "544868204467",
+         "start_time": "17:30",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Ontario Centre of Innovation Suite 300",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.39028549999999",
+               "localized_address_display": "325 Front Street West Suite 300, Toronto, ON M5V 2Y1",
+               "postal_code": "M5V 2Y1",
+               "address_1": "325 Front Street West",
+               "address_2": "Suite 300",
+               "latitude": "43.6431507",
+               "localized_multi_line_address_display": [
+                  "325 Front Street West",
+                  "Suite 300",
+                  "Toronto, ON M5V 2Y1"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "138147189"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "LatAm Startups",
+            "profile_type": "organizer",
+            "num_followers": 474,
+            "url": "https://www.eventbrite.ca/o/latam-startups-9354870894",
+            "twitter": "@LatAmStartupsCo",
+            "summary": "LatAm Startups is a non-profit corporation helping startups to scale. We're based in Toronto, providing softlanding and bootcamp programs for technology companies. LatAm Startups has an MoU with the C...",
+            "num_saves": null,
+            "image_id": "52094551",
+            "followed_by_you": false,
+            "facebook": "LatAmStartups",
+            "num_collections": null,
+            "id": "9354870894",
+            "website_url": "http://latamstartups.org",
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "444403079",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "138147189",
+         "checkout_flow": "widget",
+         "name": "Lessons Learned: Newcomers Growing Tech Businesses in Canada",
+         "language": "en-us",
+         "url": "https://www.eventbrite.ca/e/lessons-learned-newcomers-growing-tech-businesses-in-canada-tickets-544868204467",
+         "hide_start_date": false,
+         "summary": "Join us and learn how 3 tech companies owned by newcomers led their businesses to success. How did they create and grow their businesses?",
+         "is_online_event": false,
+         "eid": "egftdhyh",
+         "published": "2023-02-11T22:52:00Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#817f74",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F436808559%2F1006711231673%2F1%2Foriginal.20230201-145225?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C40%2C1080%2C540&s=4a8126c3bc09bd3be040bf5bb16113b3",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F436808559%2F1006711231673%2F1%2Foriginal.20230201-145225?auto=format%2Ccompress&q=75&sharp=10&s=4521f837bc642508acfdb32e458a7ac3",
+               "width": 1080,
+               "height": 1080
+            },
+            "crop_mask": {
+               "width": 1080,
+               "height": 540,
+               "top_left": {
+                  "y": 40,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "436808559"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-02-01T00:00:00",
+               "utc": "2023-02-01T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "529494461187",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "46818973633",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=529494461187",
+         "hide_end_date": false,
+         "start_date": "2023-03-03",
+         "end_time": "17:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": true,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            }
+         },
+         "end_date": "2023-03-03",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1010",
+               "display_name": "Career"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/tech",
+               "display_name": "tech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology",
+               "display_name": "technology",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/innovation",
+               "display_name": "innovation",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/hiring",
+               "display_name": "hiring",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/students",
+               "display_name": "students",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/university",
+               "display_name": "university",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/jobfair",
+               "display_name": "jobfair",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/bipoc",
+               "display_name": "bipoc",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/jobsearch",
+               "display_name": "jobsearch",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/hiring_event",
+               "display_name": "hiring_event",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "529494461187",
+         "start_time": "11:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "MLSE LaunchPad",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.37460209999999",
+               "localized_address_display": "259 Jarvis Street, Toronto, ON M5B 2C2",
+               "postal_code": "M5B 2C2",
+               "address_1": "259 Jarvis Street",
+               "address_2": "",
+               "latitude": "43.6577297",
+               "localized_multi_line_address_display": [
+                  "259 Jarvis Street",
+                  "Toronto, ON M5B 2C2"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "135988139"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "MyStartr",
+            "profile_type": "organizer",
+            "num_followers": 118,
+            "url": "https://www.eventbrite.ca/o/mystartr-46818973633",
+            "twitter": "MyStartr_",
+            "summary": "MyStartr is Canada’s only national, employer-led coalition committed to providing career-launching opportunities for youth.",
+            "num_saves": null,
+            "image_id": "282335229",
+            "followed_by_you": false,
+            "facebook": "102323212366652",
+            "num_collections": null,
+            "id": "46818973633",
+            "website_url": "https://mystartr.ca",
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "436808559",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "135988139",
+         "checkout_flow": "widget",
+         "name": "Empower to Employ: Activate!",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.ca/e/empower-to-employ-activate-tickets-529494461187",
+         "hide_start_date": false,
+         "summary": "Make meaningful connections and explore your path to a career in tech and innovation!",
+         "is_online_event": false,
+         "eid": "egfmcryh",
+         "published": "2023-01-31T18:58:47Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#955893",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F452307439%2F1396468336063%2F1%2Foriginal.20230222-191839?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C27%2C4800%2C2400&s=9bcee2211375220735c4adc75f324eaa",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F452307439%2F1396468336063%2F1%2Foriginal.20230222-191839?auto=format%2Ccompress&q=75&sharp=10&s=4167b0cde017f7a82edab34bdafc3dc6",
+               "width": 4800,
+               "height": 2700
+            },
+            "crop_mask": {
+               "width": 4800,
+               "height": 2400,
+               "top_left": {
+                  "y": 27,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "452307439"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-02-22T00:00:00",
+               "utc": "2023-02-22T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "USD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "558994145537",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "60885595513",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=558994145537",
+         "hide_end_date": true,
+         "start_date": "2023-03-09",
+         "end_time": "15:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": true,
+            "minimum_ticket_price": {
+               "currency": "USD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 USD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "USD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 USD"
+            }
+         },
+         "end_date": "2023-03-09",
+         "tags": [
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/102",
+               "display_name": "Science & Technology",
+               "localized": {
+                  "display_name": "Science & Technology"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/9",
+               "display_name": "Class, Training, or Workshop"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/tech",
+               "display_name": "tech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology",
+               "display_name": "technology",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/womenintech",
+               "display_name": "womenintech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/womensupportingwomen",
+               "display_name": "womensupportingwomen",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/pitchcompetition",
+               "display_name": "pitchcompetition",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/internationalwomensday",
+               "display_name": "internationalwomensday",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/women_empowerment",
+               "display_name": "women_empowerment",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/pitch_competition",
+               "display_name": "pitch_competition",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology_innovation",
+               "display_name": "technology_innovation",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/internationalwomensday23",
+               "display_name": "internationalwomensday23",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "558994145537",
+         "start_time": "10:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "KPMG",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.3804767",
+               "localized_address_display": "333 Bay Street #4600, Toronto, ON M5H 2S5",
+               "postal_code": "M5H 2S5",
+               "address_1": "333 Bay Street",
+               "address_2": "#4600",
+               "latitude": "43.65037359999999",
+               "localized_multi_line_address_display": [
+                  "333 Bay Street",
+                  "#4600",
+                  "Toronto, ON M5H 2S5"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "140009629"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Prince's Trust Canada",
+            "profile_type": "organizer",
+            "num_followers": null,
+            "url": "https://www.eventbrite.com/o/princes-trust-canada-60885595513",
+            "twitter": null,
+            "summary": null,
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "60885595513",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "452307439",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "140009629",
+         "checkout_flow": "widget",
+         "name": "Women in Tech Pitch Challenge",
+         "language": "en-us",
+         "url": "https://www.eventbrite.com/e/women-in-tech-pitch-challenge-tickets-558994145537",
+         "hide_start_date": true,
+         "summary": "This Pitch Challenge is an in-person two-day leadership development opportunity for aspiring women in tech living in the GTA",
+         "is_online_event": false,
+         "eid": "eggzghgf",
+         "published": "2023-02-22T19:27:34Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#c83f49",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F441397499%2F458703899044%2F1%2Foriginal.20230207-214733?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C0%2C2160%2C1080&s=33fd1ad7862a06e71f31ab370f8c2e8c",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F441397499%2F458703899044%2F1%2Foriginal.20230207-214733?auto=format%2Ccompress&q=75&sharp=10&s=dba3f1fc6b12a04f483cc696d05dbdee",
+               "width": 2160,
+               "height": 1080
+            },
+            "crop_mask": {
+               "width": 2160,
+               "height": 1080,
+               "top_left": {
+                  "y": 0,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "441397499"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-02-07T16:32:00",
+               "utc": "2023-02-07T21:32:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "538081445087",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "2162934293",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=538081445087",
+         "hide_end_date": false,
+         "start_date": "2023-03-08",
+         "end_time": "19:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": null,
+            "has_available_tickets": true,
+            "maximum_ticket_price": null
+         },
+         "end_date": "2023-03-08",
+         "tags": [],
+         "eventbrite_event_id": "538081445087",
+         "start_time": "17:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Georgian",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.3946485",
+               "localized_address_display": "2 St Clair Avenue West Suite 1400, Toronto, ON M4V1L5",
+               "postal_code": "M4V1L5",
+               "address_1": "2 St Clair Avenue West",
+               "address_2": "Suite 1400",
+               "latitude": "43.6883259",
+               "localized_multi_line_address_display": [
+                  "2 St Clair Avenue West",
+                  "Suite 1400",
+                  "Toronto, ON M4V1L5"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "137385019"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Canada Learning Code | Canada en programmation",
+            "profile_type": "organizer",
+            "num_followers": 4281,
+            "url": "https://www.eventbrite.ca/o/canada-learning-code-canada-en-programmation-2162934293",
+            "twitter": "learningcode",
+            "summary": "We design, deliver and partner on technology education for people in Canada and run programs for Ladies, Kids, Girls, Teens and Teachers.\n\n\nNous concevons et mettons en œuvre des programmes et réaliso...",
+            "num_saves": null,
+            "image_id": "37019559",
+            "followed_by_you": false,
+            "facebook": "learningcode",
+            "num_collections": null,
+            "id": "2162934293",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "441397499",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "137385019",
+         "checkout_flow": "widget",
+         "name": "In-Person LLC: IWD Meetup: Women in Tech (18+) - Toronto (2hrs)",
+         "language": "en-us",
+         "url": "https://www.eventbrite.ca/e/in-person-llc-iwd-meetup-women-in-tech-18-toronto-2hrs-tickets-538081445087",
+         "hide_start_date": false,
+         "summary": "Join us for a discussion on Women in Tech with Charlotte, Dinah Davis, Sumeet Khanna , Lana Wehbeh and Jennifer Thomas!",
+         "is_online_event": false,
+         "eid": "538081445087",
+         "published": "2023-02-07T21:55:38Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#746362",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F458670889%2F1415213933093%2F1%2Foriginal.20230302-021524?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C124%2C1834%2C917&s=8b6c9f399be196199abbf6deb7ed7760",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F458670889%2F1415213933093%2F1%2Foriginal.20230302-021524?auto=format%2Ccompress&q=75&sharp=10&s=b08fa02ce4c8cc7a59bd4c8478cf3cb8",
+               "width": 1834,
+               "height": 1166
+            },
+            "crop_mask": {
+               "width": 1834,
+               "height": 917,
+               "top_left": {
+                  "y": 124,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "458670889"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-02-28T00:00:00",
+               "utc": "2023-02-28T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "566705430197",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "61468849913",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=566705430197",
+         "hide_end_date": false,
+         "start_date": "2023-03-16",
+         "end_time": "21:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "11.98",
+               "value": 1198,
+               "display": "11.98 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "22.63",
+               "value": 2263,
+               "display": "22.63 CAD"
+            }
+         },
+         "end_date": "2023-03-16",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1001",
+               "display_name": "Startups & Small Business"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business",
+               "display_name": "business",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/networking",
+               "display_name": "networking",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/mixer",
+               "display_name": "mixer",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/tech",
+               "display_name": "tech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneur",
+               "display_name": "entrepreneur",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/toronto",
+               "display_name": "toronto",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/startups",
+               "display_name": "startups",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "566705430197",
+         "start_time": "18:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Door Three",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.4028859",
+               "localized_address_display": "667 King Street West ##2, Toronto, ON M5V 1M9",
+               "postal_code": "M5V 1M9",
+               "address_1": "667 King Street West",
+               "address_2": "##2",
+               "latitude": "43.6436639",
+               "localized_multi_line_address_display": [
+                  "667 King Street West",
+                  "##2",
+                  "Toronto, ON M5V 1M9"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "141463819"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Six Figures in the Six",
+            "profile_type": "organizer",
+            "num_followers": 4,
+            "url": "https://www.eventbrite.com/o/six-figures-in-the-six-61468849913",
+            "twitter": null,
+            "summary": null,
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "61468849913",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "458670889",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "141463819",
+         "checkout_flow": "widget",
+         "name": "Toronto Tech Mixer March 2023",
+         "language": "en-us",
+         "url": "https://www.eventbrite.com/e/toronto-tech-mixer-march-2023-tickets-566705430197",
+         "hide_start_date": false,
+         "summary": "Come to a networking event with a few \"special touches\" that make networking frictionless with 100+ people working in business and tech!",
+         "is_online_event": false,
+         "eid": "eghtpgcc",
+         "published": "2023-02-28T23:59:03Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#67925b",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F432966809%2F1108713443793%2F1%2Foriginal.20230126-183758?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C0%2C2160%2C1080&s=a2c990201904fa244a95b948049412a4",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F432966809%2F1108713443793%2F1%2Foriginal.20230126-183758?auto=format%2Ccompress&q=75&sharp=10&s=77d5ef14db8dd21bf23f907b91ffb974",
+               "width": 2160,
+               "height": 1080
+            },
+            "crop_mask": {
+               "width": 2160,
+               "height": 1080,
+               "top_left": {
+                  "y": 0,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "432966809"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2022-12-04T00:00:00",
+               "utc": "2022-12-04T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "490571601867",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "51495944853",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=490571601867",
+         "hide_end_date": false,
+         "start_date": "2023-03-06",
+         "end_time": "18:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "53.11",
+               "value": 5311,
+               "display": "53.11 CAD"
+            }
+         },
+         "end_date": "2023-03-06",
+         "tags": [
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/2",
+               "display_name": "Seminar or Talk"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/leadership",
+               "display_name": "leadership",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/timemanagement",
+               "display_name": "timemanagement",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/career_development",
+               "display_name": "career_development",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "490571601867",
+         "start_time": "17:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Rotman School of Management + Livestream",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.3983849",
+               "localized_address_display": "105 St. George Street, Toronto, ON M5S 3E6",
+               "postal_code": "M5S 3E6",
+               "address_1": "105 St. George Street",
+               "address_2": "",
+               "latitude": "43.6653138",
+               "localized_multi_line_address_display": [
+                  "105 St. George Street",
+                  "Toronto, ON M5S 3E6"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "129512949"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Rotman Events",
+            "profile_type": "organizer",
+            "num_followers": 1271,
+            "url": "https://www.eventbrite.ca/o/rotman-events-51495944853",
+            "twitter": "RotmanEvents",
+            "summary": "Each year, the Rotman School hosts about 100 public talks by international bestselling authors, top management executives and other influential thought leaders. We hope you'll join us for one of these...",
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "51495944853",
+            "website_url": "https://rotman.force.com/events/s/special-event/evt__Special_Event__c/Default",
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "432966809",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "129512949",
+         "checkout_flow": "widget",
+         "name": "Waze cofounder Uri Levine on Falling in Love with the Problem",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.ca/e/waze-cofounder-uri-levine-on-falling-in-love-with-the-problem-tickets-490571601867",
+         "hide_start_date": false,
+         "summary": "Tech disruptor Uri Levine discusses his new book \"Falling Love with the Problem, Not the Solution: A Handbook for Entrepreneurs.\"",
+         "is_online_event": false,
+         "eid": "efxxmkqx",
+         "published": "2022-12-16T17:26:21Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#690d70",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F416663549%2F256314814581%2F1%2Foriginal.20230102-185652?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C0%2C2160%2C1080&s=e07385ee1848217cbdf8e0e569f95f9f",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F416663549%2F256314814581%2F1%2Foriginal.20230102-185652?auto=format%2Ccompress&q=75&sharp=10&s=3f5c2e85700973d9c461d318d247fd46",
+               "width": 2160,
+               "height": 1080
+            },
+            "crop_mask": {
+               "width": 2160,
+               "height": 1080,
+               "top_left": {
+                  "y": 0,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "416663549"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2022-12-31T14:00:00",
+               "utc": "2022-12-31T19:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "500297331787",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "17323347489",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=500297331787",
+         "hide_end_date": false,
+         "start_date": "2023-08-15",
+         "end_time": "23:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "241.00",
+               "value": 24100,
+               "display": "241.00 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "662.21",
+               "value": 66221,
+               "display": "662.21 CAD"
+            }
+         },
+         "end_date": "2023-08-16",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/2004",
+               "display_name": "High Tech"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/102",
+               "display_name": "Science & Technology",
+               "localized": {
+                  "display_name": "Science & Technology"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/1",
+               "display_name": "Conference"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/blockchain",
+               "display_name": "blockchain",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/cryptocurrency",
+               "display_name": "cryptocurrency",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/bitcoin",
+               "display_name": "bitcoin",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/ethereum",
+               "display_name": "ethereum",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/fintech",
+               "display_name": "fintech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/defi",
+               "display_name": "defi",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/crypto",
+               "display_name": "crypto",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/web3",
+               "display_name": "web3",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/metaverse",
+               "display_name": "metaverse",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/nft",
+               "display_name": "nft",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "500297331787",
+         "start_time": "08:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Rebel Entertainment Complex",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.35467059999996",
+               "localized_address_display": "11 Polson Street, Toronto, ON M5A 1A4",
+               "postal_code": "M5A 1A4",
+               "address_1": "11 Polson Street",
+               "address_2": "",
+               "latitude": "43.640978",
+               "localized_multi_line_address_display": [
+                  "11 Polson Street",
+                  "Toronto, ON M5A 1A4"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "130736369"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Untraceable Blockchain Events",
+            "profile_type": "organizer",
+            "num_followers": 694,
+            "url": "https://www.eventbrite.ca/o/untraceable-blockchain-events-17323347489",
+            "twitter": "untraceableinc",
+            "summary": null,
+            "num_saves": null,
+            "image_id": "116831529",
+            "followed_by_you": false,
+            "facebook": "untraceableinc",
+            "num_collections": null,
+            "id": "17323347489",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "416663549",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "130736369",
+         "checkout_flow": "widget",
+         "name": "2023 Blockchain Futurist Conference- Canada's Largest Crypto & Web3 Event",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.ca/e/2023-blockchain-futurist-conference-canadas-largest-crypto-web3-event-tickets-500297331787",
+         "hide_start_date": false,
+         "summary": "Untraceable's 5th Annual Blockchain Futurist Conference 2023 brings together top leaders in Blockchain, Crypto, Web3, DeFi, Privacy, & NFTs!",
+         "is_online_event": false,
+         "eid": "efytbkbh",
+         "published": "2023-01-10T15:19:07Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#34beea",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F441376299%2F943334911283%2F1%2Foriginal.20230207-212608?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C0%2C2160%2C1080&s=6280ef2ab068b8ee2eef58165535eac2",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F441376299%2F943334911283%2F1%2Foriginal.20230207-212608?auto=format%2Ccompress&q=75&sharp=10&s=fc22830ede784051757d817700342d85",
+               "width": 2160,
+               "height": 1080
+            },
+            "crop_mask": {
+               "width": 2160,
+               "height": 1080,
+               "top_left": {
+                  "y": 0,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "441376299"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2022-10-27T00:00:00",
+               "utc": "2022-10-27T04:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "USD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "482660429337",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "14929911903",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=482660429337",
+         "hide_end_date": false,
+         "start_date": "2023-03-08",
+         "end_time": "20:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": true,
+            "minimum_ticket_price": {
+               "currency": "USD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 USD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "USD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 USD"
+            }
+         },
+         "end_date": "2023-03-08",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/2004",
+               "display_name": "High Tech"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/102",
+               "display_name": "Science & Technology",
+               "localized": {
+                  "display_name": "Science & Technology"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/devops",
+               "display_name": "devops",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/cicd",
+               "display_name": "cicd",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/software_development",
+               "display_name": "software_development",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/cloud_computing",
+               "display_name": "cloud_computing",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "482660429337",
+         "start_time": "18:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Trend Micro",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.4200135",
+               "localized_address_display": "1 Snooker St,, Toronto, ON N M6K 1G1",
+               "postal_code": "N M6K 1G1",
+               "address_1": "1 Snooker St,",
+               "address_2": "",
+               "latitude": "43.6391257",
+               "localized_multi_line_address_display": [
+                  "1 Snooker St",
+                  "Toronto, ON N M6K 1G1"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "132131839"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "NADOG",
+            "profile_type": "organizer",
+            "num_followers": 1132,
+            "url": "https://www.eventbrite.com/o/nadog-14929911903",
+            "twitter": null,
+            "summary": null,
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "14929911903",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "441376299",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "132131839",
+         "checkout_flow": "widget",
+         "name": "Toronto DevOps Connect with NADOG",
+         "language": "en-us",
+         "url": "https://www.eventbrite.com/e/toronto-devops-connect-with-nadog-tickets-482660429337",
+         "hide_start_date": false,
+         "summary": "Networking and knowledge sharing with your local DevOps-minded peers",
+         "is_online_event": false,
+         "eid": "efwzdhmh",
+         "published": "2022-12-06T20:40:31Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#bed000",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F441333459%2F1261151301263%2F1%2Foriginal.20230207-204036?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C0%2C2160%2C1080&s=34bfea3ee5c8cd9bb8d56f0ac69c95d4",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F441333459%2F1261151301263%2F1%2Foriginal.20230207-204036?auto=format%2Ccompress&q=75&sharp=10&s=432f4f99108eff9a0cb44dc7527a8aba",
+               "width": 2160,
+               "height": 1080
+            },
+            "crop_mask": {
+               "width": 2160,
+               "height": 1080,
+               "top_left": {
+                  "y": 0,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "441333459"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-01-27T00:00:00",
+               "utc": "2023-01-27T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "525130578697",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "56544579633",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=525130578697",
+         "hide_end_date": false,
+         "start_date": "2023-03-30",
+         "end_time": "22:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": true,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            }
+         },
+         "end_date": "2023-03-30",
+         "tags": [
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business",
+               "display_name": "business",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneur",
+               "display_name": "entrepreneur",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/toronto",
+               "display_name": "toronto",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/connection",
+               "display_name": "connection",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/founder",
+               "display_name": "founder",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/marketplace",
+               "display_name": "marketplace",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business_networking",
+               "display_name": "business_networking",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/networking_event",
+               "display_name": "networking_event",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "525130578697",
+         "start_time": "18:30",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "325 Front St W 4th floor",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.39028549999999",
+               "localized_address_display": "325 Front Street West #4th floor, Toronto, ON M5V 2Y1",
+               "postal_code": "M5V 2Y1",
+               "address_1": "325 Front Street West",
+               "address_2": "#4th floor",
+               "latitude": "43.6431718",
+               "localized_multi_line_address_display": [
+                  "325 Front Street West",
+                  "#4th floor",
+                  "Toronto, ON M5V 2Y1"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "135444089"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "The Journey",
+            "profile_type": "organizer",
+            "num_followers": 9,
+            "url": "https://www.eventbrite.com/o/the-journey-56544579633",
+            "twitter": null,
+            "summary": null,
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "56544579633",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "441333459",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "135444089",
+         "checkout_flow": "widget",
+         "name": "The Journey Presents: Consumer Goods Market and Networking Event",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.com/e/the-journey-presents-consumer-goods-market-and-networking-event-tickets-525130578697",
+         "hide_start_date": false,
+         "summary": "Join The Journey for a CPG market & networking event. Discover industry trends & connect with leaders.",
+         "is_online_event": false,
+         "eid": "egcrhqrz",
+         "published": "2023-01-25T22:06:26Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#acb2ba",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F331220269%2F849706397593%2F1%2Foriginal.20220807-193243?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=130%2C0%2C984%2C492&s=2e96fcedf2f6fca72e6d2915ebc4c7bd",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F331220269%2F849706397593%2F1%2Foriginal.20220807-193243?auto=format%2Ccompress&q=75&sharp=10&s=30f78b32a4a24a606d8fdcc16d8085f0",
+               "width": 1200,
+               "height": 492
+            },
+            "crop_mask": {
+               "width": 984,
+               "height": 492,
+               "top_left": {
+                  "y": 0,
+                  "x": 130
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "331220269"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2022-12-28T00:00:00",
+               "utc": "2022-12-28T05:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "398598979277",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "43180571863",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=398598979277",
+         "hide_end_date": false,
+         "start_date": "2023-06-15",
+         "end_time": "12:30",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "103.92",
+               "value": 10392,
+               "display": "103.92 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "103.92",
+               "value": 10392,
+               "display": "103.92 CAD"
+            }
+         },
+         "end_date": "2023-06-15",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1005",
+               "display_name": "Real Estate"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/3",
+               "display_name": "Tradeshow, Consumer Show, or Expo"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/seminar",
+               "display_name": "seminar",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/community",
+               "display_name": "community",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology",
+               "display_name": "technology",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/event",
+               "display_name": "event",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/future",
+               "display_name": "future",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/toronto",
+               "display_name": "toronto",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/artificial_intelligence",
+               "display_name": "artificial_intelligence",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "398598979277",
+         "start_time": "09:30",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "73 Bathurst St",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.4022462",
+               "localized_address_display": "73 Bathurst Street, Toronto, ON M5V 2P6",
+               "postal_code": "M5V 2P6",
+               "address_1": "73 Bathurst Street",
+               "address_2": "",
+               "latitude": "43.6435711",
+               "localized_multi_line_address_display": [
+                  "73 Bathurst Street",
+                  "Toronto, ON M5V 2P6"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "108693099"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Jerry Jay Hunter",
+            "profile_type": "organizer",
+            "num_followers": 38,
+            "url": "https://www.eventbrite.com/o/jerry-jay-hunter-43180571863",
+            "twitter": null,
+            "summary": null,
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "43180571863",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "331220269",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "108693099",
+         "checkout_flow": "widget",
+         "name": "PropTech 2023 - Real Estate and the Future of Construction",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.com/e/proptech-2023-real-estate-and-the-future-of-construction-tickets-398598979277",
+         "hide_start_date": false,
+         "summary": "Where Real Estate, Technology and Construction Intersect",
+         "is_online_event": false,
+         "eid": "efbxqzkx",
+         "published": "2022-08-07T19:37:33Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": null,
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F423327879%2F225829800867%2F1%2Foriginal.20230111-145720?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C50%2C1600%2C800&s=02ea91683f59bb8097b105aefbe3a195",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F423327879%2F225829800867%2F1%2Foriginal.20230111-145720?auto=format%2Ccompress&q=75&sharp=10&s=85c739b15918fe27ba23bbd9345afa2d",
+               "width": 1600,
+               "height": 900
+            },
+            "crop_mask": {
+               "width": 1600,
+               "height": 800,
+               "top_left": {
+                  "y": 50,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "423327879"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2023-01-12T08:00:00",
+               "utc": "2023-01-12T13:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "510949693287",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "27262524091",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=510949693287",
+         "hide_end_date": false,
+         "start_date": "2023-03-10",
+         "end_time": "18:30",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "11.98",
+               "value": 1198,
+               "display": "11.98 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "11.98",
+               "value": 1198,
+               "display": "11.98 CAD"
+            }
+         },
+         "end_date": "2023-03-12",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/2999",
+               "display_name": "Other"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/102",
+               "display_name": "Science & Technology",
+               "localized": {
+                  "display_name": "Science & Technology"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/100",
+               "display_name": "Other"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business",
+               "display_name": "business",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/technology",
+               "display_name": "technology",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/sustainability",
+               "display_name": "sustainability",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurship",
+               "display_name": "entrepreneurship",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/startup",
+               "display_name": "startup",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/hackathon",
+               "display_name": "hackathon",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/un_sustainable",
+               "display_name": "un_sustainable",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "510949693287",
+         "start_time": "17:30",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Bergeron Building for Engineering Excellence",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.5066888",
+               "localized_address_display": "11 Arboretum Lane, Toronto, ON M3J 2S5",
+               "postal_code": "M3J 2S5",
+               "address_1": "11 Arboretum Lane",
+               "address_2": "",
+               "latitude": "43.7722329",
+               "localized_multi_line_address_display": [
+                  "11 Arboretum Lane",
+                  "Toronto, ON M3J 2S5"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "132115629"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Lassonde School of Engineering- BEST Program",
+            "profile_type": "organizer",
+            "num_followers": 240,
+            "url": "https://www.eventbrite.ca/o/lassonde-school-of-engineering-best-program-27262524091",
+            "twitter": null,
+            "summary": "The BEST program supports experiential learning and entrepreneurial programs at Lassonde School of Engineering focused on enabling students to understand and develop the skills required to launch a st...",
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "27262524091",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "423327879",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "132115629",
+         "checkout_flow": "widget",
+         "name": "BEST Startup Experience 2023 - Transform your Ideas into a Business",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.ca/e/best-startup-experience-2023-transform-your-ideas-into-a-business-tickets-510949693287",
+         "hide_start_date": false,
+         "summary": "Transform your Ideas into a Business",
+         "is_online_event": false,
+         "eid": "efzrdxbc",
+         "published": "2023-01-12T15:41:10Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#ffffff",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F456818829%2F172733399697%2F1%2Foriginal.20230228-114212?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C153%2C2880%2C1440&s=c968b3d9b77d00e004471bdcd099dbcf",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F456818829%2F172733399697%2F1%2Foriginal.20230228-114212?auto=format%2Ccompress&q=75&sharp=10&s=642748a9c7d594c2ef0e6f350ae9aa0d",
+               "width": 2880,
+               "height": 1800
+            },
+            "crop_mask": {
+               "width": 2880,
+               "height": 1440,
+               "top_left": {
+                  "y": 153,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "456818829"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "start_sales_date": {
+               "timezone": "America/Toronto",
+               "local": "2022-12-08T10:00:00",
+               "utc": "2022-12-08T15:00:00Z"
+            },
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "CAD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "483761693247",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "49476778943",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=483761693247",
+         "hide_end_date": false,
+         "start_date": "2023-03-09",
+         "end_time": "21:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": true,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "0.00",
+               "value": 0,
+               "display": "0.00 CAD"
+            }
+         },
+         "end_date": "2023-03-09",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1010",
+               "display_name": "Career"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/career",
+               "display_name": "career",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/hr",
+               "display_name": "hr",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/recruitment",
+               "display_name": "recruitment",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/leadership",
+               "display_name": "leadership",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/human_resources",
+               "display_name": "human_resources",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "483761693247",
+         "start_time": "17:30",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "180 John St",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.3918249",
+               "localized_address_display": "180 John Street, Toronto, ON M5T 1X5",
+               "postal_code": "M5T 1X5",
+               "address_1": "180 John Street",
+               "address_2": "",
+               "latitude": "43.6506942",
+               "localized_multi_line_address_display": [
+                  "180 John Street",
+                  "Toronto, ON M5T 1X5"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "128492599"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "HR Gazette",
+            "profile_type": "organizer",
+            "num_followers": 131,
+            "url": "https://www.eventbrite.ca/o/hr-gazette-49476778943",
+            "twitter": null,
+            "summary": "The HR Gazette\nThe HR Gazette is a Toronto-based online business magazine offering fresh perspectives on topics including HR Technology, Talent, Performance, Learning, Strategy and Leadership. Contact...",
+            "num_saves": null,
+            "image_id": null,
+            "followed_by_you": false,
+            "facebook": null,
+            "num_collections": null,
+            "id": "49476778943",
+            "website_url": "https://hr-gazette.com/",
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "456818829",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "128492599",
+         "checkout_flow": "widget",
+         "name": "Agility Reimagined Summit at Spaces",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.ca/e/agility-reimagined-summit-at-spaces-tickets-483761693247",
+         "hide_start_date": false,
+         "summary": "Network and discover how to shape the future of work with agile, ethical, data-fuelled tech and strategies.",
+         "is_online_event": false,
+         "eid": "efxcxrft",
+         "published": "2022-12-08T14:30:32Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#748c9a",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F343522749%2F233567016891%2F1%2Foriginal.20200928-112622?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C132%2C1000%2C500&s=4daa716351bbd1ca6f7f3e3004008c1f",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F343522749%2F233567016891%2F1%2Foriginal.20200928-112622?auto=format%2Ccompress&q=75&sharp=10&s=0bba36bc41be1273205ed4cdf3fff2d8",
+               "width": 1000,
+               "height": 668
+            },
+            "crop_mask": {
+               "width": 1000,
+               "height": 500,
+               "top_left": {
+                  "y": 132,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "343522749"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "USD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "500675482847",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "15646132597",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=500675482847",
+         "hide_end_date": false,
+         "start_date": "2023-03-07",
+         "end_time": "17:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "USD",
+               "major_value": "105.33",
+               "value": 10533,
+               "display": "105.33 USD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "USD",
+               "major_value": "522.83",
+               "value": 52283,
+               "display": "522.83 USD"
+            }
+         },
+         "end_date": "2023-03-07",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1001",
+               "display_name": "Startups & Small Business"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/9",
+               "display_name": "Class, Training, or Workshop"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business",
+               "display_name": "business",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/tech",
+               "display_name": "tech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/startup",
+               "display_name": "startup",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneur",
+               "display_name": "entrepreneur",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/hackathon",
+               "display_name": "hackathon",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/webinar",
+               "display_name": "webinar",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/virtual",
+               "display_name": "virtual",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/vr",
+               "display_name": "vr",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/webinars",
+               "display_name": "webinars",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/virtual_reality",
+               "display_name": "virtual_reality",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "500675482847",
+         "start_time": "13:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Toronto",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.3831843",
+               "localized_address_display": "Virtual Workshop, Toronto, ON",
+               "address_1": "Virtual Workshop",
+               "address_2": "",
+               "latitude": "43.653226",
+               "localized_multi_line_address_display": [
+                  "Virtual Workshop",
+                  "Toronto, ON"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "111787379"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Atechup.com",
+            "profile_type": "organizer",
+            "num_followers": 17408,
+            "url": "https://www.eventbrite.com/o/atechupcom-15646132597",
+            "twitter": "atechup_com",
+            "summary": "Atechup Technologies specialize in online workshops, virtual class, startup training for entrepreneurs, organizations, managers and established businesses/startups with focus in emerging and disruptiv...",
+            "num_saves": null,
+            "image_id": "112395625",
+            "followed_by_you": false,
+            "facebook": "atechup.inc",
+            "num_collections": null,
+            "id": "15646132597",
+            "website_url": "https://www.atechup.com",
+            "num_following": null
+         },
+         "series_id": "409557626887",
+         "image_id": "343522749",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "111787379",
+         "checkout_flow": "widget",
+         "name": "Develop a Successful Smart City Tech Startup Business Today! Entrepreneur",
+         "language": "en-us",
+         "url": "https://www.eventbrite.com/e/develop-a-successful-smart-city-tech-startup-business-today-entrepreneur-tickets-500675482847",
+         "hide_start_date": false,
+         "summary": "Develop a Successful  Smart City Tech Startup Business Hackathon | Startup Hackathon | Entrepreneur Hackathon | Entrepreneurship Hackathon",
+         "is_online_event": false,
+         "eid": "efdyfhfq",
+         "published": "2022-08-28T18:59:45Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#7e837d",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F431706559%2F277613589621%2F1%2Foriginal.20230125-040833?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C215%2C1000%2C500&s=ca913f7be7b5541de617f2ebe6f67728",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F431706559%2F277613589621%2F1%2Foriginal.20230125-040833?auto=format%2Ccompress&q=75&sharp=10&s=4483eacec01293ed3682a6ea2c0f14bc",
+               "width": 1000,
+               "height": 758
+            },
+            "crop_mask": {
+               "width": 1000,
+               "height": 500,
+               "top_left": {
+                  "y": 215,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "431706559"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "default_message": "Sales Ended",
+            "sales_status": "sales_ended",
+            "currency": "CAD",
+            "message_code": "tickets_with_sales_ended",
+            "message": "Sales Ended",
+            "message_type": "default"
+         },
+         "timezone": "America/Toronto",
+         "id": "524192553037",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "26207856739",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=524192553037",
+         "hide_end_date": false,
+         "start_date": "2023-03-29",
+         "end_time": "21:30",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": true,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "11.30",
+               "value": 1130,
+               "display": "11.30 CAD"
+            },
+            "has_available_tickets": false,
+            "maximum_ticket_price": {
+               "currency": "CAD",
+               "major_value": "5650.00",
+               "value": 565000,
+               "display": "5650.00 CAD"
+            }
+         },
+         "end_date": "2023-03-29",
+         "tags": [
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/102",
+               "display_name": "Science & Technology",
+               "localized": {
+                  "display_name": "Science & Technology"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/10",
+               "display_name": "Meeting or Networking Event"
+            }
+         ],
+         "eventbrite_event_id": "524192553037",
+         "start_time": "18:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "888 Yonge St",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.38835019999999",
+               "localized_address_display": "888 Yonge Street, Toronto, ON M4W 2J2",
+               "postal_code": "M4W 2J2",
+               "address_1": "888 Yonge Street",
+               "address_2": "",
+               "latitude": "43.6730907",
+               "localized_multi_line_address_display": [
+                  "888 Yonge Street",
+                  "Toronto, ON M4W 2J2"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "134897659"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Tech Talent Canada",
+            "profile_type": "organizer",
+            "num_followers": 2473,
+            "url": "https://www.eventbrite.ca/o/tech-talent-canada-26207856739",
+            "twitter": "techtalentcan",
+            "summary": "Tech Talent Canada connects the world's top tech talent to Canada's growing companies.",
+            "num_saves": null,
+            "image_id": "417264639",
+            "followed_by_you": false,
+            "facebook": "TechTalentCanada",
+            "num_collections": null,
+            "id": "26207856739",
+            "website_url": null,
+            "num_following": null
+         },
+         "series_id": null,
+         "image_id": "431706559",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "134897659",
+         "checkout_flow": "widget",
+         "name": "Tech Talent Canada Job Fair",
+         "language": "en-ca",
+         "url": "https://www.eventbrite.ca/e/tech-talent-canada-job-fair-tickets-524192553037",
+         "hide_start_date": false,
+         "summary": "A unique recruiting event that connects Toronto's fastest growing companies with the top tech talent in the city.",
+         "is_online_event": false,
+         "eid": "524192553037",
+         "published": "2023-01-25T04:51:01Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#3c688f",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F335126949%2F233567016891%2F1%2Foriginal.20220108-121109?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C0%2C1000%2C500&s=d82a2cc8237892c00f0eca877d595082",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F335126949%2F233567016891%2F1%2Foriginal.20220108-121109?auto=format%2Ccompress&q=75&sharp=10&s=686f6784b1f2a639e7bd31fed3413da1",
+               "width": 1000,
+               "height": 563
+            },
+            "crop_mask": {
+               "width": 1000,
+               "height": 500,
+               "top_left": {
+                  "y": 0,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "335126949"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "USD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "501785111777",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "15646132597",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=501785111777",
+         "hide_end_date": false,
+         "start_date": "2023-03-05",
+         "end_time": "17:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "USD",
+               "major_value": "105.33",
+               "value": 10533,
+               "display": "105.33 USD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "USD",
+               "major_value": "522.83",
+               "value": 52283,
+               "display": "522.83 USD"
+            }
+         },
+         "end_date": "2023-03-05",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/2001",
+               "display_name": "Medicine"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/102",
+               "display_name": "Science & Technology",
+               "localized": {
+                  "display_name": "Science & Technology"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/9",
+               "display_name": "Class, Training, or Workshop"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/health",
+               "display_name": "health",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurs",
+               "display_name": "entrepreneurs",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurship",
+               "display_name": "entrepreneurship",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneur",
+               "display_name": "entrepreneur",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/healthcare",
+               "display_name": "healthcare",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/medicine",
+               "display_name": "medicine",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/digital_health",
+               "display_name": "digital_health",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurship_workshop",
+               "display_name": "entrepreneurship_workshop",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/healthcare_professionals",
+               "display_name": "healthcare_professionals",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurship_training",
+               "display_name": "entrepreneurship_training",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "501785111777",
+         "start_time": "13:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Toronto",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.3831843",
+               "localized_address_display": "Virtual Workshop, Toronto, ON",
+               "address_1": "Virtual Workshop",
+               "address_2": "",
+               "latitude": "43.653226",
+               "localized_multi_line_address_display": [
+                  "Virtual Workshop",
+                  "Toronto, ON"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "109668209"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Atechup.com",
+            "profile_type": "organizer",
+            "num_followers": 17408,
+            "url": "https://www.eventbrite.com/o/atechupcom-15646132597",
+            "twitter": "atechup_com",
+            "summary": "Atechup Technologies specialize in online workshops, virtual class, startup training for entrepreneurs, organizations, managers and established businesses/startups with focus in emerging and disruptiv...",
+            "num_saves": null,
+            "image_id": "112395625",
+            "followed_by_you": false,
+            "facebook": "atechup.inc",
+            "num_collections": null,
+            "id": "15646132597",
+            "website_url": "https://www.atechup.com",
+            "num_following": null
+         },
+         "series_id": "401961697257",
+         "image_id": "335126949",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "109668209",
+         "checkout_flow": "widget",
+         "name": "Develop a Successful Healthcare Tech Startup Business Today! Entrepreneur",
+         "language": "en-us",
+         "url": "https://www.eventbrite.com/e/develop-a-successful-healthcare-tech-startup-business-today-entrepreneur-tickets-501785111777",
+         "hide_start_date": false,
+         "summary": "Develop a Successful Healthcare Tech Startup Business Hackathon |  Healthcare Tech Entrepreneurship Workshop | Medtech Entrepreneur Training",
+         "is_online_event": false,
+         "eid": "efcmxqmq",
+         "published": "2022-08-14T16:29:54Z"
+      },
+      {
+         "image": {
+            "edge_color_set": true,
+            "edge_color": "#9ebcc9",
+            "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F343449239%2F233567016891%2F1%2Foriginal.20220604-185358?w=512&auto=format%2Ccompress&q=75&sharp=10&rect=0%2C10%2C812%2C406&s=01d60c0d0658d6cf060efb3e4483dccf",
+            "original": {
+               "url": "https://img.evbuc.com/https%3A%2F%2Fcdn.evbuc.com%2Fimages%2F343449239%2F233567016891%2F1%2Foriginal.20220604-185358?auto=format%2Ccompress&q=75&sharp=10&s=a0c0c0f70d9c27b3b534bb64bfb3ef47",
+               "width": 813,
+               "height": 426
+            },
+            "crop_mask": {
+               "width": 812,
+               "height": 406,
+               "top_left": {
+                  "y": 10,
+                  "x": 0
+               }
+            },
+            "aspect_ratio": "2",
+            "id": "343449239"
+         },
+         "saves": {
+            "saved_by_you": false
+         },
+         "event_sales_status": {
+            "default_message": null,
+            "sales_status": "on_sale",
+            "currency": "USD",
+            "message_code": null,
+            "message": null,
+            "message_type": null
+         },
+         "timezone": "America/Toronto",
+         "id": "500707007137",
+         "privacy_setting": "unlocked",
+         "tickets_by": "Eventbrite",
+         "primary_organizer_id": "15646132597",
+         "tickets_url": "https://www.eventbrite.com/checkout-external?eid=500707007137",
+         "hide_end_date": false,
+         "start_date": "2023-03-09",
+         "end_time": "17:00",
+         "status": "live",
+         "_type": "destination_event",
+         "public_collections": {
+            "creator_collections": {
+               "object_count": 0,
+               "collections": []
+            }
+         },
+         "ticket_availability": {
+            "is_sold_out": false,
+            "is_free": false,
+            "minimum_ticket_price": {
+               "currency": "USD",
+               "major_value": "105.33",
+               "value": 10533,
+               "display": "105.33 USD"
+            },
+            "has_available_tickets": true,
+            "maximum_ticket_price": {
+               "currency": "USD",
+               "major_value": "522.83",
+               "value": 52283,
+               "display": "522.83 USD"
+            }
+         },
+         "end_date": "2023-03-09",
+         "tags": [
+            {
+               "prefix": "EventbriteSubCategory",
+               "tag": "EventbriteSubCategory/1002",
+               "display_name": "Finance"
+            },
+            {
+               "prefix": "EventbriteCategory",
+               "tag": "EventbriteCategory/101",
+               "display_name": "Business & Professional",
+               "localized": {
+                  "display_name": "Business & Professional"
+               }
+            },
+            {
+               "prefix": "EventbriteFormat",
+               "tag": "EventbriteFormat/9",
+               "display_name": "Class, Training, or Workshop"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/business",
+               "display_name": "business",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/finance",
+               "display_name": "finance",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurs",
+               "display_name": "entrepreneurs",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurship",
+               "display_name": "entrepreneurship",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneur",
+               "display_name": "entrepreneur",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/blockchain",
+               "display_name": "blockchain",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/hackathon",
+               "display_name": "hackathon",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/fintech",
+               "display_name": "fintech",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurship_workshop",
+               "display_name": "entrepreneurship_workshop",
+               "prefix": "OrganizerTag"
+            },
+            {
+               "_type": "tag",
+               "tag": "OrganizerTag/entrepreneurship_training",
+               "display_name": "entrepreneurship_training",
+               "prefix": "OrganizerTag"
+            }
+         ],
+         "eventbrite_event_id": "500707007137",
+         "start_time": "13:00",
+         "primary_venue": {
+            "_type": "destination_venue",
+            "name": "Toronto",
+            "venue_profile_id": null,
+            "address": {
+               "city": "Toronto",
+               "country": "CA",
+               "region": "ON",
+               "longitude": "-79.39565640000001",
+               "localized_address_display": "Virtual Workshop, Toronto, ON",
+               "address_1": "Virtual Workshop",
+               "address_2": "",
+               "latitude": "43.6628917",
+               "localized_multi_line_address_display": [
+                  "Virtual Workshop",
+                  "Toronto, ON"
+               ],
+               "localized_area_display": "Toronto, ON"
+            },
+            "venue_profile_url": "",
+            "id": "111769599"
+         },
+         "primary_organizer": {
+            "_type": "destination_profile",
+            "num_upcoming_events": null,
+            "name": "Atechup.com",
+            "profile_type": "organizer",
+            "num_followers": 17408,
+            "url": "https://www.eventbrite.com/o/atechupcom-15646132597",
+            "twitter": "atechup_com",
+            "summary": "Atechup Technologies specialize in online workshops, virtual class, startup training for entrepreneurs, organizations, managers and established businesses/startups with focus in emerging and disruptiv...",
+            "num_saves": null,
+            "image_id": "112395625",
+            "followed_by_you": false,
+            "facebook": "atechup.inc",
+            "num_collections": null,
+            "id": "15646132597",
+            "website_url": "https://www.atechup.com",
+            "num_following": null
+         },
+         "series_id": "409464498337",
+         "image_id": "343449239",
+         "is_protected_event": false,
+         "is_cancelled": null,
+         "primary_venue_id": "111769599",
+         "checkout_flow": "widget",
+         "name": "Develop a Successful FinTech | De-Fi Startup Business Today!",
+         "language": "en-us",
+         "url": "https://www.eventbrite.com/e/develop-a-successful-fintech-de-fi-startup-business-today-tickets-500707007137",
+         "hide_start_date": false,
+         "summary": "Develop a Successful FinTech Startup Business Hackathon | Fintech Entrepreneurship Workshop | Fintech Entrepreneur Training",
+         "is_online_event": false,
+         "eid": "efdybhkq",
+         "published": "2022-08-28T15:03:04Z"
+      }
+   ]
+}
