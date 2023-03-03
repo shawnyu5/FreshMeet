@@ -30,7 +30,7 @@ async fn main() {
         "500707007137".to_string(),
     ];
 
-    search.fetch(event_ids).await.unwrap();
+    search.fetch(event_ids, Some(15)).await.unwrap();
     // let result = user.user_info().await.unwrap();
     // println!("{:?}", result);
 
