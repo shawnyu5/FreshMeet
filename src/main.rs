@@ -1,10 +1,12 @@
 use dotenv::dotenv;
 mod eventbrite;
+use serde_json::to_string_pretty;
+mod meetup;
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
-    let search = eventbrite::info::Info::new();
+    let search = meetup::search::Search::new();
 
     // event_ids=543298208567,518737516877,442445665897,534539430827,544868204467,529494461187,558994145537,538081445087,566705430197,490571601867,500297331787,482660429337,525130578697,398598979277,510949693287,483761693247,500675482847,524192553037,501785111777,500707007137&
     let event_ids = vec![
@@ -30,7 +32,8 @@ async fn main() {
         "500707007137".to_string(),
     ];
 
-    search.fetch(event_ids, Some(15)).await.unwrap();
+    let result = search.fetch().await;
+    println!("{}", to_string_pretty(&result).unwrap());
     // let result = user.user_info().await.unwrap();
     // println!("{:?}", result);
 
