@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use serde_json::to_string_pretty;
-use tokio::runtime::Runtime;
 // use std::collections::HashMap;
 // use std::{env, error::Error};
 
@@ -135,6 +134,7 @@ impl Info {
 #[cfg(test)]
 mod test {
     use super::*;
+    use tokio::runtime::Runtime;
 
     #[test]
     fn test_fetch() {
