@@ -32,7 +32,7 @@ async fn main() {
         "500707007137".to_string(),
     ];
 
-    let result = search.fetch().await;
+    let result = search.fetch(Some("tech meetups".to_string())).await;
     println!("{}", to_string_pretty(&result).unwrap());
     // let result = user.user_info().await.unwrap();
     // println!("{:?}", result);

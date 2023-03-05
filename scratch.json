@@ -2573,3 +2573,26 @@
       }
    }
 }
+{
+   "operationName": "eventKeywordSearch",
+   "variables": {
+      "first": 20,
+      "lat": 43.7400016784668,
+      "lon": -79.36000061035156,
+      "topicCategoryId": null,
+      "startDateRange": "2023-03-03T21:58:47-05:00[US/Eastern]",
+      "source": "EVENTS",
+      "query": "tech meetup",
+      "sortField": "RELEVANCE",
+      "city": "Toronto",
+      "state": "ON",
+      "country": "ca",
+      "zip": "M3B 0A3"
+   },
+   "extensions": {
+      "persistedQuery": {
+         "version": 1,
+         "sha256Hash": "711dea20be1699a73645ed3e5cbbea50002ce3907fb3c04e414cd19dc49bcbc3"
+      }
+   }
+}
