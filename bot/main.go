@@ -4,10 +4,10 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/shawnyu5/networking_bot/commands"
+	"github.com/shawnyu5/networking_bot/commands/events"
 	"github.com/shawnyu5/networking_bot/middware"
 	utils "github.com/shawnyu5/networking_bot/utils"
 )
@@ -37,7 +37,9 @@ type handlerFunc func(sess *discordgo.Session, i *discordgo.InteractionCreate)
 
 var (
 	// array of all slash commands in this bot
-	allCommands = []commands.Command{}
+	allCommands = []commands.Command{
+		events.Events{},
+	}
 
 	// array of slash command defs
 	slashCommandDefs = utils.GetCmdDefs(allCommands)
@@ -78,38 +80,11 @@ func init() {
 }
 
 func main() {
-	go func() {
-		generatedocs.Generate()
-	}()
-	// create database dir
-	os.Mkdir(c.DbPath, 0755)
 
-	dg.Identify.Intents |= discordgo.IntentGuildMessages
-	dg.Identify.Intents |= discordgo.IntentGuildMembers
+	// dg.Identify.Intents |= discordgo.IntentGuildMessages
+	// dg.Identify.Intents |= discordgo.IntentGuildMembers
 	dg.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
 		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
-	})
-
-	dg.AddHandler(func(_ *discordgo.Session, mess *discordgo.MessageDelete) {
-		snipe.LastDeletedMessage = mess
-	})
-
-	dg.AddHandler(func(sess *discordgo.Session, mess *discordgo.MessageCreate) {
-		// fmt.Println(mess.Content)
-		// subforcarmen.Listen(sess, mess.Message)
-		snipe.TrackMessage(mess)
-		stfu.TellUser(sess, mess)
-	})
-
-	dg.AddHandler(func(sess *discordgo.Session, user *discordgo.GuildMemberAdd) {
-		log.Println("new user entered the guild")
-		time.AfterFunc(5*time.Second, func() {
-			res, err := newmember.Greet(sess, user)
-			if err != nil {
-				log.Println(err)
-			}
-			log.Println(res)
-		})
 	})
 
 	err := dg.Open()

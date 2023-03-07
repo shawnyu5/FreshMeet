@@ -9,7 +9,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
-	"github.com/shawnyu5/debate_dragon_2.0/commands"
+	"github.com/shawnyu5/networking_bot/commands"
 	"github.com/spf13/afero"
 )
 
@@ -22,46 +22,7 @@ type Config struct {
 	TokenDev    string `json:"-"`
 	LogLevel    string `json:"logLevel"`
 	Development bool   `json:"-"`
-	// path to the local db
-	DbPath string `json:"dbPath"`
-
-	Emotes []struct {
-		// name of emote
-		Name string `json:"name"`
-		// url to emote
-		URL string `json:"url"`
-	} `json:"emotes"`
-	// config for new member greetings
-	NewMemberGreeting struct {
-		Config []struct {
-			ServerName string `json:"serverName"`
-			RoleID     string `json:"roleID"`
-			ServerID   string `json:"serverID"`
-			ChannelID  string `json:"channelID"`
-			Enable     bool   `json:"enable"`
-		} `json:"config"`
-	} `json:"newMemberGreeting"`
-	Ivan struct {
-		Emotes []struct {
-			Name         string `json:"name"`
-			FileLocation string `json:"fileLocation"`
-		} `json:"emotes"`
-	} `json:"ivan"`
-	SubForCarmen struct {
-		// toggle this feature on and off
-		On bool `json:"on"`
-		// id of carmen user to track messages of
-		CarmenID string `json:"carmenId"`
-		// cool down, defined in minutes
-		CoolDown int `json:"coolDown"`
-		// the guild to keep track of carmen messages
-		GuildID string `json:"guildID"`
-		// number of messages before a notification is triggered
-		MessageLimit      int    `json:"messageLimit"`
-		SubscribersRoleID string `json:"subscribersRoleID"`
-		// channels to ignore
-		IgnoredChannels []string `json:"ignoredChannels"`
-	} `json:"subForCarmen"`
+	ApiUrl      string `json:"-"`
 }
 
 // RegisterCommands register an array of commands to a discord session.
@@ -155,6 +116,7 @@ func LoadConfig() Config {
 	godotenv.Load()
 	c.Token = os.Getenv("TOKEN")
 	c.TokenDev = os.Getenv("TOKEN_DEV")
+	c.ApiUrl = os.Getenv("API_URL")
 
 	dev := os.Getenv("DEVELOPMENT")
 	if dev == "true" {
