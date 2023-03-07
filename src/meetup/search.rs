@@ -1,43 +1,56 @@
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
+
+#[allow(non_camel_case_types)]
+#[derive(Serialize, Deserialize, Debug)]
+pub enum EventType {
+    physical,
+    online,
+}
+
+impl Default for EventType {
+    /// physical/in person is the default event type
+    fn default() -> Self {
+        EventType::physical
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Search {
-    data: Data,
+    pub data: Data,
 }
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Data {
-    results: Results,
+    pub results: Results,
 }
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Results {
-    pageInfo: PageInfo,
-    count: i32,
-    edges: Vec<Edge>,
+    pub pageInfo: PageInfo,
+    pub count: i32,
+    pub edges: Vec<Edge>,
 }
 
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct PageInfo {
-    hasNextPage: bool,
-    endCursor: String,
+    pub hasNextPage: bool,
+    pub endCursor: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Edge {
-    node: Node,
+    pub node: Node,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Node {
-    id: String,
-    result: SearchResult,
+    pub id: String,
+    pub result: SearchResult,
 }
 
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 /// Details about a meetup event
 ///
 /// * `id`: id of the event
@@ -51,57 +64,54 @@ pub struct Node {
 /// * `currency`: currency of event
 /// * `eventUrl`: url to event details
 pub struct SearchResult {
-    id: String,
-    title: String,
-    dateTime: String,
-    endTime: String,
-    description: String,
-    duration: String,
-    timezone: String,
-    eventType: String,
-    currency: String,
-    eventUrl: String,
+    pub id: String,
+    pub title: String,
+    pub dateTime: String,
+    pub endTime: String,
+    pub description: String,
+    pub duration: String,
+    pub timezone: String,
+    pub eventType: String,
+    pub currency: String,
+    pub eventUrl: String,
 }
 
 mod request_body {
     use chrono::{DateTime, Utc};
     use serde::{Deserialize, Serialize};
 
-    #[allow(dead_code)]
-    /// create a new request body for the meetup search
-    ///
-    /// * `num_of_events`: number of events to return. Default 20
-    /// * `query`: the query for the search
-    pub fn new(num_of_events: Option<i32>, query: String) -> super::request_body::Body {
-        let utc: DateTime<Utc> = Utc::now();
-        let num_of_events = num_of_events.unwrap_or(20);
-        let start_date_range = utc.format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
-        // TODO: read up on API docs on the spec if this API
-        // https://www.meetup.com/api/schema/#event:~:text=something%20gone%20wrong-,Event,-object
-        return super::request_body::Body {
-            operationName: "eventKeywordSearch".to_string(),
-            variables: super::request_body::Variables {
-                first: num_of_events,
-                lat: 43.7400016784668,
-                lon: -79.36000061035156,
-                topicCategoryId: None,
-                startDateRange: start_date_range.to_string(),
-                source: "EVENTS".to_string(),
-                query,
-                sortField: "RELEVANCE".to_string(),
-                city: "Toronto".to_string(),
-                state: "ON".to_string(),
-                country: "ca".to_string(),
-                zip: "M3B 0A3".to_string(),
-            },
-            extensions: super::request_body::Extensions {
-                persistedQuery: super::request_body::PersistedQuery {
-                    version: 1,
-                    sha256Hash: "711dea20be1699a73645ed3e5cbbea50002ce3907fb3c04e414cd19dc49bcbc3"
-                        .to_string(),
+    impl Default for super::request_body::Body {
+        #[allow(dead_code)]
+        fn default() -> super::request_body::Body {
+            let utc: DateTime<Utc> = Utc::now();
+            let start_date_range = utc.format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
+            return super::request_body::Body {
+                operationName: "eventKeywordSearch".to_string(),
+                variables: super::request_body::Variables {
+                    first: 20,
+                    lat: 43.7400016784668,
+                    lon: -79.36000061035156,
+                    topicCategoryId: None,
+                    eventType: None,
+                    startDateRange: start_date_range.to_string(),
+                    source: "EVENTS".to_string(),
+                    query: "".to_string(),
+                    sortField: "RELEVANCE".to_string(),
+                    city: "Toronto".to_string(),
+                    state: "ON".to_string(),
+                    country: "ca".to_string(),
+                    zip: "M3B 0A3".to_string(),
                 },
-            },
-        };
+                extensions: super::request_body::Extensions {
+                    persistedQuery: super::request_body::PersistedQuery {
+                        version: 1,
+                        sha256Hash:
+                            "711dea20be1699a73645ed3e5cbbea50002ce3907fb3c04e414cd19dc49bcbc3"
+                                .to_string(),
+                    },
+                },
+            };
+        }
     }
     #[allow(non_snake_case)]
     #[derive(Serialize, Deserialize, Debug)]
@@ -117,6 +127,7 @@ mod request_body {
         pub first: i32,
         pub lat: f64,
         pub lon: f64,
+        pub eventType: Option<super::EventType>,
         pub topicCategoryId: Option<String>,
         pub startDateRange: String,
         pub source: String,
@@ -141,8 +152,8 @@ mod request_body {
         sha256Hash: String,
     }
 }
-impl Search {
-    pub fn new() -> Search {
+impl Default for Search {
+    fn default() -> Search {
         return Search {
             data: Data {
                 results: Results {
@@ -156,14 +167,24 @@ impl Search {
             },
         };
     }
+}
 
+impl Search {
     /// search for meetup events
     ///
-    /// * `query`: the query to search for. Default: tech meetups
-    pub async fn fetch(&self, query: Option<String>) -> Result<Search, String> {
+    /// * `query`: the query to search for
+    /// * `event_type`: the type of event to search for. Default EventType::physical
+    pub async fn search(
+        &self,
+        query: String,
+        event_type: Option<EventType>,
+    ) -> Result<Search, String> {
         let url = "https://www.meetup.com/gql";
-        let query = query.unwrap_or("tech meetups".to_string());
-        let body = request_body::new(Some(20), query);
+        let event_type = event_type.unwrap_or(EventType::default());
+
+        let mut body = request_body::Body::default();
+        body.variables.query = query;
+        body.variables.eventType = Some(event_type);
 
         let mut headers = HeaderMap::new();
         headers.insert("content-type", HeaderValue::from_static("application/json"));
@@ -172,6 +193,7 @@ impl Search {
         match client
             .post(url)
             .json(&body)
+            .headers(headers)
             .send()
             .await
             .unwrap()
@@ -191,10 +213,10 @@ mod tests {
     use super::*;
 
     #[tokio::test]
-    async fn test_fetch() {
-        let search = Search::new();
+    async fn test_search_pysical_events() {
+        let search = Search::default();
         let search = search
-            .fetch(Some("tech meetups".to_string()))
+            .search("tech meetups".to_string(), Some(EventType::physical))
             .await
             .unwrap();
         assert_eq!(search.data.results.count, 20);
