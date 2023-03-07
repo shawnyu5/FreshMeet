@@ -174,17 +174,21 @@ impl Search {
     ///
     /// * `query`: the query to search for
     /// * `event_type`: the type of event to search for. Default EventType::physical
+    /// * `items`: the number of items to return. Default 20
     pub async fn search(
         &self,
         query: String,
         event_type: Option<EventType>,
+        items: Option<i32>,
     ) -> Result<Search, String> {
         let url = "https://www.meetup.com/gql";
         let event_type = event_type.unwrap_or(EventType::default());
+        let items = items.unwrap_or(20);
 
         let mut body = request_body::Body::default();
         body.variables.query = query;
         body.variables.eventType = Some(event_type);
+        body.variables.first = items;
 
         let mut headers = HeaderMap::new();
         headers.insert("content-type", HeaderValue::from_static("application/json"));
@@ -216,7 +220,7 @@ mod tests {
     async fn test_search_pysical_events() {
         let search = Search::default();
         let search = search
-            .search("tech meetups".to_string(), Some(EventType::physical))
+            .search("tech meetups".to_string(), Some(EventType::physical), None)
             .await
             .unwrap();
         assert_eq!(search.data.results.count, 20);

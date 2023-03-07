@@ -5,10 +5,10 @@ mod eventbrite;
 mod meetup;
 
 #[get("/search?<query>&<items>")]
-async fn search(query: &str, items: Option<u8>) -> String {
+async fn search(query: &str, items: Option<i32>) -> String {
     let meetup = meetup::search::Search::default();
     let items = items.unwrap_or(20);
-    let result = match meetup.search(query.to_string(), None).await {
+    let result = match meetup.search(query.to_string(), None, Some(items)).await {
         Ok(search) => {
             serde_json::to_string_pretty(&search).unwrap();
             let deseralized = serde_json::to_string_pretty(&search.data.results.edges).unwrap();
