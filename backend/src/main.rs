@@ -28,6 +28,7 @@ fn index() -> &'static str {
 
 #[launch]
 fn rocket() -> _ {
+    println!("Starting on port 8000");
     rocket::build().mount("/", routes![search, index])
 }
 
