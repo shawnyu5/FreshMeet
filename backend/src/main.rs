@@ -22,40 +22,44 @@ lazy_static! {
 /// * `query`: the search query
 /// * `page`: the page number
 /// * `per_page`: number of nodes to return in a single page
-async fn search(query: &str, page: i32, per_page: Option<i32>) -> String {
-    let cache_key = format!("{}-{}-{}", query, page, per_page.unwrap());
+async fn search(query: &str, page: i32, per_page: i32) -> String {
+    let cache_key = format!("{}-{}-{}", query, page, per_page);
 
     // let meetup: Search = meetup::search::Search::default();
     let meetup: Search = meetup::search::Search::default();
     let cache_value = CACHE.get(&cache_key.to_string()).await;
     let mut result: Search = Search::default();
+    let mut cursor: Option<String> = None;
 
     // if cache value does not exist
     if cache_value.is_none()
         // if length of nodes does not fit inside a single page
-        || cache_value.as_ref().unwrap().value().data.results.edges.len() < per_page.unwrap() as usize
+        || cache_value.as_ref().unwrap().value().data.results.edges.len() < per_page as usize
     {
         println!("making request");
-        let mut cursor: Option<String> = None;
+        // keep track of the cursor of the previous search
+        // contains all search results
         let mut edge_vec: Vec<Edge> = vec![];
+
         loop {
             println!("cursor = {:?}", cursor);
             let search_result = meetup
                 .search(
                     query.to_string(),
-                    Some(meetup::search::EventType::physical),
+                    meetup::search::EventType::physical,
                     cursor.clone(),
-                    Some(100),
+                    100,
                 )
                 .await
                 .unwrap();
 
             edge_vec.extend(search_result.data.results.edges.clone());
 
-            // stop when we've fetched enough results
-            if edge_vec.len() >= per_page.unwrap() as usize
+            // stop when we've fetched enough results. Or if there no more nodes to fetch
+            if edge_vec.len() >= per_page as usize
                 || search_result.data.results.pageInfo.endCursor == Some("".to_string())
             {
+                // add response from meetup api to results
                 result.data.results.edges.append(&mut edge_vec);
                 break;
             }
@@ -79,7 +83,7 @@ async fn search(query: &str, page: i32, per_page: Option<i32>) -> String {
     let nodes = &result.data.results.edges;
     let vec_end = {
         // calculate where the end of the page is
-        let end = per_page.unwrap() * page;
+        let end = per_page * page;
         // if end is larger than the max size of vector, return vector max size
         if end > num_results as i32 {
             num_results as i32
@@ -87,7 +91,7 @@ async fn search(query: &str, page: i32, per_page: Option<i32>) -> String {
             end
         }
     };
-    let vec_begin = vec_end - per_page.unwrap();
+    let vec_begin = vec_end - per_page;
 
     println!("vec_begin = {}", vec_begin);
     println!("vec_end = {}", vec_end);
@@ -112,4 +116,38 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
         .mount("/meetup", routes![search])
+}
+
+#[cfg(test)]
+mod test {
+    use super::rocket;
+    use super::*;
+    use rocket::http::Status;
+
+    #[rocket::async_test]
+    /// make sure pagination in the API works
+    /// different pages will return different results
+    async fn test_search_pagination() {
+        use rocket::local::asynchronous::Client;
+
+        let client = Client::tracked(rocket()).await.unwrap();
+        let page_1_response = client
+            .get(uri!("/meetup", search("tech", 1, 10)))
+            .dispatch()
+            .await;
+
+        let page_2_response = client
+            .get(uri!("/meetup", search("tech", 2, 10)))
+            .dispatch()
+            .await;
+
+        assert_eq!(page_1_response.status(), Status::Ok);
+        assert_eq!(page_2_response.status(), Status::Ok);
+
+        // make sure both pages are different
+        assert_ne!(
+            &page_1_response.into_string().await.unwrap(),
+            &page_2_response.into_string().await.unwrap()
+        );
+    }
 }

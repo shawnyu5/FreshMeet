@@ -29,6 +29,8 @@ pub struct Results {
     pub pageInfo: PageInfo,
     pub count: i32,
     pub edges: Vec<Edge>,
+    // if the current user is attending this event
+    pub isAttending: Option<bool>,
 }
 
 #[allow(non_snake_case)]
@@ -167,6 +169,7 @@ impl Default for Search {
                     },
                     count: 0,
                     edges: vec![],
+                    isAttending: None,
                 },
             },
         };
@@ -183,18 +186,17 @@ impl Search {
     pub async fn search(
         &self,
         query: String,
-        event_type: Option<EventType>,
-        after: Option<String>,
-        first: Option<i32>,
+        event_type: EventType,
+        cursor: Option<String>,
+        first: i32,
     ) -> Result<Search, String> {
         let url = "https://www.meetup.com/gql";
-        let event_type = event_type.unwrap_or(EventType::default());
 
         let mut body = request_body::Body::default();
         body.variables.query = query;
         body.variables.eventType = Some(event_type);
-        body.variables.after = after.unwrap_or("".to_string());
-        body.variables.first = first.unwrap_or(20);
+        body.variables.after = cursor.unwrap_or("".to_string());
+        body.variables.first = first;
 
         let mut headers = HeaderMap::new();
         headers.insert("content-type", HeaderValue::from_static("application/json"));
@@ -225,10 +227,35 @@ mod tests {
     #[tokio::test]
     async fn test_search_pysical_events() {
         let search = Search::default();
-        let search = search
-            .search("tech meetups".to_string(), Some(EventType::physical), None)
+        let result = search
+            .search("tech meetups".to_string(), EventType::physical, None, 10)
             .await
             .unwrap();
-        assert_eq!(search.data.results.count, 20);
+        assert_eq!(result.data.results.count, 10);
+        assert_eq!(result.data.results.edges.len(), 10);
+    }
+
+    #[tokio::test]
+    async fn test_search_pagination() {
+        let search = Search::default();
+        let page_1 = search
+            .search("tech meetups".to_string(), EventType::physical, None, 10)
+            .await
+            .unwrap();
+
+        let page_2 = search
+            .search(
+                "tech meetups".to_string(),
+                EventType::physical,
+                page_1.data.results.pageInfo.endCursor.clone(),
+                10,
+            )
+            .await
+            .unwrap();
+
+        let page_1 = serde_json::to_string(&page_1).unwrap();
+        let page_2 = serde_json::to_string(&page_2).unwrap();
+        // page sure page 1 and 2 are not the same
+        assert_ne!(page_1, page_2);
     }
 }
