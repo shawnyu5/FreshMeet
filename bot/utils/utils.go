@@ -117,6 +117,10 @@ func LoadConfig() Config {
 	c.Token = os.Getenv("TOKEN")
 	c.TokenDev = os.Getenv("TOKEN_DEV")
 	c.ApiUrl = os.Getenv("API_URL")
+	// make sure token and dev token are set
+	if c.Token == "" || c.TokenDev == "" {
+		panic("Please set enviroment variable `TOKEN` and `TOKEN_DEV`")
+	}
 
 	dev := os.Getenv("DEVELOPMENT")
 	if dev == "true" {

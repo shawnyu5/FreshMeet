@@ -7,7 +7,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/shawnyu5/networking_bot/commands"
-	"github.com/shawnyu5/networking_bot/commands/events"
+	"github.com/shawnyu5/networking_bot/commands/meetup"
 	"github.com/shawnyu5/networking_bot/middware"
 	utils "github.com/shawnyu5/networking_bot/utils"
 )
@@ -38,7 +38,7 @@ type handlerFunc func(sess *discordgo.Session, i *discordgo.InteractionCreate)
 var (
 	// array of all slash commands in this bot
 	allCommands = []commands.Command{
-		events.Events{},
+		meetup.Meetup{},
 	}
 
 	// array of slash command defs
