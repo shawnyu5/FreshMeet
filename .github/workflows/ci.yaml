@@ -1,4 +1,4 @@
-name: Rust
+name: CI
 
 on:
   push:
@@ -11,12 +11,19 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Build
       run: cd backend && cargo build --verbose
     - name: Run tests
       run: cd backend && cargo test --verbose
+  semverRelease:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    steps:
+      - uses: actions/checkout@v3
+      - name: semantic release
+        run: npx npx semantic-release
+
