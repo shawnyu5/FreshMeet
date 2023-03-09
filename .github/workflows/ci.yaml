@@ -18,7 +18,7 @@ jobs:
       # run: cd backend && cargo build --verbose
     # - name: Run tests
       # run: cd backend && cargo test --verbose
-  semverRelease:
+  generateRelease:
     runs-on: ubuntu-latest
     # needs:
       # - build
