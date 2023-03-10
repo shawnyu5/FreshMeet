@@ -2,27 +2,25 @@ services:
   api:
     build: ./backend
     image: shawnyu5/networking_accumulator
-    network_mode: host
     ports:
       - "8000:8000"
     hostname: api
-    # networks:
-      # - mynet
+    networks:
+      - mynet
     restart: always
 
   bot:
     build: ./bot
     image: shawnyu5/networking_bot
       # TODO: figure out how to inject environment vars
-    # env_file:
-      # - ./bot/.env
+    env_file:
+      - ./bot/.env
     environment:
-      - API_URL=http://localhost:8000
-    network_mode: host
+      - API_URL=http://api:8000
     depends_on:
       - api
-    # networks:
-      # - mynet
+    networks:
+      - mynet
     restart: always
 
   # api_test:

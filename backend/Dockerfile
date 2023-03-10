@@ -16,6 +16,8 @@ FROM rust:1.67.1-slim-buster
 
 WORKDIR networking_accumlator/
 COPY --from=build networking_accumlator/target/release/networking_accumlator .
+
+ENV ROCKET_ADDRESS=0.0.0.0
+EXPOSE 8000
 # ENTRYPOINT ["./networking_accumlator"]
 CMD ["./networking_accumlator"]
-EXPOSE 8000
