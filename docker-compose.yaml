@@ -1,6 +1,7 @@
 services:
   api:
     build: ./backend
+    image: shawnyu5/networking_accumlator
     network_mode: host
     ports:
       - "8000:8000"
@@ -11,6 +12,7 @@ services:
 
   bot:
     build: ./bot
+    image: shawnyu5/networking_accumlator
       # TODO: figure out how to inject environment vars
     # env_file:
       # - ./bot/.env
@@ -31,9 +33,3 @@ services:
 networks:
   mynet:
     driver: bridge
-
-# "IPAddress": "172.25.0.3",
-# "IPAddress": "172.25.0.2",
-
-# 172.25.0.2:8000
-
