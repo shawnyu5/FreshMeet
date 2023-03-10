@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  buildBackend:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,6 +22,18 @@ jobs:
         run: cd backend && cargo build --verbose
       - name: Run tests
         run: cd backend && cargo test --verbose
+
+  buildBot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cd bot && go build -v ./...
+
   generateRelease:
     runs-on: ubuntu-latest
     permissions:
@@ -29,6 +41,7 @@ jobs:
       contents: write
     needs:
       - build
+      - buildBot
     steps:
       - uses: actions/checkout@v3
       - name: semantic release
