@@ -1,13 +1,12 @@
-version: "3"
 services:
   api:
     build: ./backend
-    # network_mode: host
+    network_mode: host
     ports:
       - "8000:8000"
     hostname: api
-    networks:
-      - mynet
+    # networks:
+      # - mynet
     restart: always
 
   bot:
@@ -15,11 +14,12 @@ services:
     env_file:
       - ./bot/.env
     environment:
-      - API_URL=http://api:8000
+      - API_URL=http://localhost:8000
+    network_mode: host
     depends_on:
       - api
-    networks:
-      - mynet
+    # networks:
+      # - mynet
     restart: always
 
   # api_test:
