@@ -1,7 +1,38 @@
+version: "3"
 services:
-  backend:
-    build: backend
-    network_mode: host
-    # ports:
-      # - "8000:8000"
+  api:
+    build: ./backend
+    # network_mode: host
+    ports:
+      - "8000:8000"
+    hostname: api
+    networks:
+      - mynet
     restart: always
+
+  bot:
+    build: ./bot
+    env_file:
+      - ./bot/.env
+    environment:
+      - API_URL=http://api:8000
+    depends_on:
+      - api
+    networks:
+      - mynet
+    restart: always
+
+  # api_test:
+    # build: ./api_test
+    # depends_on:
+      # - api
+
+networks:
+  mynet:
+    driver: bridge
+
+# "IPAddress": "172.25.0.3",
+# "IPAddress": "172.25.0.2",
+
+# 172.25.0.2:8000
+
