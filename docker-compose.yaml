@@ -11,8 +11,9 @@ services:
 
   bot:
     build: ./bot
-    env_file:
-      - ./bot/.env
+      # TODO: figure out how to inject environment vars
+    # env_file:
+      # - ./bot/.env
     environment:
       - API_URL=http://localhost:8000
     network_mode: host
