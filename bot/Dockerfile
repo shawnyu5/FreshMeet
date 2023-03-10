@@ -11,5 +11,6 @@ WORKDIR /bot
 
 COPY --from=build /bot/config.json .
 COPY --from=build /bot/bot .
+COPY ./.env .
 
 CMD ["./bot"]
