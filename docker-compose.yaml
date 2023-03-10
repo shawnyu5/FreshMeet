@@ -1,7 +1,7 @@
 services:
   api:
     build: ./backend
-    image: shawnyu5/networking_accumlator
+    image: shawnyu5/networking_accumulator
     network_mode: host
     ports:
       - "8000:8000"
@@ -12,7 +12,7 @@ services:
 
   bot:
     build: ./bot
-    image: shawnyu5/networking_accumlator
+    image: shawnyu5/networking_bot
       # TODO: figure out how to inject environment vars
     # env_file:
       # - ./bot/.env
