@@ -1,4 +1,4 @@
-name: Docker
+name: Deploy
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -6,12 +6,22 @@ name: Docker
 # documentation.
 
 on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+
   push:
     branches: ["master"]
     # Publish semver tags as releases.
     tags: ["v*.*.*"]
   pull_request:
     branches: ["master"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -20,7 +30,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  dockerPush:
     # We'll only build and push when landing on main, not for PRs
     # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -63,4 +73,15 @@ jobs:
           DEVELOPMENT=false" > ./bot/.env
           docker compose build
           docker compose push
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - dockerPush
+    steps:
+      - name: Deploy app
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          script: whoami
 
