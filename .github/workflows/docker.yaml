@@ -83,5 +83,9 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          script: whoami
+          script: |
+            cd networking_accumulator
+            git pull
+            docker compose pull
+            docker compose up -d
 
