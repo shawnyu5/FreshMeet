@@ -29,7 +29,7 @@ env:
 jobs:
   dockerPush:
     # We'll only build and push when landing on main, not for PRs
-    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -71,6 +71,8 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    # We'll only build and push when landing on main, not for PRs
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs:
       - dockerPush
     steps:
@@ -84,5 +86,5 @@ jobs:
             cd networking_accumulator
             git pull
             docker compose pull
-            docker compose up -d
+            docker compose up --remove-orphans -d
 
