@@ -1,0 +1,3 @@
+# Networking accumulator
+
+Accumulate networking events, and uhhh idk yet...

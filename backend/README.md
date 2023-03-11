@@ -1,10 +1,8 @@
-# Networking accumulator
+# Networking accumulator API
 
-Accumulate networking events and uh... idk yet
+A back end API to fetch networking events
 
 ## Routes
-
-<!-- #[get("/search?<query>&<page>&<per_page>")] -->
 
 `/meetup/search?<query>&<page><per_page>` - search for events on meetup.
 
