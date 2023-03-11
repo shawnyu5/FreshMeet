@@ -1,18 +1,17 @@
 name: Deploy
-
 on:
+  push:
+    branches: ["master"]
+    # Publish semver tags as releases.
+    tags: ["v*.*.*"]
+  # pull_request:
+    # branches: ["master"]
   workflow_run:
     workflows:
       - CI
     types:
       - completed
 
-  push:
-    branches: ["master"]
-    # Publish semver tags as releases.
-    tags: ["v*.*.*"]
-  pull_request:
-    branches: ["master"]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
