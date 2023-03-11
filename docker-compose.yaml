@@ -12,7 +12,6 @@ services:
   bot:
     build: ./bot
     image: shawnyu5/networking_bot
-      # TODO: figure out how to inject environment vars
     env_file:
       - ./bot/.env
     environment:
