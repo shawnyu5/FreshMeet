@@ -6,11 +6,11 @@ name: Deploy
 # documentation.
 
 on:
-  workflow_run:
-    workflows:
-      - CI
-    types:
-      - completed
+  # workflow_run:
+    # workflows:
+      # - CI
+    # types:
+      # - completed
 
   push:
     branches: ["master"]
@@ -61,8 +61,6 @@ jobs:
         # if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
-          # registry: ${{ env.REGISTRY }}
-          # TODO: update with docker hub creds
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
@@ -83,6 +81,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: whoami
 

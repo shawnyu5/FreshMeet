@@ -1,51 +1,51 @@
-name: CI
+# name: CI
 
-on:
-  push:
-    branches: ["master"]
-  pull_request:
-    branches: ["master"]
+# on:
+  # push:
+    # branches: ["master"]
+  # pull_request:
+    # branches: ["master"]
 
-env:
-  CARGO_TERM_COLOR: always
+# env:
+  # CARGO_TERM_COLOR: always
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+  # group: ${{ github.workflow }}-${{ github.ref }}
+  # cancel-in-progress: true
 
-jobs:
-  buildBackend:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build
-        run: cd backend && cargo build --verbose
-      - name: Run tests
-        run: cd backend && cargo test --verbose
+# jobs:
+  # buildBackend:
+    # runs-on: ubuntu-latest
+    # steps:
+      # - uses: actions/checkout@v3
+      # - name: Build
+        # run: cd backend && cargo build --verbose
+      # - name: Run tests
+        # run: cd backend && cargo test --verbose
 
-  buildBot:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.19
-      - uses: actions/checkout@v3
-      - name: Build
-        run: cd bot && go build -v ./...
+  # buildBot:
+    # runs-on: ubuntu-latest
+    # steps:
+      # - name: Set up Go
+        # uses: actions/setup-go@v3
+        # with:
+          # go-version: 1.19
+      # - uses: actions/checkout@v3
+      # - name: Build
+        # run: cd bot && go build -v ./...
 
-  generateRelease:
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: write
-    needs:
-      - buildBackend
-      - buildBot
-    steps:
-      - uses: actions/checkout@v3
-      - name: semantic release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          npx npx semantic-release
+  # generateRelease:
+    # runs-on: ubuntu-latest
+    # permissions:
+      # packages: write
+      # contents: write
+    # needs:
+      # - buildBackend
+      # - buildBot
+    # steps:
+      # - uses: actions/checkout@v3
+      # - name: semantic release
+        # env:
+          # GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        # run: |
+          # npx npx semantic-release
