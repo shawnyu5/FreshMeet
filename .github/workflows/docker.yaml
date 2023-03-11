@@ -21,13 +21,12 @@ env:
 
 jobs:
   build:
+    # We'll only build and push when landing on main, not for PRs
+    # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
-      id-token: write
 
     steps:
       - name: Checkout repository
@@ -60,6 +59,8 @@ jobs:
       - name: Build and push Docker image
         id: build-and-push
         run: |
+          echo -e "TOKEN=${{ secrets.DISCORD_TOKEN }}
+          DEVELOPMENT=false" > ./bot/.env
           docker compose build
           docker compose push
 

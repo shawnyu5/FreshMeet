@@ -23,11 +23,6 @@ services:
       - mynet
     restart: always
 
-  # api_test:
-    # build: ./api_test
-    # depends_on:
-      # - api
-
 networks:
   mynet:
     driver: bridge
