@@ -76,6 +76,7 @@ pub struct SearchResult {
     pub eventType: String,
     pub currency: String,
     pub eventUrl: String,
+    pub going: Option<i32>,
 }
 
 mod request_body {

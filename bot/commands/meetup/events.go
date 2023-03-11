@@ -28,6 +28,7 @@ type Events []struct {
 			ID          string `json:"id"`
 			Timezone    string `json:"timezone"`
 			Title       string `json:"title"`
+			Going       int    `json:"going"`
 		} `json:"result"`
 	} `json:"node"`
 }
@@ -209,8 +210,8 @@ func constructReply(events Events) string {
 		// truncate description to 100 characters
 		if len(description) > 250 {
 			description = fmt.Sprintf("%s...", description[:250])
-			// escape all `*` so discord dont render them
-			description = strings.ReplaceAll(description, "*", "\\*")
+			// remove all `*`
+			description = strings.ReplaceAll(description, "*", "")
 		}
 
 		// 2023-03-17T18:30-04:00
@@ -226,7 +227,7 @@ func constructReply(events Events) string {
 
 		eventDate := fmt.Sprintf("%s %s - %s", date, startTime, endTime)
 
-		response += fmt.Sprintf("**title**: %s\n**description**: %s\n**date**: %s\n**URL**: <%s>\n\n", event.Node.Result.Title, description, eventDate, event.Node.Result.EventURL)
+		response += fmt.Sprintf("**title**: %s(%d)\n**description**: %s\n**date**: %s\n**URL**: <%s>\n\n", event.Node.Result.Title, event.Node.Result.Going, description, eventDate, event.Node.Result.EventURL)
 	}
 	return response
 }
