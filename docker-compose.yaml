@@ -1,38 +1,27 @@
 services:
   api:
     build: ./backend
-    network_mode: host
+    image: shawnyu5/networking_accumulator
     ports:
       - "8000:8000"
     hostname: api
-    # networks:
-      # - mynet
+    networks:
+      - mynet
     restart: always
 
   bot:
     build: ./bot
+    image: shawnyu5/networking_bot
     env_file:
       - ./bot/.env
     environment:
-      - API_URL=http://localhost:8000
-    network_mode: host
+      - API_URL=http://api:8000
     depends_on:
       - api
-    # networks:
-      # - mynet
+    networks:
+      - mynet
     restart: always
-
-  # api_test:
-    # build: ./api_test
-    # depends_on:
-      # - api
 
 networks:
   mynet:
     driver: bridge
-
-# "IPAddress": "172.25.0.3",
-# "IPAddress": "172.25.0.2",
-
-# 172.25.0.2:8000
-
