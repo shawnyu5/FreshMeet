@@ -1,7 +1,7 @@
 use std::env;
 
-/// returns the EventBrite API key
 #[allow(dead_code)]
+/// returns the EventBrite API key
 pub fn api_key() -> String {
     return env::var("EVENTBRITE_API_KEY").unwrap();
 }
