@@ -3,6 +3,7 @@ use std::{sync::Arc, time::Duration};
 use crate::meetup::search::{Edge, EventType, Search};
 use lazy_static::lazy_static;
 use retainer::Cache;
+use rocket::response::status::BadRequest;
 
 lazy_static! {
     pub static ref CACHE: Arc<Cache<String, Search>> = Arc::new(Cache::<String, Search>::new());
@@ -14,13 +15,20 @@ lazy_static! {
 /// * `query`: the search query
 /// * `page`: the page number
 /// * `per_page`: number of nodes to return in a single page
-pub async fn search(query: &str, page: i32, per_page: i32) -> String {
+pub async fn search(query: &str, page: i32, per_page: i32) -> Result<String, BadRequest<String>> {
     let cache_key = format!("{}-{}-{}", query, page, per_page);
 
     let meetup: Search = Search::default();
     let cache_value = CACHE.get(&cache_key.to_string()).await;
     let mut result: Search = Search::default();
     let mut cursor: Option<String> = None;
+
+    // make sure page is not less than 1
+    if page < 1 {
+        return Err(BadRequest(Some(
+            "page number cannot be less than 1".to_string(),
+        )));
+    }
 
     // if cache value does not exist
     if cache_value.is_none()
@@ -87,7 +95,7 @@ pub async fn search(query: &str, page: i32, per_page: i32) -> String {
     // println!("vec_begin = {}", vec_begin);
     // println!("vec_end = {}", vec_end);
     // println!("num_results = {}", num_results);
-    return serde_json::to_string_pretty(&nodes[vec_begin as usize..vec_end as usize]).unwrap();
+    return Ok(serde_json::to_string_pretty(&nodes[vec_begin as usize..vec_end as usize]).unwrap());
 }
 
 #[cfg(test)]
@@ -119,8 +127,24 @@ mod test {
 
         // make sure both pages are different
         assert_ne!(
-            &page_1_response.into_string().await.unwrap(),
-            &page_2_response.into_string().await.unwrap()
+            page_1_response.into_string().await.unwrap(),
+            page_2_response.into_string().await.unwrap()
+        );
+    }
+
+    #[rocket::async_test]
+    /// test making a request with a page number less than 1 will return a status code 400 bad request
+    async fn test_invalid_page_number() {
+        use rocket::local::asynchronous::Client;
+        let client = Client::tracked(rocket()).await.unwrap();
+        let res = client
+            .get(uri!("/meetup", search("tech", 0, 10)))
+            .dispatch()
+            .await;
+        assert_eq!(res.status(), Status::BadRequest);
+        assert_eq!(
+            res.into_string().await.unwrap(),
+            "page number cannot be less than 1".to_string()
         );
     }
 }

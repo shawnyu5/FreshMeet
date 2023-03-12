@@ -2,7 +2,7 @@
 extern crate rocket;
 
 use lazy_static::lazy_static;
-use meetup::search::Search;
+use meetup::search::SearchResult;
 use retainer::*;
 use std::sync::Arc;
 use std::time::Duration;
@@ -12,7 +12,8 @@ mod meetup;
 mod routes;
 
 lazy_static! {
-    pub static ref CACHE: Arc<Cache<String, Search>> = Arc::new(Cache::<String, Search>::new());
+    pub static ref CACHE: Arc<Cache<String, SearchResult>> =
+        Arc::new(Cache::<String, SearchResult>::new());
 }
 
 #[get("/")]
