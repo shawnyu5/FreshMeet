@@ -7,6 +7,7 @@ use retainer::*;
 use std::sync::Arc;
 use std::time::Duration;
 
+mod cache;
 mod eventbrite;
 mod meetup;
 mod routes;
