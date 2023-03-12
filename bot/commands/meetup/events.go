@@ -216,7 +216,7 @@ func constructReply(events Events) string {
 			httpRegex := regexp.MustCompile(`(https://\S+)`)
 			description = httpRegex.ReplaceAllString(description, "<$1>")
 			description = fmt.Sprintf("%s...", description)
-			fmt.Printf("constructReply description: %v\n", description) // __AUTO_GENERATED_PRINT_VAR__
+			// fmt.Printf("constructReply description: %v\n", description) // __AUTO_GENERATED_PRINT_VAR__
 
 			// remove all `*`
 			description = strings.ReplaceAll(description, "*", "")
@@ -235,7 +235,7 @@ func constructReply(events Events) string {
 
 		eventDate := fmt.Sprintf("%s, %s - %s", date, startTime, endTime)
 
-		response += fmt.Sprintf("**title**: %s(%d)\n**description**: %s\n**date**: %s\n**URL**: <%s>\n\n", event.Node.Result.Title, event.Node.Result.Going, description, eventDate, event.Node.Result.EventURL)
+		response += fmt.Sprintf("**title**: %s(%d ppl)\n**description**: %s\n**date**: %s\n**URL**: <%s>\n\n", event.Node.Result.Title, event.Node.Result.Going, description, eventDate, event.Node.Result.EventURL)
 	}
 	return response
 }
