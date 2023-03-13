@@ -29,8 +29,6 @@ pub struct Results {
     pub pageInfo: PageInfo,
     pub count: i32,
     pub edges: Vec<Edge>,
-    // if the current user is attending this event
-    pub isAttending: Option<bool>,
 }
 
 #[allow(non_snake_case)]
@@ -65,6 +63,8 @@ pub struct Node {
 /// * `eventType`: event type. Default EventType::physical
 /// * `currency`: currency of event
 /// * `eventUrl`: url to event details
+/// * `going`: number of people going to the even`
+/// * `isAttending`: whether or not the user is attending the event
 pub struct SearchResult {
     pub id: String,
     pub title: String,
@@ -77,6 +77,7 @@ pub struct SearchResult {
     pub currency: String,
     pub eventUrl: String,
     pub going: Option<i32>,
+    pub isAttending: Option<bool>,
 }
 
 mod request_body {
