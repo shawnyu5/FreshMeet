@@ -2,6 +2,7 @@ package meetup
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -13,6 +14,8 @@ import (
 	"github.com/shawnyu5/networking_bot/commands"
 	"github.com/shawnyu5/networking_bot/utils"
 )
+
+// var t tech_events.TechEvent[Events] = Meetup{}
 
 // Events Events response from the meetup api
 type Events struct {
@@ -56,15 +59,15 @@ var cursor string
 var nextPageComponentID = "next page"
 var previousPageComponentID = "previous page"
 
-func (Meetup) Components() []commands.Component {
+func (meetup Meetup) Components() []commands.Component {
 	return []commands.Component{
 		{
 			ComponentID:      nextPageComponentID,
-			ComponentHandler: handleNextPageButton,
+			ComponentHandler: meetup.handleNextPageButton,
 		},
 		{
 			ComponentID:      previousPageComponentID,
-			ComponentHandler: handlePreviousPageButton,
+			ComponentHandler: meetup.handlePreviousPageButton,
 		},
 	}
 }
@@ -76,7 +79,7 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 	}
 
 	state.page++
-	events, err := getEvents(state.query, state.page, 4)
+	events, err := meetup.fetchEvents(state.query, strconv.Itoa(state.page), "4")
 	if err != nil {
 		return "", err
 	}
@@ -110,15 +113,15 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 }
 
 // handlePreviousPageButton handle when the previous page button is clicked
-func handlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+func (meetup Meetup) handlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	state.page--
-	events, err := getEvents(state.query, state.page, 4)
+	events, err := meetup.fetchEvents(state.query, strconv.Itoa(state.page), "4")
 	if err != nil {
 		return "", err
 	}
 	state.events = events
 
-	reply := constructReply(events)
+	reply := meetup.constructReply(events)
 
 	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
@@ -183,20 +186,20 @@ func (Meetup) Def() *discordgo.ApplicationCommand {
 	return obj
 }
 
-func (Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+func (meetup Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	utils.DeferReply(sess, i.Interaction)
 	userOptions := utils.ParseUserOptions(sess, i)
 	state.query = userOptions["query"].StringValue()
 	state.page = 1
 
-	events, err := getEvents(state.query, state.page, 4)
+	events, err := meetup.fetchEvents(state.query, strconv.Itoa(state.page), "4")
 	if err != nil {
 		return "", err
 	}
 	state.events = events
 
 	// construct a reply from api body
-	reply := constructReply(events)
+	reply := meetup.constructReply(events)
 
 	_, err = sess.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 		Content: &reply,
@@ -216,9 +219,9 @@ func (Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (
 }
 
 // constructReply construct a reply with data from the API
-// events: events from the meetup api.
+// events: the events to be used to construct the reply
 // returns: a string to be sent as a reply
-func constructReply(events Events) string {
+func (meetup Meetup) constructReply(events Events) string {
 	response := ""
 	for _, event := range events.Nodes {
 		description := strings.ReplaceAll(event.Description, "\n", " ")
@@ -253,12 +256,20 @@ func constructReply(events Events) string {
 	return response
 }
 
-// getEvents get events from the meetup api
+// fetchEvents get events from the meetup api
+// opts: array of options as follows
 // query: search query
 // page: page number
 // perPage: number of results per page
 // returns: events from the meetup api
-func getEvents(query string, page int, perPage int) (Events, error) {
+func (Meetup) fetchEvents(opts ...string) (Events, error) {
+	if len(opts) != 3 {
+		return Events{}, errors.New("invalid number of arguments")
+	}
+	query := opts[0]
+	page := opts[1]
+	perPage := opts[2]
+
 	config := utils.LoadConfig()
 
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/meetup/search", config.ApiUrl), nil)
@@ -268,8 +279,8 @@ func getEvents(query string, page int, perPage int) (Events, error) {
 
 	q := req.URL.Query()
 	q.Add("query", query)
-	q.Add("page", strconv.Itoa(page))
-	q.Add("per_page", strconv.Itoa(perPage))
+	q.Add("page", page)
+	q.Add("per_page", perPage)
 	req.URL.RawQuery = q.Encode()
 
 	res, err := http.DefaultClient.Do(req)
