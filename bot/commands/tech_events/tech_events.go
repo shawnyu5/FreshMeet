@@ -5,19 +5,19 @@ import (
 	"github.com/shawnyu5/networking_bot/commands"
 )
 
-type Query struct {
-}
-
 // TechEvent interface defining the structure of any module that wants to opt into the tech-events command
+// T: the type of the query string
 type TechEvent interface {
 	// retrieve events from the API
-	FetchEvents(opts ...string) error
+	FetchEvents() error
 	// handles the next page button
 	HandleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error)
 	// handles the previous page button
 	HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error)
 	// constructs the reply message from events
 	ConstructReply() string
+	// Returns the components of the package
+	CreateComponents() []discordgo.MessageComponent
 }
 
 // TechEventCommand the tech-event command
@@ -42,16 +42,20 @@ func (TechEventCommand) Def() *discordgo.ApplicationCommand {
 
 // Handler implements commands.Command
 func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	for _, pack := range t.Modules {
-		q := pack.Queries // array of strings that is our query strings?
-		pack.FetchEvents(q)
-		err := pack.FetchEvents()
+	for _, mod := range t.Modules {
+		err := mod.FetchEvents()
 		if err != nil {
 			return "", err
 		}
-		reply := pack.ConstructReply()
+		reply := mod.ConstructReply()
 		_, err = sess.ChannelMessageSendComplex(i.ChannelID, &discordgo.MessageSend{
 			Content: reply,
+			TTS:     false,
+			Components: []discordgo.MessageComponent{
+				discordgo.ActionsRow{
+					Components: mod.CreateComponents(),
+				},
+			},
 		})
 		if err != nil {
 			return "", err

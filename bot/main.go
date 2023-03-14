@@ -39,10 +39,25 @@ type handlerFunc func(sess *discordgo.Session, i *discordgo.InteractionCreate)
 var (
 	// array of all slash commands in this bot
 	allCommands = []commands.Command{
-		meetup.Meetup{},
+		&meetup.Meetup{
+			QueryString: meetup.QueryString{},
+		},
 		tech_events.TechEventCommand{
 			Modules: []tech_events.TechEvent{
-				meetup.Meetup{},
+				&meetup.Meetup{
+					QueryString: meetup.QueryString{
+						Query:   "coding",
+						Page:    1,
+						PerPage: "4",
+					},
+				},
+				&meetup.Meetup{
+					QueryString: meetup.QueryString{
+						Query:   "Programming",
+						Page:    1,
+						PerPage: "4",
+					},
+				},
 			},
 		},
 	}
