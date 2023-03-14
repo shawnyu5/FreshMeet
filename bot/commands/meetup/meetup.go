@@ -15,8 +15,6 @@ import (
 	"github.com/shawnyu5/networking_bot/utils"
 )
 
-// var t tech_events.TechEvent[Events] = Meetup{}
-
 // Events Events response from the meetup api
 type Events struct {
 	PageInfo struct {
@@ -41,12 +39,14 @@ type Events struct {
 }
 
 // /meetup command
-type Meetup struct{}
+type Meetup struct {
+	Events Events
+}
 
 // State local persistent state
 type State struct {
 	// events from the meetup api
-	events Events
+	// events Events
 	// the search query the user entered
 	query string
 	// the current page number the user is on
@@ -63,11 +63,11 @@ func (meetup Meetup) Components() []commands.Component {
 	return []commands.Component{
 		{
 			ComponentID:      nextPageComponentID,
-			ComponentHandler: meetup.handleNextPageButton,
+			ComponentHandler: meetup.HandleNextPageButton,
 		},
 		{
 			ComponentID:      previousPageComponentID,
-			ComponentHandler: meetup.handlePreviousPageButton,
+			ComponentHandler: meetup.HandlePreviousPageButton,
 		},
 	}
 }
@@ -79,7 +79,7 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 	}
 
 	state.page++
-	events, err := meetup.fetchEvents(state.query, strconv.Itoa(state.page), "4")
+	err := m.FetchEvents(state.query, strconv.Itoa(state.page), "4")
 	if err != nil {
 		return "", err
 	}
@@ -112,16 +112,16 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 	return "Next page event updated", nil
 }
 
-// handlePreviousPageButton handle when the previous page button is clicked
-func (meetup Meetup) handlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+// HandlePreviousPageButton handle when the previous page button is clicked
+func (meetup Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	state.page--
-	events, err := meetup.fetchEvents(state.query, strconv.Itoa(state.page), "4")
+	err := meetup.FetchEvents(state.query, strconv.Itoa(state.page), "4")
 	if err != nil {
 		return "", err
 	}
 	state.events = events
 
-	reply := meetup.constructReply(events)
+	reply := meetup.ConstructReply()
 
 	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
@@ -142,7 +142,6 @@ func (meetup Meetup) handlePreviousPageButton(sess *discordgo.Session, i *discor
 	}
 
 	return "previous page event updated", nil
-
 }
 
 // createNextPageButton create next page button
@@ -186,20 +185,20 @@ func (Meetup) Def() *discordgo.ApplicationCommand {
 	return obj
 }
 
-func (meetup Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+func (m Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	utils.DeferReply(sess, i.Interaction)
 	userOptions := utils.ParseUserOptions(sess, i)
 	state.query = userOptions["query"].StringValue()
 	state.page = 1
 
-	events, err := meetup.fetchEvents(state.query, strconv.Itoa(state.page), "4")
+	err := m.FetchEvents(state.query, strconv.Itoa(state.page), "4")
 	if err != nil {
 		return "", err
 	}
 	state.events = events
 
 	// construct a reply from api body
-	reply := meetup.constructReply(events)
+	reply := m.ConstructReply()
 
 	_, err = sess.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 		Content: &reply,
@@ -218,10 +217,9 @@ func (meetup Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCr
 	return "list of events sent", nil
 }
 
-// constructReply construct a reply with data from the API
-// events: the events to be used to construct the reply
+// ConstructReply construct a reply with data from the API
 // returns: a string to be sent as a reply
-func (meetup Meetup) constructReply(events Events) string {
+func (m Meetup) ConstructReply() string {
 	response := ""
 	for _, event := range events.Nodes {
 		description := strings.ReplaceAll(event.Description, "\n", " ")
@@ -256,15 +254,15 @@ func (meetup Meetup) constructReply(events Events) string {
 	return response
 }
 
-// fetchEvents get events from the meetup api
+// FetchEvents get events from the meetup api. Store events in Meetup.Events
 // opts: array of options as follows
 // query: search query
 // page: page number
 // perPage: number of results per page
-// returns: events from the meetup api
-func (Meetup) fetchEvents(opts ...string) (Events, error) {
+// returns: errors if any
+func (m Meetup) FetchEvents(opts ...string) error {
 	if len(opts) != 3 {
-		return Events{}, errors.New("invalid number of arguments")
+		return errors.New("invalid number of arguments")
 	}
 	query := opts[0]
 	page := opts[1]
@@ -274,7 +272,7 @@ func (Meetup) fetchEvents(opts ...string) (Events, error) {
 
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/meetup/search", config.ApiUrl), nil)
 	if err != nil {
-		return Events{}, err
+		return err
 	}
 
 	q := req.URL.Query()
@@ -285,12 +283,12 @@ func (Meetup) fetchEvents(opts ...string) (Events, error) {
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return Events{}, err
+		return err
 	}
 
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return Events{}, err
+		return err
 	}
 	var body Events
 	json.Unmarshal(b, &body)
