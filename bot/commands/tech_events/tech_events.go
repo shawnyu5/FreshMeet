@@ -1,6 +1,8 @@
 package tech_events
 
 import (
+	"reflect"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/shawnyu5/networking_bot/commands"
 )
@@ -17,10 +19,10 @@ type TechEvent interface {
 	// constructs the reply message from events
 	ConstructReply() string
 	// Returns the components of the package
-	CreateComponents() []discordgo.MessageComponent
+	// CreateComponents() []discordgo.MessageComponent
 	// set local package cache
 	SetCache()
-	Components() []commands.Component
+	// Components() []commands.Component
 }
 
 // TechEventCommand the tech-event command
@@ -28,10 +30,35 @@ type TechEventCommand struct {
 	// packages that have opted into this command
 	Modules []TechEvent
 }
+type State struct {
+	// all sent messages
+	// map of command : commandMessage
+	Messages map[string]*discordgo.Message
+}
+
+var state State
+var nextPageComponentID = "next page"
+var previousPageComponentID = "next page"
 
 // Components implements commands.Command
-func (TechEventCommand) Components() []commands.Component {
-	return []commands.Component{}
+func (t TechEventCommand) Components() []commands.Component {
+	return []commands.Component{
+		{
+			ComponentID:      nextPageComponentID,
+			ComponentHandler: t.HandleNextPageButton,
+		},
+	}
+}
+
+// HandleNextPageButton handles when the next page button is clicked
+func (t TechEventCommand) HandleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+	for _, mod := range t.Modules {
+		_, err := mod.HandleNextPageButton(sess, i)
+		if err != nil {
+			return "", err
+		}
+	}
+	return "next page", nil
 }
 
 // Def implements commands.Command
@@ -46,25 +73,25 @@ func (TechEventCommand) Def() *discordgo.ApplicationCommand {
 // Handler implements commands.Command
 func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	for _, mod := range t.Modules {
-		mod.Components()[0].ComponentHandler(sess, i)
 		err := mod.FetchEvents()
 		if err != nil {
 			return "", err
 		}
+
 		reply := mod.ConstructReply()
-		_, err = sess.ChannelMessageSendComplex(i.ChannelID, &discordgo.MessageSend{
+		mess, err := sess.ChannelMessageSendComplex(i.ChannelID, &discordgo.MessageSend{
 			Content: reply,
-			TTS:     false,
-			Components: []discordgo.MessageComponent{
-				discordgo.ActionsRow{
-					Components: mod.CreateComponents(),
-				},
-			},
 		})
 		if err != nil {
 			return "", err
 		}
+		state.Messages[reflect.TypeOf(mod).String()] = mess
 	}
+	// sess.ChannelMessageSendComplex(i.ChannelID, &discordgo.MessageSend{
+	// // Components: []discordgo.MessageComponent{
+	// // t.Components(),
+	// // },
+	// })
 	sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
