@@ -46,8 +46,10 @@ type QueryString struct {
 
 // `/meetup` command
 type Meetup struct {
-	Events      Events
-	QueryString QueryString
+	Events               Events
+	QueryString          QueryString
+	NextPageButtonID     string
+	PreviousPageButtonID string
 }
 
 // State local persistent state
@@ -59,18 +61,19 @@ type State struct {
 var state State
 var cursor string
 
-var nextPageComponentID = "next page"
-var previousPageComponentID = "previous page"
+// var nextPageComponentID = "next page"
+// var previousPageComponentID = "previous page"
 
-func (meetup *Meetup) Components() []commands.Component {
+func (m *Meetup) Components() []commands.Component {
+	fmt.Printf("Components m.NextPageButtonID: %v\n", m.NextPageButtonID) // __AUTO_GENERATED_PRINT_VAR__
 	return []commands.Component{
 		{
-			ComponentID:      nextPageComponentID,
-			ComponentHandler: meetup.HandleNextPageButton,
+			ComponentID:      m.NextPageButtonID,
+			ComponentHandler: m.HandleNextPageButton,
 		},
 		{
-			ComponentID:      previousPageComponentID,
-			ComponentHandler: meetup.HandlePreviousPageButton,
+			ComponentID:      m.PreviousPageButtonID,
+			ComponentHandler: m.HandlePreviousPageButton,
 		},
 	}
 }
@@ -133,8 +136,8 @@ func (m *Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.
 			Components: []discordgo.MessageComponent{
 				discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
-						createPreviousPageButton(false),
-						createNextPageButton(false),
+						m.createPreviousPageButton(false),
+						m.createNextPageButton(false),
 					},
 				},
 			},
@@ -149,7 +152,7 @@ func (m *Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.
 
 // createNextPageButton create next page button
 // disabled: if the button should be disabled
-func createNextPageButton(disabled bool) discordgo.Button {
+func (m *Meetup) createNextPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "➡️",
 		Style:    discordgo.PrimaryButton,
@@ -161,12 +164,12 @@ func createNextPageButton(disabled bool) discordgo.Button {
 
 // createPreviousPageButton create a previous page button
 // disabled: if the button should be disabled
-func createPreviousPageButton(disabled bool) discordgo.Button {
+func (m *Meetup) createPreviousPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "⬅️",
 		Style:    discordgo.PrimaryButton,
 		Disabled: false,
-		CustomID: previousPageComponentID,
+		CustomID: m.PreviousPageButtonID,
 	}
 
 }
@@ -189,14 +192,11 @@ func (*Meetup) Def() *discordgo.ApplicationCommand {
 }
 
 func (m *Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	// TODO: use SetCache() here to make use of the cache instead of data in the struct
 	utils.DeferReply(sess, i.Interaction)
 	userOptions := utils.ParseUserOptions(sess, i)
-	m.QueryString.Query = userOptions["query"].StringValue()
-	m.QueryString.Page = 1
-	m.QueryString.PerPage = "4"
-
-	m.SetCache()
+	state.query.Query = userOptions["query"].StringValue()
+	state.query.Page = 1
+	state.query.PerPage = "4"
 
 	err := m.FetchEvents()
 	if err != nil {
@@ -212,8 +212,8 @@ func (m *Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate
 		Components: &[]discordgo.MessageComponent{
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{
-					createPreviousPageButton(false),
-					createNextPageButton(false),
+					m.createPreviousPageButton(false),
+					m.createNextPageButton(false),
 				},
 			},
 		},
@@ -303,8 +303,8 @@ func (m *Meetup) FetchEvents() error {
 
 func (m *Meetup) CreateComponents() []discordgo.MessageComponent {
 	return []discordgo.MessageComponent{
-		createPreviousPageButton(false),
-		createNextPageButton(false),
+		m.createPreviousPageButton(false),
+		m.createNextPageButton(false),
 	}
 
 }

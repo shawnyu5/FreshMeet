@@ -20,6 +20,7 @@ type TechEvent interface {
 	CreateComponents() []discordgo.MessageComponent
 	// set local package cache
 	SetCache()
+	Components() []commands.Component
 }
 
 // TechEventCommand the tech-event command
@@ -45,7 +46,7 @@ func (TechEventCommand) Def() *discordgo.ApplicationCommand {
 // Handler implements commands.Command
 func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	for _, mod := range t.Modules {
-		mod.SetCache()
+		mod.Components()[0].ComponentHandler(sess, i)
 		err := mod.FetchEvents()
 		if err != nil {
 			return "", err

@@ -45,18 +45,14 @@ var (
 		tech_events.TechEventCommand{
 			Modules: []tech_events.TechEvent{
 				&meetup.Meetup{
-					QueryString: meetup.QueryString{
-						Query:   "coding",
-						Page:    1,
-						PerPage: "4",
-					},
+					QueryString:          meetup.QueryString{Query: "coding", Page: 1, PerPage: "4"},
+					NextPageButtonID:     "next page coding",
+					PreviousPageButtonID: "previous page coding",
 				},
 				&meetup.Meetup{
-					QueryString: meetup.QueryString{
-						Query:   "Programming",
-						Page:    1,
-						PerPage: "4",
-					},
+					QueryString:          meetup.QueryString{Query: "Programming", Page: 1, PerPage: "4"},
+					NextPageButtonID:     "next page programming",
+					PreviousPageButtonID: "previous page programming",
 				},
 			},
 		},
