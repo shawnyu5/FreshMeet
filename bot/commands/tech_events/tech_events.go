@@ -20,7 +20,7 @@ type TechEvent interface {
 	ConstructReply() string
 	// Returns the components of the package
 	// CreateComponents() []discordgo.MessageComponent
-	// set local package cache
+	// load necessary values into the package level cache
 	SetCache()
 	// Components() []commands.Component
 }
@@ -36,9 +36,11 @@ type State struct {
 	Messages map[string]*discordgo.Message
 }
 
-var state State
+var state State = State{
+	Messages: make(map[string]*discordgo.Message),
+}
 var nextPageComponentID = "next page"
-var previousPageComponentID = "next page"
+var previousPageComponentID = "previous page"
 
 // Components implements commands.Command
 func (t TechEventCommand) Components() []commands.Component {
@@ -53,6 +55,7 @@ func (t TechEventCommand) Components() []commands.Component {
 // HandleNextPageButton handles when the next page button is clicked
 func (t TechEventCommand) HandleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	for _, mod := range t.Modules {
+		// fmt.Printf("HandleNextPageButton mod: %+v\n", mod) // __AUTO_GENERATED_PRINT_VAR__
 		_, err := mod.HandleNextPageButton(sess, i)
 		if err != nil {
 			return "", err
@@ -73,6 +76,7 @@ func (TechEventCommand) Def() *discordgo.ApplicationCommand {
 // Handler implements commands.Command
 func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	for _, mod := range t.Modules {
+		mod.SetCache()
 		err := mod.FetchEvents()
 		if err != nil {
 			return "", err
@@ -87,11 +91,20 @@ func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.Interact
 		}
 		state.Messages[reflect.TypeOf(mod).String()] = mess
 	}
-	// sess.ChannelMessageSendComplex(i.ChannelID, &discordgo.MessageSend{
-	// // Components: []discordgo.MessageComponent{
-	// // t.Components(),
-	// // },
-	// })
+	_, err := sess.ChannelMessageSendComplex(i.ChannelID, &discordgo.MessageSend{
+		// Content: "**Pagination**",
+		Components: []discordgo.MessageComponent{
+			discordgo.ActionsRow{
+				Components: []discordgo.MessageComponent{
+					createPreviousPageButton(false),
+					createNextPageButton(false),
+				},
+			},
+		},
+	})
+	if err != nil {
+		return "", err
+	}
 	sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
@@ -112,4 +125,26 @@ func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.Interact
 // OptIn add a opt a package into this command
 func (t *TechEventCommand) OptIn(pack TechEvent) {
 	t.Modules = append(t.Modules, pack)
+}
+
+// createNextPageButton create next page button
+// disabled: if the button should be disabled
+func createNextPageButton(disabled bool) discordgo.Button {
+	return discordgo.Button{
+		Label:    "➡️",
+		Style:    discordgo.PrimaryButton,
+		Disabled: disabled,
+		CustomID: nextPageComponentID,
+	}
+}
+
+// createPreviousPageButton create a previous page button
+// disabled: if the button should be disabled
+func createPreviousPageButton(disabled bool) discordgo.Button {
+	return discordgo.Button{
+		Label:    "⬅️",
+		Style:    discordgo.PrimaryButton,
+		Disabled: disabled,
+		CustomID: previousPageComponentID,
+	}
 }

@@ -109,6 +109,18 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 			},
 		},
 	})
+	// Type: discordgo.InteractionResponseUpdateMessage,
+	// Data: &discordgo.InteractionResponseData{
+	// Content: reply,
+	// Components: []discordgo.MessageComponent{
+	// discordgo.ActionsRow{
+	// Components: []discordgo.MessageComponent{
+	// m.createPreviousPageButton(false),
+	// m.createNextPageButton(false),
+	// },
+	// },
+	// },
+	// },
 	if err != nil {
 		return "", err
 	}
@@ -262,8 +274,10 @@ func (m Meetup) ConstructReply() string {
 // FetchEvents get events from the meetup api. Store events in Meetup.Events
 // returns: errors if any
 func (m Meetup) FetchEvents() error {
-
 	fmt.Printf("%+v\n", state.query)
+	// if state.query.Query == "" {
+	// return errors.New("query is empty")
+	// }
 
 	config := utils.LoadConfig()
 
@@ -302,6 +316,7 @@ func (m Meetup) FetchEvents() error {
 // }
 // }
 
+// SetCache load data from Events into state cache
 func (m Meetup) SetCache() {
 	state.query.Page = m.QueryString.Page
 	state.query.PerPage = m.QueryString.PerPage
