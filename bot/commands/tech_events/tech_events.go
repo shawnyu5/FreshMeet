@@ -18,6 +18,8 @@ type TechEvent interface {
 	ConstructReply() string
 	// Returns the components of the package
 	CreateComponents() []discordgo.MessageComponent
+	// set local package cache
+	SetCache()
 }
 
 // TechEventCommand the tech-event command
@@ -43,6 +45,7 @@ func (TechEventCommand) Def() *discordgo.ApplicationCommand {
 // Handler implements commands.Command
 func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	for _, mod := range t.Modules {
+		mod.SetCache()
 		err := mod.FetchEvents()
 		if err != nil {
 			return "", err

@@ -189,11 +189,14 @@ func (*Meetup) Def() *discordgo.ApplicationCommand {
 }
 
 func (m *Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+	// TODO: use SetCache() here to make use of the cache instead of data in the struct
 	utils.DeferReply(sess, i.Interaction)
 	userOptions := utils.ParseUserOptions(sess, i)
 	m.QueryString.Query = userOptions["query"].StringValue()
 	m.QueryString.Page = 1
 	m.QueryString.PerPage = "4"
+
+	m.SetCache()
 
 	err := m.FetchEvents()
 	if err != nil {
@@ -265,12 +268,6 @@ func (m *Meetup) ConstructReply() string {
 // perPage: number of results per page
 // returns: errors if any
 func (m *Meetup) FetchEvents() error {
-	// make sure query string is not empty
-	if m.QueryString.Query != "" {
-		state.query.Page = m.QueryString.Page
-		state.query.PerPage = m.QueryString.PerPage
-		state.query.Query = m.QueryString.Query
-	}
 
 	fmt.Printf("%+v\n", state.query)
 
@@ -310,4 +307,10 @@ func (m *Meetup) CreateComponents() []discordgo.MessageComponent {
 		createNextPageButton(false),
 	}
 
+}
+
+func (m *Meetup) SetCache() {
+	state.query.Page = m.QueryString.Page
+	state.query.PerPage = m.QueryString.PerPage
+	state.query.Query = m.QueryString.Query
 }
