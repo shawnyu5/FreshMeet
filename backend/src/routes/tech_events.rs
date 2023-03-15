@@ -1,7 +1,8 @@
 use crate::meetup::search::Edge;
 use crate::routes::meetup::search;
-use lazy_static::lazy_static;
+use rand::seq::SliceRandom;
 use rocket::response::status::BadRequest;
+// use lazy_static::lazy_static;
 
 // use retainer::Cache;
 
@@ -23,13 +24,12 @@ pub async fn tech_events(page: i32, per_page: i32) -> Result<String, BadRequest<
     for query in meetup_queries {
         let search_results = search(query, page, per_page).await.unwrap();
         let search_results: Vec<Edge> = serde_json::from_str(&search_results).unwrap();
-        println!("search_results: {:?}", search_results);
         meetups.extend(search_results.clone());
     }
+    meetups.shuffle(&mut rand::thread_rng());
 
     let num_results = meetups.len();
 
-    // cache the entire search result
     let vec_end = {
         // calculate where the end of the page is
         let end = per_page * page;
