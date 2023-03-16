@@ -1,6 +1,6 @@
 use std::{sync::Arc, time::Duration};
 
-use crate::meetup::search::{Edge, EventType, Search};
+use crate::meetup::search::{Edge, EventType, RsvpState, Search};
 use lazy_static::lazy_static;
 use retainer::Cache;
 use rocket::response::status::BadRequest;
@@ -53,7 +53,16 @@ pub async fn search(query: &str, page: i32, per_page: i32) -> Result<String, Bad
                 .await
                 .unwrap();
 
-            edge_vec.extend(search_result.data.results.edges.clone());
+            let mut filtered_vec: Vec<Edge> = vec![];
+            for edge in search_result.data.results.edges {
+                // TODO: request needs to be send with cookie information to get isAttending info
+                // filter out events that I am attending, or if RSVP is closed
+                if edge.node.result.isAttending || edge.node.result.rsvpState == RsvpState::CLOSED {
+                    continue;
+                }
+                filtered_vec.push(edge);
+            }
+            edge_vec.extend(filtered_vec.clone());
 
             // stop when we've fetched enough results. Or if there no more nodes to fetch
             if edge_vec.len() >= per_page as usize

@@ -8,6 +8,16 @@ pub enum EventType {
     online,
 }
 
+#[allow(non_camel_case_types)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
+pub enum RsvpState {
+    #[default]
+    JOIN_OPEN,
+    CLOSED,
+    JOIN_APPROVAL,
+    NOT_OPEN_YET,
+}
+
 impl Default for EventType {
     /// physical/in person is the default event type
     fn default() -> Self {
@@ -29,8 +39,6 @@ pub struct Results {
     pub pageInfo: PageInfo,
     pub count: i32,
     pub edges: Vec<Edge>,
-    // if the current user is attending this event
-    pub isAttending: Option<bool>,
 }
 
 #[allow(non_snake_case)]
@@ -65,6 +73,9 @@ pub struct Node {
 /// * `eventType`: event type. Default EventType::physical
 /// * `currency`: currency of event
 /// * `eventUrl`: url to event details
+/// * `going`: number of people going to the even`
+/// * `isAttending`: whether or not the user is attending the event
+/// * `rsvpState`: state of RSVP
 pub struct SearchResult {
     pub id: String,
     pub title: String,
@@ -77,6 +88,8 @@ pub struct SearchResult {
     pub currency: String,
     pub eventUrl: String,
     pub going: Option<i32>,
+    pub isAttending: bool,
+    pub rsvpState: RsvpState,
 }
 
 mod request_body {
@@ -170,7 +183,6 @@ impl Default for Search {
                     },
                     count: 0,
                     edges: vec![],
-                    isAttending: None,
                 },
             },
         };
