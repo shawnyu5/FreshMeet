@@ -88,7 +88,7 @@ pub struct SearchResult {
     pub currency: String,
     pub eventUrl: String,
     pub going: Option<i32>,
-    pub isAttending: Option<bool>,
+    pub isAttending: bool,
     pub rsvpState: RsvpState,
 }
 

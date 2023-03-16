@@ -54,11 +54,10 @@ pub async fn search(query: &str, page: i32, per_page: i32) -> Result<String, Bad
                 .unwrap();
 
             let mut filtered_vec: Vec<Edge> = vec![];
-            // filter out events that I am attending
             for edge in search_result.data.results.edges {
-                if edge.node.result.isAttending.unwrap_or(false)
-                    || edge.node.result.rsvpState == RsvpState::CLOSED
-                {
+                // TODO: request needs to be send with cookie information to get isAttending info
+                // filter out events that I am attending, or if RSVP is closed
+                if edge.node.result.isAttending || edge.node.result.rsvpState == RsvpState::CLOSED {
                     continue;
                 }
                 filtered_vec.push(edge);
