@@ -1,6 +1,8 @@
 package tech_events
 
 import (
+	"bytes"
+	"encoding/gob"
 	"reflect"
 
 	"github.com/bwmarrin/discordgo"
@@ -21,7 +23,7 @@ type TechEvent interface {
 	// Returns the components of the package
 	// CreateComponents() []discordgo.MessageComponent
 	// load necessary values into the package level cache
-	SetCache()
+	// SetCache()
 	// Components() []commands.Component
 }
 
@@ -76,7 +78,7 @@ func (TechEventCommand) Def() *discordgo.ApplicationCommand {
 // Handler implements commands.Command
 func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	for _, mod := range t.Modules {
-		mod.SetCache()
+		// mod.SetCache()
 		err := mod.FetchEvents()
 		if err != nil {
 			return "", err
@@ -147,4 +149,13 @@ func createPreviousPageButton(disabled bool) discordgo.Button {
 		Disabled: disabled,
 		CustomID: previousPageComponentID,
 	}
+}
+
+// hash hash a struct
+// t: the struct to hash
+// return: the hashed representation of the struct
+func hash(t TechEvent) string {
+	var b bytes.Buffer
+	gob.NewEncoder(&b).Encode(t)
+	return b.String()
 }

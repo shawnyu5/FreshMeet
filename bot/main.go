@@ -44,10 +44,10 @@ var (
 		},
 		tech_events.TechEventCommand{
 			Modules: []tech_events.TechEvent{
-				meetup.Meetup{
+				&meetup.Meetup{
 					QueryString: meetup.QueryString{Query: "coding", Page: 1, PerPage: "4"},
 				},
-				meetup.Meetup{
+				&meetup.Meetup{
 					QueryString: meetup.QueryString{Query: "Programming", Page: 1, PerPage: "4"},
 				},
 			},
