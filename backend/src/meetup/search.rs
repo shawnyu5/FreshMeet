@@ -42,7 +42,7 @@ pub struct Results {
 }
 
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
 pub struct PageInfo {
     pub hasNextPage: bool,
     pub endCursor: Option<String>,
@@ -60,7 +60,7 @@ pub struct Node {
 }
 
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug, Default, Clone)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
 /// Details about a meetup event
 ///
 /// * `id`: id of the event
@@ -92,7 +92,7 @@ pub struct SearchResult {
     pub rsvpState: RsvpState,
 }
 
-mod request_body {
+pub mod request_body {
     use chrono::{DateTime, Utc};
     use serde::{Deserialize, Serialize};
 
@@ -189,27 +189,10 @@ impl Default for Search {
     }
 }
 
-impl Search {
+impl request_body::Body {
     /// search for meetup events
-    ///
-    /// * `query`: the query to search for
-    /// * `event_type`: the type of event to search for. Default EventType::physical
-    /// * `cursor`: the cursor position
-    /// * `first`: number of event nodes to fetch
-    pub async fn search(
-        &self,
-        query: String,
-        event_type: EventType,
-        cursor: Option<String>,
-        first: i32,
-    ) -> Result<Search, String> {
+    pub async fn search(&self) -> Result<Search, String> {
         let url = "https://www.meetup.com/gql";
-
-        let mut body = request_body::Body::default();
-        body.variables.query = query;
-        body.variables.eventType = Some(event_type);
-        body.variables.after = cursor.unwrap_or("".to_string());
-        body.variables.first = first;
 
         let mut headers = HeaderMap::new();
         headers.insert("content-type", HeaderValue::from_static("application/json"));
@@ -217,7 +200,7 @@ impl Search {
         let client = reqwest::Client::new();
         match client
             .post(url)
-            .json(&body)
+            .json(self)
             .headers(headers)
             .send()
             .await
@@ -232,39 +215,36 @@ impl Search {
         }
     }
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[tokio::test]
     async fn test_search_pysical_events() {
-        let search = Search::default();
-        let result = search
-            .search("tech meetups".to_string(), EventType::physical, None, 10)
-            .await
-            .unwrap();
+        // let search = Search::default();
+        let mut request = request_body::Body::default();
+        request.variables.query = "tech meetups".to_string();
+        request.variables.eventType = Some(EventType::physical);
+        request.variables.first = 10;
+        let result = request.search().await.unwrap();
         assert_eq!(result.data.results.count, 10);
         assert_eq!(result.data.results.edges.len(), 10);
     }
 
     #[tokio::test]
     async fn test_search_pagination() {
-        let search = Search::default();
-        let page_1 = search
-            .search("tech meetups".to_string(), EventType::physical, None, 10)
-            .await
-            .unwrap();
+        let mut request = request_body::Body::default();
+        request.variables.query = "tech meetups".to_string();
+        request.variables.eventType = Some(EventType::physical);
+        request.variables.first = 10;
+        let page_1 = request.search().await.unwrap();
 
-        let page_2 = search
-            .search(
-                "tech meetups".to_string(),
-                EventType::physical,
-                page_1.data.results.pageInfo.endCursor.clone(),
-                10,
-            )
-            .await
-            .unwrap();
+        let mut request = request_body::Body::default();
+        request.variables.query = "tech meetups".to_string();
+        request.variables.eventType = Some(EventType::physical);
+        request.variables.first = 10;
+        request.variables.after = page_1.data.results.pageInfo.endCursor.clone().unwrap();
+        let page_2 = request.search().await.unwrap();
 
         let page_1 = serde_json::to_string(&page_1).unwrap();
         let page_2 = serde_json::to_string(&page_2).unwrap();
