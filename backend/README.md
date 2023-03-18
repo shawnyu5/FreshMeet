@@ -14,21 +14,23 @@ A back end API to fetch networking events
 {
   "page_info": {
     "hasNextPage": true,
-    "endCursor": "MjA="
+    "endCursor": "Mg=="
   },
-
   "nodes": [
     {
-      "id": "291352101",
-      "title": "Toronto's Biggest Professional Networking Mixer -Entrepreneur Tech & GameChanger",
-      "dateTime": "2023-04-03T18:30-04:00",
-      "endTime": "2023-04-03T20:30-04:00",
-      "description": "***[Click Here To Confirm Your RSVP On EventBrite](https://bit.ly/3YdV0te)***\nOr\nClick Link Here - https://bit.ly/3YdV0te\n\nMAKE SURE TO RSVP ON EVENTBRITE TO ATTEND\n\nHighlights From Previous Events - Media Link Below\nhttps://youtu.be/9epSNzTL2tc\n\n***[Click Here To Confirm Your RSVP On EventBrite](https://bit.ly/3YdV0te)***\nOr\nClick Link Here - https://bit.ly/3YdV0te\n\nThis is...",
-      "duration": "PT2H",
+      "id": "292273023",
+      "title": "Dupont Morning Code",
+      "dateTime": "2023-04-01T13:00-04:00",
+      "endTime": "2023-04-01T16:00-04:00",
+      "description": "[Summary]\nThis meetup is for those who are interested in code, web development, design, cloud, or AI. All levels are welcome, so feel free to bring your laptop and discuss what you are working on or what you are learning. You can share your projects and ideas with other participants freely. There are outlets and WiFi, drinks are about $5 for tea, they take card only.\n\n[Price]\nAttendance is FREE. But you need to buy something from the venue.",
+      "duration": "PT3H",
       "timezone": "America/Toronto",
       "eventType": "physical",
       "currency": "USD",
-      "eventUrl": "https://www.meetup.com/toronto_tech/events/291352101"
+      "eventUrl": "https://www.meetup.com/toronto-tech-stack-exchange/events/292273023",
+      "going": 2,
+      "isAttending": false,
+      "rsvpState": "JOIN_OPEN"
     }
   ]
 }

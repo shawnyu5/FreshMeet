@@ -15,24 +15,47 @@ import (
 )
 
 // Events Events response from the meetup api
-type Events []struct {
-	Node struct {
-		ID     string `json:"id"`
-		Result struct {
-			Currency    string `json:"currency"`
-			DateTime    string `json:"dateTime"`
-			Description string `json:"description"`
-			Duration    string `json:"duration"`
-			EndTime     string `json:"endTime"`
-			EventType   string `json:"eventType"`
-			EventURL    string `json:"eventUrl"`
-			ID          string `json:"id"`
-			Timezone    string `json:"timezone"`
-			Title       string `json:"title"`
-			Going       int    `json:"going"`
-		} `json:"result"`
-	} `json:"node"`
+type Events struct {
+	PageInfo struct {
+		EndCursor   string `json:"endCursor"`
+		HasNextPage bool   `json:"hasNextPage"`
+	} `json:"page_info"`
+	Nodes []struct {
+		Currency    string `json:"currency"`
+		DateTime    string `json:"dateTime"`
+		Description string `json:"description"`
+		Duration    string `json:"duration"`
+		EndTime     string `json:"endTime"`
+		EventType   string `json:"eventType"`
+		EventURL    string `json:"eventUrl"`
+		Going       int64  `json:"going"`
+		ID          string `json:"id"`
+		IsAttending bool   `json:"isAttending"`
+		RsvpState   string `json:"rsvpState"`
+		Timezone    string `json:"timezone"`
+		Title       string `json:"title"`
+	} `json:"nodes"`
 }
+
+// Events Events response from the meetup api
+// type Events []struct {
+// Node struct {
+// ID     string `json:"id"`
+// Result struct {
+// Currency    string `json:"currency"`
+// DateTime    string `json:"dateTime"`
+// Description string `json:"description"`
+// Duration    string `json:"duration"`
+// EndTime     string `json:"endTime"`
+// EventType   string `json:"eventType"`
+// EventURL    string `json:"eventUrl"`
+// ID          string `json:"id"`
+// Timezone    string `json:"timezone"`
+// Title       string `json:"title"`
+// Going       int    `json:"going"`
+// } `json:"result"`
+// } `json:"node"`
+// }
 
 // /meetup command
 type Meetup struct{}
@@ -48,6 +71,7 @@ type State struct {
 }
 
 var state State
+var cursor string
 
 var nextPageComponentID = "next page"
 var previousPageComponentID = "previous page"
@@ -206,8 +230,8 @@ func (Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (
 // returns: a string to be sent as a reply
 func constructReply(events Events) string {
 	response := ""
-	for _, event := range events {
-		description := strings.ReplaceAll(event.Node.Result.Description, "\n", " ")
+	for _, event := range events.Nodes {
+		description := strings.ReplaceAll(event.Description, "\n", " ")
 		// truncate description to 100 characters
 		if len(description) > 250 {
 			// wrap all links with <>, to avid embed preview
@@ -224,18 +248,18 @@ func constructReply(events Events) string {
 
 		// 2023-03-17T18:30-04:00
 		// trim away the date
-		date := strings.Split(event.Node.Result.DateTime, "T")[0]
-		startTime := strings.SplitAfter(event.Node.Result.DateTime, "T")[1]
+		date := strings.Split(event.DateTime, "T")[0]
+		startTime := strings.SplitAfter(event.DateTime, "T")[1]
 		// remove everything after `-`
 		startTime = strings.Split(startTime, "-")[0]
 
 		// endTime is in the same format is start time
-		endTime := strings.SplitAfter(event.Node.Result.EndTime, "T")[1]
+		endTime := strings.SplitAfter(event.EndTime, "T")[1]
 		endTime = strings.Split(endTime, "-")[0]
 
 		eventDate := fmt.Sprintf("%s, %s - %s", date, startTime, endTime)
 
-		response += fmt.Sprintf("**title**: %s(%d ppl)\n**description**: %s\n**date**: %s\n**URL**: <%s>\n\n", event.Node.Result.Title, event.Node.Result.Going, description, eventDate, event.Node.Result.EventURL)
+		response += fmt.Sprintf("**title**: %s(%d ppl)\n**description**: %s\n**date**: %s\n**URL**: <%s>\n\n", event.Title, event.Going, description, eventDate, event.EventURL)
 	}
 	return response
 }
@@ -257,6 +281,7 @@ func getEvents(query string, page int, perPage int) (Events, error) {
 	q.Add("query", query)
 	q.Add("page", strconv.Itoa(page))
 	q.Add("per_page", strconv.Itoa(perPage))
+	q.Add("after", cursor)
 	req.URL.RawQuery = q.Encode()
 
 	res, err := http.DefaultClient.Do(req)
@@ -270,6 +295,7 @@ func getEvents(query string, page int, perPage int) (Events, error) {
 	}
 	var body Events
 	json.Unmarshal(b, &body)
+	cursor = body.PageInfo.EndCursor
 	return body, nil
 
 }

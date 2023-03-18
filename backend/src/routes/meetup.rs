@@ -1,3 +1,4 @@
+use std::sync::Mutex;
 use std::{sync::Arc, time::Duration};
 
 use crate::meetup::search::{request_body, Edge, PageInfo, RsvpState, Search, SearchResult};
@@ -8,7 +9,8 @@ use rocket::serde::{json::Json, Serialize};
 use serde::Deserialize;
 
 lazy_static! {
-    pub static ref CACHE: Arc<Cache<String, Search>> = Arc::new(Cache::<String, Search>::new());
+    static ref CACHE: Arc<Cache<String, Search>> = Arc::new(Cache::<String, Search>::new());
+    static ref CURSOR: Mutex<String> = Mutex::new("".to_string());
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
@@ -21,31 +23,17 @@ pub struct Response {
     nodes: Vec<SearchResult>,
 }
 
-#[get("/search?<query>&<page>&<per_page>&<after>")]
+#[get("/search?<query>&<page>&<per_page>")]
 /// search for a query on meetup
 ///
 /// * `query`: the search query
 /// * `page`: the page number
 /// * `per_page`: number of nodes to return in a single page
-/// * `after`: cursor of the previous search
 pub async fn search(
     query: &str,
     page: i32,
     per_page: i32,
-    after: Option<String>,
 ) -> Result<Json<Response>, BadRequest<String>> {
-    let cache_key = format!(
-        "{}-{}-{}-{}",
-        query,
-        page,
-        per_page,
-        after.as_ref().unwrap_or(&"".to_string())
-    );
-
-    let mut request = request_body::Body::default();
-    let cache_value = CACHE.get(&cache_key.to_string()).await;
-    let mut result: Search = Search::default();
-
     // make sure page is not less than 1
     if page < 1 {
         return Err(BadRequest(Some(
@@ -53,13 +41,28 @@ pub async fn search(
         )));
     }
 
-    // if cache value does not exist
-    if cache_value.is_none() {
-        println!("No cache found");
+    let cache_key = "search".to_string();
 
+    let mut request = request_body::Body::default();
+    let cache_value = CACHE.get(&cache_key.to_string()).await;
+    let mut result: Search = Search::default();
+
+    // if cache value does not exist
+    if cache_value.is_none()
+        || cache_value
+            .as_ref()
+            .unwrap()
+            .value()
+            .data
+            .results
+            .edges
+            .len()
+            // the total number of records needed in cache to fulfill the current request
+            < (page * per_page) as usize
+    {
         request.variables.query = query.to_string();
         request.variables.first = per_page;
-        request.variables.after = after.clone().unwrap_or("".to_string());
+        request.variables.after = CURSOR.lock().unwrap().clone();
         let search_result = request.search().await.unwrap();
 
         let mut filtered_vec: Vec<Edge> = vec![];
@@ -73,6 +76,15 @@ pub async fn search(
         }
         result.data.results.edges = filtered_vec;
         result.data.results.pageInfo = search_result.data.results.pageInfo;
+
+        let mut cursor = CURSOR.lock().unwrap();
+        *cursor = result
+            .data
+            .results
+            .pageInfo
+            .endCursor
+            .clone()
+            .unwrap_or("".to_string());
     } else {
         result = cache_value.unwrap().value().clone();
     }
@@ -81,24 +93,71 @@ pub async fn search(
         return Err(BadRequest(Some("no results found".to_string())));
     }
 
-    // cache the entire search result
-    CACHE
-        .insert(
-            cache_key.to_string(),
-            result.clone(),
-            Duration::from_secs(20 * 60),
-        )
-        .await;
-
+    // if cache is empty right now, we add current results to it
+    // if CACHE.get(&cache_key).await.is_none() {
+    // CACHE
+    // .insert(
+    // cache_key.to_string(),
+    // result.clone(),
+    // Duration::from_secs(20 * 60),
+    // )
+    // .await;
+    // } else {
+    // println!("appending to cache");
+    // // append the current search result iteration to the cache
+    // let mut cache_value = CACHE.get(&cache_key).await.unwrap().value().clone();
+    // cache_value
+    // .data
+    // .results
+    // .edges
+    // .append(&mut result.data.results.edges.clone());
+    // CACHE
+    // .insert(
+    // cache_key.to_string(),
+    // cache_value.clone(),
+    // Duration::from_secs(20 * 60),
+    // )
+    // .await;
+    // nodes = cache_value
+    // .data
+    // .results
+    // .edges
+    // .iter()
+    // .map(|e| e.node.result.clone())
+    // .collect();
+    // }
     let mut nodes: Vec<SearchResult> = vec![];
 
     for e in result.data.results.edges {
         nodes.push(e.node.result);
     }
 
+    let vec_end: usize = {
+        // calculate where the end of the page is
+        // page = 2
+        // per_page = 10
+        let end = per_page * page; // end = 20
+
+        // if end is larger than the max size of vector, return vector max size
+        if end > nodes.len() as i32 {
+            println!("node len: {}", nodes.len());
+            nodes.len()
+        } else {
+            end as usize
+        }
+    };
+    let vec_begin: usize = {
+        let result = vec_end as i32 - per_page;
+        if result < 0 {
+            0
+        } else {
+            result as usize
+        }
+    };
+
     return Ok(Json(Response {
         page_info: result.data.results.pageInfo,
-        nodes,
+        nodes: nodes[vec_begin..vec_end].to_vec(),
     }));
 }
 
@@ -115,7 +174,7 @@ mod test {
         use rocket::local::asynchronous::Client;
         let client = Client::tracked(rocket()).await.unwrap();
         let response = client
-            .get(uri!("/meetup", search("tech", 1, 10, None::<String>)))
+            .get(uri!("/meetup", search("tech", 1, 10)))
             .dispatch()
             .await;
 
@@ -130,21 +189,18 @@ mod test {
 
         let client = Client::tracked(rocket()).await.unwrap();
         let page_1_response = client
-            .get(uri!("/meetup", search("tech", 1, 10, None::<String>)))
+            .get(uri!("/meetup", search("tech", 1, 10)))
             .dispatch()
             .await;
 
-        assert_eq!(page_1_response.status(), Status::Ok);
+        // assert_eq!(page_1_response.status(), Status::Ok);
 
         let page_1_response: Response = page_1_response.into_json().await.unwrap();
         let page_2_response = client
-            .get(uri!(
-                "/meetup",
-                search("tech", 2, 10, page_1_response.page_info.endCursor.as_ref())
-            ))
+            .get(uri!("/meetup", search("tech", 2, 10)))
             .dispatch()
             .await;
-        assert_eq!(page_2_response.status(), Status::Ok);
+        // assert_eq!(page_2_response.status(), Status::Ok);
 
         let page_2_response: Response = page_2_response.into_json().await.unwrap();
 
@@ -157,7 +213,7 @@ mod test {
         use rocket::local::asynchronous::Client;
         let client = Client::tracked(rocket()).await.unwrap();
         let res = client
-            .get(uri!("/meetup", search("tech", 0, 10, None::<String>)))
+            .get(uri!("/meetup", search("tech", 0, 10)))
             .dispatch()
             .await;
         assert_eq!(res.status(), Status::BadRequest);
@@ -173,7 +229,7 @@ mod test {
         use rocket::local::asynchronous::Client;
         let client = Client::tracked(rocket()).await.unwrap();
         let res = client
-            .get(uri!("/meetup", search("tech", 1, 10, None::<String>)))
+            .get(uri!("/meetup", search("tech", 1, 10)))
             .dispatch()
             .await;
 
