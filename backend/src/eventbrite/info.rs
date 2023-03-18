@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 use serde_json::to_string_pretty;
 // use std::collections::HashMap;
