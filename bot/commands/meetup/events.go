@@ -37,26 +37,6 @@ type Events struct {
 	} `json:"nodes"`
 }
 
-// Events Events response from the meetup api
-// type Events []struct {
-// Node struct {
-// ID     string `json:"id"`
-// Result struct {
-// Currency    string `json:"currency"`
-// DateTime    string `json:"dateTime"`
-// Description string `json:"description"`
-// Duration    string `json:"duration"`
-// EndTime     string `json:"endTime"`
-// EventType   string `json:"eventType"`
-// EventURL    string `json:"eventUrl"`
-// ID          string `json:"id"`
-// Timezone    string `json:"timezone"`
-// Title       string `json:"title"`
-// Going       int    `json:"going"`
-// } `json:"result"`
-// } `json:"node"`
-// }
-
 // /meetup command
 type Meetup struct{}
 
@@ -91,15 +71,23 @@ func (Meetup) Components() []commands.Component {
 
 // handleNextPageButton handle when the next page button is clicked
 func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+	if !state.events.PageInfo.HasNextPage {
+		return "No more pages", nil
+	}
+
 	state.page++
 	events, err := getEvents(state.query, state.page, 4)
 	if err != nil {
 		return "", err
 	}
+	state.events = events
 
 	reply := constructReply(events)
-	println(len(reply))
 
+	disableNextButton := false
+	if !state.events.PageInfo.HasNextPage {
+		disableNextButton = true
+	}
 	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
@@ -108,7 +96,7 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 				discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
 						createPreviousPageButton(false),
-						createNextPageButton(false),
+						createNextPageButton(disableNextButton),
 					},
 				},
 			},
@@ -128,6 +116,7 @@ func handlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionC
 	if err != nil {
 		return "", err
 	}
+	state.events = events
 
 	reply := constructReply(events)
 
@@ -159,7 +148,7 @@ func createNextPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "➡️",
 		Style:    discordgo.PrimaryButton,
-		Disabled: false,
+		Disabled: disabled,
 		CustomID: nextPageComponentID,
 	}
 
@@ -204,6 +193,7 @@ func (Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (
 	if err != nil {
 		return "", err
 	}
+	state.events = events
 
 	// construct a reply from api body
 	reply := constructReply(events)
@@ -240,7 +230,6 @@ func constructReply(events Events) string {
 			httpRegex := regexp.MustCompile(`(https://\S+)`)
 			description = httpRegex.ReplaceAllString(description, "<$1>")
 			description = fmt.Sprintf("%s...", description)
-			// fmt.Printf("constructReply description: %v\n", description) // __AUTO_GENERATED_PRINT_VAR__
 
 			// remove all `*`
 			description = strings.ReplaceAll(description, "*", "")
