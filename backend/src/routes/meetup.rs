@@ -1,16 +1,18 @@
-use std::sync::Mutex;
-use std::{sync::Arc, time::Duration};
-
-use crate::meetup::search::{request_body, Edge, PageInfo, RsvpState, Search, SearchResult};
+use crate::meetup;
+use crate::meetup::search::{request_body, Edge, PageInfo, Result_, RsvpState, SearchResult};
 use lazy_static::lazy_static;
 use retainer::Cache;
 use rocket::response::status::BadRequest;
 use rocket::serde::{json::Json, Serialize};
 use serde::Deserialize;
+use std::sync::{Arc, RwLock};
+use std::time::Duration;
 
 lazy_static! {
-    static ref CACHE: Arc<Cache<String, Search>> = Arc::new(Cache::<String, Search>::new());
-    static ref CURSOR: Mutex<String> = Mutex::new("".to_string());
+    static ref CACHE: RwLock<Arc<Cache<String, SearchResult>>> =
+        RwLock::new(Arc::new(Cache::<String, SearchResult>::new()));
+    // static ref CURSOR: Arc<String> = Arc::new("".to_string());
+    // static ref CURSOR: RwLock<Arc<String>> = RwLock::new(Arc::new("".to_string()));
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
@@ -20,7 +22,7 @@ lazy_static! {
 /// * `nodes`: list of event nodes
 pub struct Response {
     page_info: PageInfo,
-    nodes: Vec<SearchResult>,
+    nodes: Vec<meetup::search::Result_>,
 }
 
 #[get("/search?<query>&<page>&<per_page>")]
@@ -30,7 +32,7 @@ pub struct Response {
 /// * `page`: the page number
 /// * `per_page`: number of nodes to return in a single page
 pub async fn search(
-    query: &str,
+    query: String,
     page: i32,
     per_page: i32,
 ) -> Result<Json<Response>, BadRequest<String>> {
@@ -41,28 +43,21 @@ pub async fn search(
         )));
     }
 
-    let cache_key = "search".to_string();
+    // let cache_read = CACHE.read().unwrap();
+    // let cache_key = "search".to_string();
+    // let cache_value = cache_read.get(&cache_key).await;
+    let mut cursor = "".to_string();
 
-    let mut request = request_body::Body::default();
-    let cache_value = CACHE.get(&cache_key.to_string()).await;
-    let mut result: Search = Search::default();
+    let mut result: SearchResult = SearchResult::default();
 
     // if cache value does not exist
-    if cache_value.is_none()
-        || cache_value
-            .as_ref()
-            .unwrap()
-            .value()
-            .data
-            .results
-            .edges
-            .len()
-            // the total number of records needed in cache to fulfill the current request
-            < (page * per_page) as usize
-    {
+    // if cache_value.is_none() {
+    loop {
+        let mut request = request_body::Body::default();
         request.variables.query = query.to_string();
-        request.variables.first = per_page;
-        request.variables.after = CURSOR.lock().unwrap().clone();
+        request.variables.first = 20;
+        request.variables.after = cursor.to_string().clone();
+
         let search_result = request.search().await.unwrap();
 
         let mut filtered_vec: Vec<Edge> = vec![];
@@ -74,59 +69,41 @@ pub async fn search(
             }
             filtered_vec.push(edge);
         }
-        result.data.results.edges = filtered_vec;
-        result.data.results.pageInfo = search_result.data.results.pageInfo;
-
-        let mut cursor = CURSOR.lock().unwrap();
-        *cursor = result
+        println!("Filtered vector length: {}", filtered_vec.len());
+        result.data.results.edges.append(&mut filtered_vec);
+        result.data.results.pageInfo = search_result.data.results.pageInfo.clone();
+        cursor = search_result
             .data
             .results
             .pageInfo
             .endCursor
-            .clone()
             .unwrap_or("".to_string());
-    } else {
-        result = cache_value.unwrap().value().clone();
+
+        // if no next page, then stop
+        println!("Next page: {}", result.data.results.pageInfo.hasNextPage);
+        if result.data.results.pageInfo.hasNextPage == false {
+            break;
+        }
     }
+    // } else {
+    // result = cache_value.unwrap().value().clone();
+    // }
+
+    // create new cache with updated search results
+    // let updated_cache = Cache::<String, SearchResult>::new();
+    // updated_cache
+    // .insert(cache_key, result.clone(), Duration::from_secs(20 * 60))
+    // .await;
+
+    // update global cache
+    // let mut cache_write = CACHE.write().unwrap();
+    // *cache_write = Arc::new(updated_cache);
 
     if result.data.results.edges.len() == 0 {
         return Err(BadRequest(Some("no results found".to_string())));
     }
 
-    // if cache is empty right now, we add current results to it
-    // if CACHE.get(&cache_key).await.is_none() {
-    // CACHE
-    // .insert(
-    // cache_key.to_string(),
-    // result.clone(),
-    // Duration::from_secs(20 * 60),
-    // )
-    // .await;
-    // } else {
-    // println!("appending to cache");
-    // // append the current search result iteration to the cache
-    // let mut cache_value = CACHE.get(&cache_key).await.unwrap().value().clone();
-    // cache_value
-    // .data
-    // .results
-    // .edges
-    // .append(&mut result.data.results.edges.clone());
-    // CACHE
-    // .insert(
-    // cache_key.to_string(),
-    // cache_value.clone(),
-    // Duration::from_secs(20 * 60),
-    // )
-    // .await;
-    // nodes = cache_value
-    // .data
-    // .results
-    // .edges
-    // .iter()
-    // .map(|e| e.node.result.clone())
-    // .collect();
-    // }
-    let mut nodes: Vec<SearchResult> = vec![];
+    let mut nodes: Vec<Result_> = vec![];
 
     for e in result.data.results.edges {
         nodes.push(e.node.result);
@@ -140,7 +117,6 @@ pub async fn search(
 
         // if end is larger than the max size of vector, return vector max size
         if end > nodes.len() as i32 {
-            println!("node len: {}", nodes.len());
             nodes.len()
         } else {
             end as usize

@@ -281,7 +281,6 @@ func getEvents(query string, page int, perPage int) (Events, error) {
 	q.Add("query", query)
 	q.Add("page", strconv.Itoa(page))
 	q.Add("per_page", strconv.Itoa(perPage))
-	q.Add("after", cursor)
 	req.URL.RawQuery = q.Encode()
 
 	res, err := http.DefaultClient.Do(req)

@@ -26,7 +26,7 @@ impl Default for EventType {
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Search {
+pub struct SearchResult {
     pub data: Data,
 }
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
@@ -56,7 +56,7 @@ pub struct Edge {
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct Node {
     pub id: String,
-    pub result: SearchResult,
+    pub result: Result_,
 }
 
 #[allow(non_snake_case)]
@@ -76,7 +76,7 @@ pub struct Node {
 /// * `going`: number of people going to the even`
 /// * `isAttending`: whether or not the user is attending the event
 /// * `rsvpState`: state of RSVP
-pub struct SearchResult {
+pub struct Result_ {
     pub id: String,
     pub title: String,
     pub dateTime: String,
@@ -172,9 +172,9 @@ pub mod request_body {
         sha256Hash: String,
     }
 }
-impl Default for Search {
-    fn default() -> Search {
-        return Search {
+impl Default for SearchResult {
+    fn default() -> SearchResult {
+        return SearchResult {
             data: Data {
                 results: Results {
                     pageInfo: PageInfo {
@@ -191,7 +191,7 @@ impl Default for Search {
 
 impl request_body::Body {
     /// search for meetup events
-    pub async fn search(&self) -> Result<Search, String> {
+    pub async fn search(&self) -> Result<SearchResult, String> {
         let url = "https://www.meetup.com/gql";
 
         let mut headers = HeaderMap::new();
@@ -205,7 +205,7 @@ impl request_body::Body {
             .send()
             .await
             .unwrap()
-            .json::<Search>()
+            .json::<SearchResult>()
             .await
         {
             Ok(search) => return Ok(search),
