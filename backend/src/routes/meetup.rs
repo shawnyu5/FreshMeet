@@ -69,7 +69,6 @@ pub async fn search(
             }
             filtered_vec.push(edge);
         }
-        println!("Filtered vector length: {}", filtered_vec.len());
         result.data.results.edges.append(&mut filtered_vec);
         result.data.results.pageInfo = search_result.data.results.pageInfo.clone();
         cursor = search_result
@@ -80,7 +79,6 @@ pub async fn search(
             .unwrap_or("".to_string());
 
         // if no next page, then stop
-        println!("Next page: {}", result.data.results.pageInfo.hasNextPage);
         if result.data.results.pageInfo.hasNextPage == false {
             break;
         }
@@ -130,6 +128,13 @@ pub async fn search(
             result as usize
         }
     };
+
+    // if we are not at the last page, show there are more pages
+    if vec_end < nodes.len() {
+        result.data.results.pageInfo.hasNextPage = true;
+    } else {
+        result.data.results.pageInfo.hasNextPage = false;
+    }
 
     return Ok(Json(Response {
         page_info: result.data.results.pageInfo,
@@ -205,12 +210,22 @@ mod test {
         use rocket::local::asynchronous::Client;
         let client = Client::tracked(rocket()).await.unwrap();
         let res = client
-            .get(uri!("/meetup", search("tech", 1, 10)))
+            .get(uri!("/meetup", search("tech", 1, 4)))
             .dispatch()
             .await;
 
         assert_eq!(res.status(), Status::Ok);
         let res = res.into_json::<Response>().await.unwrap();
         assert_ne!(res.page_info.endCursor, None);
+        // there should be more pages
+        assert_eq!(res.page_info.hasNextPage, true);
+
+        let res = client
+            .get(uri!("/meetup", search("tech", 200, 4)))
+            .dispatch()
+            .await;
+        assert_eq!(res.status(), Status::Ok);
+        let res = res.into_json::<Response>().await.unwrap();
+        assert_eq!(res.page_info.hasNextPage, false);
     }
 }
