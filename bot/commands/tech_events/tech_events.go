@@ -3,7 +3,7 @@ package tech_events
 import (
 	"bytes"
 	"encoding/gob"
-	"reflect"
+	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/shawnyu5/networking_bot/commands"
@@ -20,11 +20,10 @@ type TechEvent interface {
 	HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error)
 	// constructs the reply message from events
 	ConstructReply() string
-	// Returns the components of the package
-	// CreateComponents() []discordgo.MessageComponent
-	// load necessary values into the package level cache
-	// SetCache()
-	// Components() []commands.Component
+	// set the package level cache
+	SetCache(cache interface{}) interface{}
+	// get the package level cache
+	GetCache() interface{}
 }
 
 // TechEventCommand the tech-event command
@@ -38,9 +37,12 @@ type State struct {
 	Messages map[string]*discordgo.Message
 }
 
-var state State = State{
-	Messages: make(map[string]*discordgo.Message),
-}
+var cacheMap = make(map[string]interface{})
+var messageMap = make(map[string]*discordgo.Message)
+
+// var state = State{
+// Messages: make(map[string]*discordgo.Message),
+// }
 var nextPageComponentID = "next page"
 var previousPageComponentID = "previous page"
 
@@ -51,17 +53,39 @@ func (t TechEventCommand) Components() []commands.Component {
 			ComponentID:      nextPageComponentID,
 			ComponentHandler: t.HandleNextPageButton,
 		},
+		// {
+		// ComponentID:      previousPageComponentID,
+		// ComponentHandler: t.HandlePreviousPageButton,
+		// },
 	}
 }
 
 // HandleNextPageButton handles when the next page button is clicked
 func (t TechEventCommand) HandleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	for _, mod := range t.Modules {
-		// fmt.Printf("HandleNextPageButton mod: %+v\n", mod) // __AUTO_GENERATED_PRINT_VAR__
-		_, err := mod.HandleNextPageButton(sess, i)
+		// set the cache at the package level
+		cache := mod.SetCache(cacheMap[hash(mod)])
+		fmt.Printf("HandleNextPageButton cache: %+v\n", cache) // __AUTO_GENERATED_PRINT_VAR__
+		err := mod.FetchEvents()
+		reply := mod.ConstructReply()
 		if err != nil {
 			return "", err
 		}
+
+		mess := messageMap[hash(mod)]
+		mess, err = sess.ChannelMessageEdit(mess.ChannelID, mess.ID, reply)
+		if err != nil {
+			return "", err
+		}
+
+		messageMap[hash(mod)] = mess
+		cacheMap[hash(mod)] = mod.GetCache()
+
+		// fmt.Printf("HandleNextPageButton mod: %+v\n", mod) // __AUTO_GENERATED_PRINT_VAR__
+		// _, err := mod.HandleNextPageButton(sess, i)
+		// if err != nil {
+		// return "", err
+		// }
 	}
 	return "next page", nil
 }
@@ -78,23 +102,26 @@ func (TechEventCommand) Def() *discordgo.ApplicationCommand {
 // Handler implements commands.Command
 func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	for _, mod := range t.Modules {
-		// mod.SetCache()
+		// mod.SetCache(cacheMap[hash(mod)])
+		// the cache will be populated on first call
 		err := mod.FetchEvents()
 		if err != nil {
 			return "", err
 		}
 
 		reply := mod.ConstructReply()
-		mess, err := sess.ChannelMessageSendComplex(i.ChannelID, &discordgo.MessageSend{
-			Content: reply,
-		})
+		mess, err := sess.ChannelMessageSend(i.ChannelID, reply)
 		if err != nil {
 			return "", err
 		}
-		state.Messages[reflect.TypeOf(mod).String()] = mess
+
+		cacheMap[hash(mod)] = mod.GetCache()
+		fmt.Printf("Handler mod: %+v\n", mod) // __AUTO_GENERATED_PRINT_VAR__
+		// fmt.Printf("Handler cacheMap[hash(mod)]: %v\n", cacheMap[hash(mod)]) // __AUTO_GENERATED_PRINT_VAR__
+		messageMap[hash(mod)] = mess
+		// cacheMap.Messages[reflect.TypeOf(mod).String()] = mess
 	}
 	_, err := sess.ChannelMessageSendComplex(i.ChannelID, &discordgo.MessageSend{
-		// Content: "**Pagination**",
 		Components: []discordgo.MessageComponent{
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{

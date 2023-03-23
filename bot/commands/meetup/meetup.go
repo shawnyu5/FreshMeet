@@ -46,25 +46,26 @@ type QueryString struct {
 
 // `/meetup` command
 type Meetup struct {
-	QueryString QueryString
-	Events      Events
+	Query QueryString
 }
 
 // State local persistent state
-// type State struct {
-// // query for the API
-// query QueryString
-// // events fetched from the meetup api
-// Events Events
-// }
+type State struct {
+	// Query for the API
+	Query QueryString
+	// events fetched from the meetup api
+	events Events
+}
 
-var state State
+var Cache State
+
+// var state State
 var cursor string
 
 var nextPageComponentID = "next page"
 var previousPageComponentID = "previous page"
 
-func (m *Meetup) Components() []commands.Component {
+func (m Meetup) Components() []commands.Component {
 	return []commands.Component{
 		{
 			ComponentID:      nextPageComponentID,
@@ -77,25 +78,19 @@ func (m *Meetup) Components() []commands.Component {
 	}
 }
 
-// handleNextPageButton handle when the next page button is clicked
-func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	if !state.events.PageInfo.HasNextPage {
+// HandleNextPageButton handle when the next page button is clicked
+func (m Meetup) HandleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+	if !Cache.events.PageInfo.HasNextPage {
 		return "No more pages", nil
 	}
-
-	state.page++
-	err := m.FetchEvents(state.query, strconv.Itoa(state.page), "4")
+	err := m.FetchEvents()
 	if err != nil {
 		return "", err
 	}
-	state.events = events
 
-	reply := constructReply(events)
+	reply := m.ConstructReply()
+	disableNextButton := !Cache.events.PageInfo.HasNextPage
 
-	disableNextButton := false
-	if !state.events.PageInfo.HasNextPage {
-		disableNextButton = true
-	}
 	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
@@ -103,25 +98,13 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 			Components: []discordgo.MessageComponent{
 				discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
-						createPreviousPageButton(false),
-						createNextPageButton(disableNextButton),
+						m.createPreviousPageButton(false),
+						m.createNextPageButton(disableNextButton),
 					},
 				},
 			},
 		},
 	})
-	// Type: discordgo.InteractionResponseUpdateMessage,
-	// Data: &discordgo.InteractionResponseData{
-	// Content: reply,
-	// Components: []discordgo.MessageComponent{
-	// discordgo.ActionsRow{
-	// Components: []discordgo.MessageComponent{
-	// m.createPreviousPageButton(false),
-	// m.createNextPageButton(false),
-	// },
-	// },
-	// },
-	// },
 	if err != nil {
 		return "", err
 	}
@@ -130,13 +113,12 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 }
 
 // HandlePreviousPageButton handle when the previous page button is clicked
-func (m *Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	m.QueryString.Page--
+func (m Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+	Cache.Query.Page--
 	err := m.FetchEvents()
 	if err != nil {
 		return "", err
 	}
-	state.events = events
 
 	reply := m.ConstructReply()
 
@@ -163,7 +145,7 @@ func (m *Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.
 
 // createNextPageButton create next page button
 // disabled: if the button should be disabled
-func (m *Meetup) createNextPageButton(disabled bool) discordgo.Button {
+func (m Meetup) createNextPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "➡️",
 		Style:    discordgo.PrimaryButton,
@@ -175,7 +157,7 @@ func (m *Meetup) createNextPageButton(disabled bool) discordgo.Button {
 
 // createPreviousPageButton create a previous page button
 // disabled: if the button should be disabled
-func (m *Meetup) createPreviousPageButton(disabled bool) discordgo.Button {
+func (m Meetup) createPreviousPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "⬅️",
 		Style:    discordgo.PrimaryButton,
@@ -184,7 +166,7 @@ func (m *Meetup) createPreviousPageButton(disabled bool) discordgo.Button {
 	}
 
 }
-func (*Meetup) Def() *discordgo.ApplicationCommand {
+func (Meetup) Def() *discordgo.ApplicationCommand {
 	obj := &discordgo.ApplicationCommand{
 		Version:     "1.0.0",
 		Name:        "meetup",
@@ -202,18 +184,17 @@ func (*Meetup) Def() *discordgo.ApplicationCommand {
 	return obj
 }
 
-func (m *Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+func (m Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	utils.DeferReply(sess, i.Interaction)
 	userOptions := utils.ParseUserOptions(sess, i)
-	m.QueryString.Query = userOptions["query"].StringValue()
-	m.QueryString.Page = 1
-	m.QueryString.PerPage = "4"
+	Cache.Query.Query = userOptions["query"].StringValue()
+	Cache.Query.Page = 1
+	Cache.Query.PerPage = "4"
 
 	err := m.FetchEvents()
 	if err != nil {
 		return "", err
 	}
-	state.events = events
 
 	// construct a reply from api body
 	reply := m.ConstructReply()
@@ -237,9 +218,9 @@ func (m *Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate
 
 // ConstructReply construct a reply with data from the API
 // returns: a string to be sent as a reply
-func (m *Meetup) ConstructReply() string {
+func (m Meetup) ConstructReply() string {
 	response := ""
-	for _, event := range events.Nodes {
+	for _, event := range Cache.events.Nodes {
 		description := strings.ReplaceAll(event.Description, "\n", " ")
 		// truncate description to 100 characters
 		if len(description) > 250 {
@@ -272,9 +253,9 @@ func (m *Meetup) ConstructReply() string {
 	return response
 }
 
-// FetchEvents get events from the meetup api. Store events in Meetup.Events
+// FetchEvents get events from the meetup api. Store events in Meetup.Events. Reads the query params from the cache
 // returns: errors if any
-func (m *Meetup) FetchEvents() error {
+func (m Meetup) FetchEvents() error {
 	// fmt.Printf("%+v\n", state.query)
 	// if state.query.Query == "" {
 	// return errors.New("query is empty")
@@ -288,10 +269,9 @@ func (m *Meetup) FetchEvents() error {
 	}
 
 	q := req.URL.Query()
-	q.Add("query", m.QueryString.Query)
-	q.Add("page", strconv.Itoa(m.QueryString.Page))
-	q.Add("per_page", m.QueryString.PerPage)
-
+	q.Add("query", Cache.Query.Query)
+	q.Add("page", strconv.Itoa(Cache.Query.Page))
+	q.Add("per_page", Cache.Query.PerPage)
 	req.URL.RawQuery = q.Encode()
 
 	res, err := http.DefaultClient.Do(req)
@@ -305,12 +285,26 @@ func (m *Meetup) FetchEvents() error {
 	}
 	var body Events
 	json.Unmarshal(b, &body)
+	Cache.events = body
+	Cache.Query.Page++
+	// TODO: remove this
 	cursor = body.PageInfo.EndCursor
-	return body, nil
+	return nil
 
 }
 
-// func (m *Meetup) CreateComponents() []discordgo.MessageComponent {
+// GetCache implements tech_events.TechEvent
+func (Meetup) GetCache() interface{} {
+	return Cache
+}
+
+// SetCache implements tech_events.TechEvent
+func (Meetup) SetCache(cache interface{}) interface{} {
+	Cache = cache.(State)
+	return Meetup{}
+}
+
+// func (m Meetup) CreateComponents() []discordgo.MessageComponent {
 // return []discordgo.MessageComponent{
 // m.createPreviousPageButton(false),
 // m.createNextPageButton(false),
@@ -318,7 +312,7 @@ func (m *Meetup) FetchEvents() error {
 // }
 
 // SetCache load data from Events into state cache
-// func (m *Meetup) SetCache() {
+// func (m Meetup) SetCache() {
 // state.query.Page = m.QueryString.Page
 // state.query.PerPage = m.QueryString.PerPage
 // state.query.Query = m.QueryString.Query
