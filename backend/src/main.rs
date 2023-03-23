@@ -31,6 +31,6 @@ fn rocket() -> _ {
     tokio::spawn(async move { cache_clone.monitor(4, 0.25, Duration::from_secs(3)).await });
 
     rocket::build()
-        .mount("/", routes![index, routes::tech_events::tech_events])
+        .mount("/", routes![index])
         .mount("/meetup", routes![routes::meetup::search])
 }
