@@ -62,8 +62,8 @@ var Cache State
 // var state State
 var cursor string
 
-var nextPageComponentID = "next page"
-var previousPageComponentID = "previous page"
+var nextPageComponentID = "meetup next page"
+var previousPageComponentID = "meetup previous page"
 
 func (m Meetup) Components() []commands.Component {
 	return []commands.Component{
@@ -83,6 +83,7 @@ func (m Meetup) HandleNextPageButton(sess *discordgo.Session, i *discordgo.Inter
 	if !Cache.events.PageInfo.HasNextPage {
 		return "No more pages", nil
 	}
+	m.IncrementPageNumber()
 	err := m.FetchEvents()
 	if err != nil {
 		return "", err
@@ -98,8 +99,8 @@ func (m Meetup) HandleNextPageButton(sess *discordgo.Session, i *discordgo.Inter
 			Components: []discordgo.MessageComponent{
 				discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
-						m.createPreviousPageButton(false),
-						m.createNextPageButton(disableNextButton),
+						createPreviousPageButton(false),
+						createNextPageButton(disableNextButton),
 					},
 				},
 			},
@@ -114,7 +115,7 @@ func (m Meetup) HandleNextPageButton(sess *discordgo.Session, i *discordgo.Inter
 
 // HandlePreviousPageButton handle when the previous page button is clicked
 func (m Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	Cache.Query.Page--
+	m.DecrementPageNumber()
 	err := m.FetchEvents()
 	if err != nil {
 		return "", err
@@ -129,8 +130,8 @@ func (m Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.I
 			Components: []discordgo.MessageComponent{
 				discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
-						m.createPreviousPageButton(false),
-						m.createNextPageButton(false),
+						createPreviousPageButton(false),
+						createNextPageButton(false),
 					},
 				},
 			},
@@ -145,7 +146,7 @@ func (m Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.I
 
 // createNextPageButton create next page button
 // disabled: if the button should be disabled
-func (m Meetup) createNextPageButton(disabled bool) discordgo.Button {
+func createNextPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "➡️",
 		Style:    discordgo.PrimaryButton,
@@ -157,7 +158,7 @@ func (m Meetup) createNextPageButton(disabled bool) discordgo.Button {
 
 // createPreviousPageButton create a previous page button
 // disabled: if the button should be disabled
-func (m Meetup) createPreviousPageButton(disabled bool) discordgo.Button {
+func createPreviousPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "⬅️",
 		Style:    discordgo.PrimaryButton,
@@ -204,8 +205,8 @@ func (m Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate)
 		Components: &[]discordgo.MessageComponent{
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{
-					m.createPreviousPageButton(true),
-					m.createNextPageButton(false),
+					createPreviousPageButton(true),
+					createNextPageButton(false),
 				},
 			},
 		},
@@ -256,11 +257,12 @@ func (m Meetup) ConstructReply() string {
 // FetchEvents get events from the meetup api. Store events in Meetup.Events. Reads the query params from the cache
 // returns: errors if any
 func (m Meetup) FetchEvents() error {
-	// fmt.Printf("%+v\n", state.query)
-	// if state.query.Query == "" {
-	// return errors.New("query is empty")
-	// }
-
+	// if cache is empty, use the query params from the struct
+	if Cache.Query.Page == 0 {
+		Cache.Query.Page = m.Query.Page
+		Cache.Query.Query = m.Query.Query
+		Cache.Query.PerPage = m.Query.PerPage
+	}
 	config := utils.LoadConfig()
 
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/meetup/search", config.ApiUrl), nil)
@@ -286,7 +288,7 @@ func (m Meetup) FetchEvents() error {
 	var body Events
 	json.Unmarshal(b, &body)
 	Cache.events = body
-	Cache.Query.Page++
+	// Cache.Query.Page++
 	// TODO: remove this
 	cursor = body.PageInfo.EndCursor
 	return nil
@@ -301,7 +303,17 @@ func (Meetup) GetCache() interface{} {
 // SetCache implements tech_events.TechEvent
 func (Meetup) SetCache(cache interface{}) interface{} {
 	Cache = cache.(State)
-	return Meetup{}
+	return Cache
+}
+
+// DecrementPageNumber implements tech_events.TechEvent
+func (Meetup) DecrementPageNumber() {
+	Cache.Query.Page--
+}
+
+// IncrementPageNumber implements tech_events.TechEvent
+func (Meetup) IncrementPageNumber() {
+	Cache.Query.Page++
 }
 
 // func (m Meetup) CreateComponents() []discordgo.MessageComponent {
