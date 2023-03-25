@@ -161,7 +161,7 @@ func (m Meetup) createPreviousPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "⬅️",
 		Style:    discordgo.PrimaryButton,
-		Disabled: false,
+		Disabled: disabled,
 		CustomID: previousPageComponentID,
 	}
 
@@ -204,7 +204,7 @@ func (m Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate)
 		Components: &[]discordgo.MessageComponent{
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{
-					m.createPreviousPageButton(false),
+					m.createPreviousPageButton(true),
 					m.createNextPageButton(false),
 				},
 			},
