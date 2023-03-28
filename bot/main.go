@@ -56,6 +56,13 @@ var (
 						PerPage: "4",
 					},
 				},
+				meetup.Meetup{
+					Query: meetup.QueryString{
+						Query:   "tech",
+						Page:    1,
+						PerPage: "4",
+					},
+				},
 			},
 		},
 	}

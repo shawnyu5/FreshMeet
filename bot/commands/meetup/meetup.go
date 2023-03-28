@@ -257,12 +257,6 @@ func (m Meetup) ConstructReply() string {
 // FetchEvents get events from the meetup api. Store events in Meetup.Events. Reads the query params from the cache
 // returns: errors if any
 func (m Meetup) FetchEvents() error {
-	// if cache is empty, use the query params from the struct
-	if Cache.Query.Page == 0 {
-		Cache.Query.Page = m.Query.Page
-		Cache.Query.Query = m.Query.Query
-		Cache.Query.PerPage = m.Query.PerPage
-	}
 	config := utils.LoadConfig()
 
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/meetup/search", config.ApiUrl), nil)
@@ -288,7 +282,6 @@ func (m Meetup) FetchEvents() error {
 	var body Events
 	json.Unmarshal(b, &body)
 	Cache.events = body
-	// Cache.Query.Page++
 	// TODO: remove this
 	cursor = body.PageInfo.EndCursor
 	return nil
