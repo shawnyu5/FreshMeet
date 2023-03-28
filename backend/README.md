@@ -10,6 +10,11 @@ A back end API to fetch networking events
 - `page`: page number to display
 - `per_page`: number of nodes to return
 
+`/tech-events?<page><per_page>` - return an accumulation of tech events, from various sources
+
+- `page`: page number to display
+- `per_page`: number of nodes to return
+
 ```json
 {
   "page_info": {

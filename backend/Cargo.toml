@@ -16,6 +16,7 @@ tokio = { version = "1.26.0", features = ["full"] }
 chrono = "0.4.23"
 retainer = "0.3"
 lazy_static = "1.4.0"
+rand = "0.8.5"
 
 
 # [toolchain]

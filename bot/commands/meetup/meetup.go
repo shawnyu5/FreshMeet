@@ -37,57 +37,61 @@ type Events struct {
 	} `json:"nodes"`
 }
 
-// /meetup command
-type Meetup struct{}
+type QueryString struct {
+	// the search query the user entered
+	Query   string
+	Page    int
+	PerPage string
+}
+
+// `/meetup` command
+type Meetup struct {
+	Query QueryString
+}
 
 // State local persistent state
 type State struct {
-	// events from the meetup api
+	// Query for the API
+	Query QueryString
+	// events fetched from the meetup api
 	events Events
-	// the search query the user entered
-	query string
-	// the current page number the user is on
-	page int
 }
 
-var state State
+var Cache State
+
+// var state State
 var cursor string
 
-var nextPageComponentID = "next page"
-var previousPageComponentID = "previous page"
+var nextPageComponentID = "meetup next page"
+var previousPageComponentID = "meetup previous page"
 
-func (Meetup) Components() []commands.Component {
+func (m Meetup) Components() []commands.Component {
 	return []commands.Component{
 		{
 			ComponentID:      nextPageComponentID,
-			ComponentHandler: handleNextPageButton,
+			ComponentHandler: m.HandleNextPageButton,
 		},
 		{
 			ComponentID:      previousPageComponentID,
-			ComponentHandler: handlePreviousPageButton,
+			ComponentHandler: m.HandlePreviousPageButton,
 		},
 	}
 }
 
-// handleNextPageButton handle when the next page button is clicked
-func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	if !state.events.PageInfo.HasNextPage {
+// HandleNextPageButton handle when the next page button is clicked
+func (m Meetup) HandleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+	if !Cache.events.PageInfo.HasNextPage {
 		return "No more pages", nil
 	}
-
-	state.page++
-	events, err := getEvents(state.query, state.page, 4)
+	m.IncrementPageNumber()
+	err := m.FetchEvents()
 	if err != nil {
 		return "", err
 	}
-	state.events = events
 
-	reply := constructReply(events)
+	reply := m.ConstructReply()
+	disableNextButton := !Cache.events.PageInfo.HasNextPage
 
-	disableNextButton := false
-	if !state.events.PageInfo.HasNextPage {
-		disableNextButton = true
-	}
 	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
 		Data: &discordgo.InteractionResponseData{
@@ -109,16 +113,15 @@ func handleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreat
 	return "Next page event updated", nil
 }
 
-// handlePreviousPageButton handle when the previous page button is clicked
-func handlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	state.page--
-	events, err := getEvents(state.query, state.page, 4)
+// HandlePreviousPageButton handle when the previous page button is clicked
+func (m Meetup) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+	m.DecrementPageNumber()
+	err := m.FetchEvents()
 	if err != nil {
 		return "", err
 	}
-	state.events = events
 
-	reply := constructReply(events)
+	reply := m.ConstructReply()
 
 	err = sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseUpdateMessage,
@@ -139,7 +142,6 @@ func handlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionC
 	}
 
 	return "previous page event updated", nil
-
 }
 
 // createNextPageButton create next page button
@@ -160,7 +162,7 @@ func createPreviousPageButton(disabled bool) discordgo.Button {
 	return discordgo.Button{
 		Label:    "⬅️",
 		Style:    discordgo.PrimaryButton,
-		Disabled: false,
+		Disabled: disabled,
 		CustomID: previousPageComponentID,
 	}
 
@@ -183,27 +185,27 @@ func (Meetup) Def() *discordgo.ApplicationCommand {
 	return obj
 }
 
-func (Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+func (m Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
 	utils.DeferReply(sess, i.Interaction)
 	userOptions := utils.ParseUserOptions(sess, i)
-	state.query = userOptions["query"].StringValue()
-	state.page = 1
+	Cache.Query.Query = userOptions["query"].StringValue()
+	Cache.Query.Page = 1
+	Cache.Query.PerPage = "4"
 
-	events, err := getEvents(state.query, state.page, 4)
+	err := m.FetchEvents()
 	if err != nil {
 		return "", err
 	}
-	state.events = events
 
 	// construct a reply from api body
-	reply := constructReply(events)
+	reply := m.ConstructReply()
 
 	_, err = sess.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
 		Content: &reply,
 		Components: &[]discordgo.MessageComponent{
 			discordgo.ActionsRow{
 				Components: []discordgo.MessageComponent{
-					createPreviousPageButton(false),
+					createPreviousPageButton(true),
 					createNextPageButton(false),
 				},
 			},
@@ -215,12 +217,11 @@ func (Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (
 	return "list of events sent", nil
 }
 
-// constructReply construct a reply with data from the API
-// events: events from the meetup api.
+// ConstructReply construct a reply with data from the API
 // returns: a string to be sent as a reply
-func constructReply(events Events) string {
+func (m Meetup) ConstructReply() string {
 	response := ""
-	for _, event := range events.Nodes {
+	for _, event := range Cache.events.Nodes {
 		description := strings.ReplaceAll(event.Description, "\n", " ")
 		// truncate description to 100 characters
 		if len(description) > 250 {
@@ -253,37 +254,71 @@ func constructReply(events Events) string {
 	return response
 }
 
-// getEvents get events from the meetup api
-// query: search query
-// page: page number
-// perPage: number of results per page
-// returns: events from the meetup api
-func getEvents(query string, page int, perPage int) (Events, error) {
+// FetchEvents get events from the meetup api. Store events in Meetup.Events. Reads the query params from the cache
+// returns: errors if any
+func (m Meetup) FetchEvents() error {
 	config := utils.LoadConfig()
 
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/meetup/search", config.ApiUrl), nil)
 	if err != nil {
-		return Events{}, err
+		return err
 	}
 
 	q := req.URL.Query()
-	q.Add("query", query)
-	q.Add("page", strconv.Itoa(page))
-	q.Add("per_page", strconv.Itoa(perPage))
+	q.Add("query", Cache.Query.Query)
+	q.Add("page", strconv.Itoa(Cache.Query.Page))
+	q.Add("per_page", Cache.Query.PerPage)
 	req.URL.RawQuery = q.Encode()
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return Events{}, err
+		return err
 	}
 
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return Events{}, err
+		return err
 	}
 	var body Events
 	json.Unmarshal(b, &body)
+	Cache.events = body
+	// TODO: remove this
 	cursor = body.PageInfo.EndCursor
-	return body, nil
+	return nil
 
 }
+
+// GetCache implements tech_events.TechEvent
+func (Meetup) GetCache() interface{} {
+	return Cache
+}
+
+// SetCache implements tech_events.TechEvent
+func (Meetup) SetCache(cache interface{}) interface{} {
+	Cache = cache.(State)
+	return Cache
+}
+
+// DecrementPageNumber implements tech_events.TechEvent
+func (Meetup) DecrementPageNumber() {
+	Cache.Query.Page--
+}
+
+// IncrementPageNumber implements tech_events.TechEvent
+func (Meetup) IncrementPageNumber() {
+	Cache.Query.Page++
+}
+
+// func (m Meetup) CreateComponents() []discordgo.MessageComponent {
+// return []discordgo.MessageComponent{
+// m.createPreviousPageButton(false),
+// m.createNextPageButton(false),
+// }
+// }
+
+// SetCache load data from Events into state cache
+// func (m Meetup) SetCache() {
+// state.query.Page = m.QueryString.Page
+// state.query.PerPage = m.QueryString.PerPage
+// state.query.Query = m.QueryString.Query
+// }
