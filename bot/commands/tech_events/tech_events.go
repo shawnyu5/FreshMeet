@@ -73,7 +73,6 @@ func (t TechEventCommand) Components() []commands.Component {
 
 // HandleNextPageButton handles when the next page button is clicked
 func (t TechEventCommand) HandleNextPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	// TODO: use this to signal loading when paginating
 	// update pagination buttons
 	messArr := make([]*discordgo.Message, 0)
 	for _, mess := range paginationMessages {

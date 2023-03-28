@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/shawnyu5/networking_bot/commands"
@@ -214,6 +216,28 @@ func (m Meetup) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate)
 	if err != nil {
 		return "", err
 	}
+
+	time.AfterFunc(5*time.Minute, func() {
+		reply := m.ConstructReply()
+
+		_, err = sess.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+			Content: &reply,
+			Components: &[]discordgo.MessageComponent{
+				discordgo.ActionsRow{
+					Components: []discordgo.MessageComponent{
+						createPreviousPageButton(true),
+						createNextPageButton(true),
+					},
+				},
+			},
+		})
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println("meetups buttons disabled")
+	})
+
 	return "list of events sent", nil
 }
 
