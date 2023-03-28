@@ -8,6 +8,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/shawnyu5/networking_bot/commands"
 	"github.com/shawnyu5/networking_bot/commands/meetup"
+	"github.com/shawnyu5/networking_bot/commands/tech_events"
 	"github.com/shawnyu5/networking_bot/middware"
 	utils "github.com/shawnyu5/networking_bot/utils"
 )
@@ -39,6 +40,31 @@ var (
 	// array of all slash commands in this bot
 	allCommands = []commands.Command{
 		meetup.Meetup{},
+		tech_events.TechEventCommand{
+			Modules: []tech_events.TechEvent{
+				meetup.Meetup{
+					Query: meetup.QueryString{
+						Query:   "programming",
+						Page:    1,
+						PerPage: "4",
+					},
+				},
+				meetup.Meetup{
+					Query: meetup.QueryString{
+						Query:   "coding",
+						Page:    1,
+						PerPage: "4",
+					},
+				},
+				meetup.Meetup{
+					Query: meetup.QueryString{
+						Query:   "tech",
+						Page:    1,
+						PerPage: "4",
+					},
+				},
+			},
+		},
 	}
 
 	// array of slash command defs
@@ -80,7 +106,6 @@ func init() {
 }
 
 func main() {
-
 	// dg.Identify.Intents |= discordgo.IntentGuildMessages
 	// dg.Identify.Intents |= discordgo.IntentGuildMembers
 	dg.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
