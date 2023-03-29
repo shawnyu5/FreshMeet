@@ -281,6 +281,13 @@ func (m Meetup) ConstructReply() string {
 // FetchEvents get events from the meetup api. Store events in Meetup.Events. Reads the query params from the cache
 // returns: errors if any
 func (m Meetup) FetchEvents() error {
+	// if no query, fetch events from Meetup struct
+	if Cache.Query.Query == "" {
+		Cache.Query.Query = m.Query.Query
+		Cache.Query.Page = m.Query.Page
+		Cache.Query.PerPage = m.Query.PerPage
+	}
+	// fmt.Printf("FetchEvents Cache: %+v\n", Cache.Query) // __AUTO_GENERATED_PRINT_VAR__
 	config := utils.LoadConfig()
 
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/meetup/search", config.ApiUrl), nil)
@@ -331,6 +338,12 @@ func (Meetup) DecrementPageNumber() {
 // IncrementPageNumber implements tech_events.TechEvent
 func (Meetup) IncrementPageNumber() {
 	Cache.Query.Page++
+}
+
+// ClearCache implements tech_events.TechEvent
+func (Meetup) ClearCache() {
+	empty := State{}
+	Cache = empty
 }
 
 // func (m Meetup) CreateComponents() []discordgo.MessageComponent {

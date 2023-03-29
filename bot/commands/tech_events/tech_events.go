@@ -20,6 +20,8 @@ type TechEvent interface {
 	SetCache(cache interface{}) interface{}
 	// get the package level cache
 	GetCache() interface{}
+	// clear out the package level cache
+	ClearCache()
 	// increase the page number in cache
 	IncrementPageNumber()
 	// decrease the page number in cache
@@ -183,7 +185,6 @@ func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.Interact
 	paginationMessages = append(paginationMessages, mess)
 
 	for _, mod := range t.Modules {
-		// mod.SetCache(cacheMap[hash(mod)])
 		err := mod.FetchEvents()
 		if err != nil {
 			return "", err
@@ -195,10 +196,12 @@ func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.Interact
 			return "", err
 		}
 
-		mod.GetCache()
+		// mod.GetCache()
 		// fmt.Printf("Handler cache: %+v\n", cache) // __AUTO_GENERATED_PRINT_VAR__
 		cacheMap[hash(mod)] = mod.GetCache()
 		messageMap[hash(mod)] = mess
+		// clear out the cache to force `FetchEvents` to use data from the parent struct
+		mod.ClearCache()
 
 		// send page separator
 		_, err = sess.ChannelMessageSend(i.ChannelID, "---------------------")
