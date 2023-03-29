@@ -66,10 +66,10 @@ func (t TechEventCommand) Components() []commands.Component {
 			ComponentID:      nextPageComponentID,
 			ComponentHandler: t.HandleNextPageButton,
 		},
-		// {
-		// ComponentID:      previousPageComponentID,
-		// ComponentHandler: t.HandlePreviousPageButton,
-		// },
+		{
+			ComponentID:      previousPageComponentID,
+			ComponentHandler: t.HandlePreviousPageButton,
+		},
 	}
 }
 
@@ -102,8 +102,6 @@ func (t TechEventCommand) HandleNextPageButton(sess *discordgo.Session, i *disco
 	for _, mod := range t.Modules {
 		// set the cache at the package level
 		mod.SetCache(cacheMap[hash(mod)])
-		// cache := mod.SetCache(cacheMap[hash(mod)])
-		// fmt.Printf("HandleNextPageButton cache: %+v\n", cache) // __AUTO_GENERATED_PRINT_VAR__
 		mod.IncrementPageNumber()
 		err := mod.FetchEvents()
 		if err != nil {
@@ -164,6 +162,97 @@ func (t TechEventCommand) HandleNextPageButton(sess *discordgo.Session, i *disco
 	paginationMessages = messArr
 
 	return "next page updated", nil
+}
+
+// HandleNextPageButton handles when the next page button is clicked
+func (t TechEventCommand) HandlePreviousPageButton(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
+	// update pagination buttons
+	messArr := make([]*discordgo.Message, 0)
+	for _, mess := range paginationMessages {
+		reply := "Loading..."
+		updatedMess, err := sess.ChannelMessageEditComplex(&discordgo.MessageEdit{
+			Content: &reply,
+			Components: []discordgo.MessageComponent{
+				discordgo.ActionsRow{
+					Components: []discordgo.MessageComponent{
+						createPreviousPageButton(false),
+						createNextPageButton(false),
+					},
+				},
+			},
+			ID:      mess.ID,
+			Channel: mess.ChannelID,
+		})
+		if err != nil {
+			return "", err
+		}
+		messArr = append(messArr, updatedMess)
+	}
+	paginationMessages = messArr
+
+	for _, mod := range t.Modules {
+		// set the cache at the package level
+		mod.SetCache(cacheMap[hash(mod)])
+		mod.DecrementPageNumber()
+		err := mod.FetchEvents()
+		if err != nil {
+			return "", err
+		}
+
+		reply := mod.ConstructReply()
+
+		mess := messageMap[hash(mod)]
+		mess, err = sess.ChannelMessageEdit(mess.ChannelID, mess.ID, reply)
+		if err != nil {
+			return "", err
+		}
+
+		messageMap[hash(mod)] = mess
+		cacheMap[hash(mod)] = mod.GetCache()
+	}
+
+	// TODO: idk why this is not able to update the interaction
+	sess.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseUpdateMessage,
+		Data: &discordgo.InteractionResponseData{
+			Components: []discordgo.MessageComponent{
+				discordgo.ActionsRow{
+					Components: []discordgo.MessageComponent{
+						createPreviousPageButton(false),
+						createNextPageButton(false),
+					},
+				},
+			},
+		},
+	})
+	// if err != nil {
+	// return "", err
+	// }
+
+	messArr = make([]*discordgo.Message, 0)
+	for _, mess := range paginationMessages {
+		reply := "previous page updated"
+		updatedMess, err := sess.ChannelMessageEditComplex(&discordgo.MessageEdit{
+			Content: &reply,
+			Components: []discordgo.MessageComponent{
+				discordgo.ActionsRow{
+					Components: []discordgo.MessageComponent{
+						createPreviousPageButton(false),
+						createNextPageButton(false),
+					},
+				},
+			},
+			ID:      mess.ID,
+			Channel: mess.ChannelID,
+		})
+		if err != nil {
+			return "", err
+		}
+		messArr = append(messArr, updatedMess)
+	}
+	paginationMessages = messArr
+
+	return "previous page updated", nil
 }
 
 // Def implements commands.Command
