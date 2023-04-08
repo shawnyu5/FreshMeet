@@ -7,7 +7,7 @@ COPY Cargo.toml .
 # create a dummy file to force cargo to build the dependencies
 RUN mkdir src \
    && echo "// dummy file" > src/lib.rs \
-   && cargo build --lib
+   && cargo build --lib --release
 
 COPY src src
 RUN cargo build --release

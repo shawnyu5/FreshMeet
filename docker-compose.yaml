@@ -2,8 +2,8 @@ services:
   api:
     build: ./backend
     image: shawnyu5/networking_accumulator
-    ports:
-      - "8000:8000"
+    # ports:
+      # - "8000:8000"
     hostname: api
     networks:
       - mynet

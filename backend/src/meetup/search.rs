@@ -218,7 +218,6 @@ impl request_body::Body {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     #[tokio::test]
     async fn test_search_pysical_events() {
         // let search = Search::default();
