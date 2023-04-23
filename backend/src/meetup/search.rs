@@ -98,6 +98,15 @@ pub mod request_body {
 
     use super::EventType;
 
+    /// convert a std::time::SystemTime to a String in ISO 8601 format
+    ///
+    /// * `st`: a system time to be converted
+    // fn iso8601(st: &std::time::SystemTime) -> String {
+    // let dt: DateTime<Utc> = st.clone().into();
+    // return format!("{}", dt.format("%+"));
+    // // formats like "2001-07-08T00:34:60.026490+09:30"
+    // }
+
     impl Default for super::request_body::Body {
         #[allow(dead_code)]
         fn default() -> super::request_body::Body {
@@ -113,6 +122,7 @@ pub mod request_body {
                     topicCategoryId: None,
                     eventType: Some(EventType::physical),
                     startDateRange: start_date_range.to_string(),
+                    startDate: None,
                     source: "EVENTS".to_string(),
                     query: "".to_string(),
                     sortField: "RELEVANCE".to_string(),
@@ -143,6 +153,7 @@ pub mod request_body {
         pub eventType: Option<super::EventType>,
         pub topicCategoryId: Option<String>,
         pub startDateRange: String,
+        pub startDate: Option<String>,
         pub source: String,
         pub query: String,
         pub sortField: String,

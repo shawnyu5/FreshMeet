@@ -154,6 +154,7 @@ pub struct SearchData<'a> {
     pub query: &'a str,
     pub page: i32,
     pub per_page: i32,
+    pub start_date: Option<String>,
 }
 
 #[post("/search", data = "<data>")]
@@ -179,6 +180,7 @@ pub async fn search_post(data: Json<SearchData<'_>>) -> Result<Json<Response>, B
         request.variables.query = data.query.to_string();
         request.variables.first = 20;
         request.variables.after = cursor.to_string().clone();
+        request.variables.startDate = data.start_date.clone();
 
         let search_result = request.search().await.unwrap();
 
@@ -292,6 +294,7 @@ mod test {
             query: "tech",
             page: 1,
             per_page: 10,
+            start_date: None,
         };
         let response = client
             .post(uri!("/meetup", search_post()))
@@ -354,6 +357,7 @@ mod test {
                     query: "tech",
                     page: 1,
                     per_page: 10,
+                    start_date: None,
                 })
                 .unwrap(),
             )
@@ -368,6 +372,7 @@ mod test {
                     query: "tech",
                     page: 2,
                     per_page: 10,
+                    start_date: None,
                 })
                 .unwrap(),
             )
@@ -407,6 +412,7 @@ mod test {
                     query: "tech",
                     page: 0,
                     per_page: 10,
+                    start_date: None,
                 })
                 .unwrap(),
             )
@@ -455,6 +461,7 @@ mod test {
                     query: "tech",
                     page: 1,
                     per_page: 4,
+                    start_date: None,
                 })
                 .unwrap(),
             )
@@ -474,6 +481,7 @@ mod test {
                     query: "tech",
                     page: 200,
                     per_page: 4,
+                    start_date: None,
                 })
                 .unwrap(),
             )
