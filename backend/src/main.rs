@@ -23,13 +23,14 @@ fn index() -> &'static str {
 #[launch]
 fn rocket() -> _ {
     println!("Starting on port 8000");
-    let cache_clone = CACHE.clone();
+    // let cache_clone = CACHE.clone();
 
     // don't forget to monitor your cache to evict entries
     // let monitor =
     // tokio::spawn(async move { cache_clone.monitor(4, 0.25, Duration::from_secs(3)).compact().await });
 
-    rocket::build()
-        .mount("/", routes![index])
-        .mount("/meetup", routes![routes::meetup::search])
+    rocket::build().mount("/", routes![index]).mount(
+        "/meetup",
+        routes![routes::meetup::search, routes::meetup::search_post],
+    )
 }
