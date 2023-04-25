@@ -266,63 +266,69 @@ func (TechEventCommand) Def() *discordgo.ApplicationCommand {
 
 // Handler implements commands.Command
 func (t TechEventCommand) Handler(sess *discordgo.Session, i *discordgo.InteractionCreate) (string, error) {
-	utils.DeferReply(sess, i.Interaction)
-	mess, err := sendPaginationButton(sess, i)
-	if err != nil {
-		return "", err
-	}
-	paginationMessages = append(paginationMessages, mess)
+	switch i.Type {
+	case discordgo.InteractionApplicationCommand:
+		utils.DeferReply(sess, i.Interaction)
+		mess, err := sendPaginationButton(sess, i)
+		if err != nil {
+			return "", err
+		}
+		paginationMessages = append(paginationMessages, mess)
 
-	for _, mod := range t.Modules {
-		err := mod.FetchEvents()
+		for _, mod := range t.Modules {
+			err := mod.FetchEvents()
+			if err != nil {
+				return "", err
+			}
+
+			reply := mod.ConstructReply()
+			mess, err := sess.ChannelMessageSend(i.ChannelID, reply)
+			if err != nil {
+				return "", err
+			}
+
+			// mod.GetCache()
+			// fmt.Printf("Handler cache: %+v\n", cache) // __AUTO_GENERATED_PRINT_VAR__
+			cacheMap[hash(mod)] = mod.GetCache()
+			messageMap[hash(mod)] = mess
+			// clear out the cache to force `FetchEvents` to use data from the parent struct
+			mod.ClearCache()
+
+			// send page separator
+			_, err = sess.ChannelMessageSend(i.ChannelID, "---------------------")
+			if err != nil {
+				return "", err
+			}
+		}
+
+		// respond to the interaction
+		res := "all events sent"
+		_, err = sess.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
+			Content: &res,
+			// Components: &[]discordgo.MessageComponent{
+			// discordgo.ActionsRow{
+			// Components: []discordgo.MessageComponent{
+			// createPreviousPageButton(false),
+			// createNextPageButton(false),
+			// },
+			// },
+			// },
+		})
 		if err != nil {
 			return "", err
 		}
 
-		reply := mod.ConstructReply()
-		mess, err := sess.ChannelMessageSend(i.ChannelID, reply)
+		mess, err = sendPaginationButton(sess, i)
 		if err != nil {
 			return "", err
 		}
+		paginationMessages = append(paginationMessages, mess)
 
-		// mod.GetCache()
-		// fmt.Printf("Handler cache: %+v\n", cache) // __AUTO_GENERATED_PRINT_VAR__
-		cacheMap[hash(mod)] = mod.GetCache()
-		messageMap[hash(mod)] = mess
-		// clear out the cache to force `FetchEvents` to use data from the parent struct
-		mod.ClearCache()
-
-		// send page separator
-		_, err = sess.ChannelMessageSend(i.ChannelID, "---------------------")
-		if err != nil {
-			return "", err
-		}
+		return "all events sent", nil
+	case discordgo.InteractionApplicationCommandAutocomplete:
+		return "", nil
 	}
-
-	// respond to the interaction
-	res := "all events sent"
-	_, err = sess.InteractionResponseEdit(i.Interaction, &discordgo.WebhookEdit{
-		Content: &res,
-		// Components: &[]discordgo.MessageComponent{
-		// discordgo.ActionsRow{
-		// Components: []discordgo.MessageComponent{
-		// createPreviousPageButton(false),
-		// createNextPageButton(false),
-		// },
-		// },
-		// },
-	})
-	if err != nil {
-		return "", err
-	}
-
-	mess, err = sendPaginationButton(sess, i)
-	if err != nil {
-		return "", err
-	}
-	paginationMessages = append(paginationMessages, mess)
-
-	return "all events sent", nil
+	return "", nil
 }
 
 // sendPaginationButton send pagination buttons to a channel.
