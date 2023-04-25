@@ -2,7 +2,6 @@ use crate::meetup;
 use crate::meetup::search::{request_body, Edge, PageInfo, Result_, RsvpState, SearchResult};
 use lazy_static::lazy_static;
 use retainer::Cache;
-use rocket::data::FromData;
 use rocket::response::status::BadRequest;
 use rocket::serde::{json::Json, Serialize};
 use serde::Deserialize;

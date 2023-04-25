@@ -5,7 +5,6 @@ use lazy_static::lazy_static;
 use meetup::search::Result_;
 use retainer::*;
 use std::sync::Arc;
-use std::time::Duration;
 
 mod eventbrite;
 mod meetup;
