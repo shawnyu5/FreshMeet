@@ -21,8 +21,18 @@ pub struct SearchData<'a> {
 /// * `page_info`: meta data for current page
 /// * `nodes`: list of event nodes
 pub struct Response {
-    page_info: PageInfo,
-    nodes: Vec<meetup::search::Result_>,
+    pub page_info: PageInfo,
+    pub nodes: Vec<Result_>,
+}
+
+impl IntoIterator for Response {
+    type Item = Result_;
+
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        return self.nodes.into_iter();
+    }
 }
 pub async fn search(data: SearchData<'_>) -> Result<Response, String> {
     // make sure page is not less than 1
@@ -173,7 +183,7 @@ mod test {
         assert_ne!(page_1_response, page_2_response);
     }
 
-    #[rocket::async_test]
+    #[tokio::test]
     /// test making a request with a page number less than 1 will return a status code 400 bad request
     async fn test_post_invalid_page_number() {
         let response = search(SearchData {

@@ -1,9 +1,9 @@
 use std::env;
 use std::{collections::HashSet, sync::Arc};
 mod commands;
+use crate::commands::command::Command;
 use serenity::async_trait;
 use serenity::client::bridge::gateway::ShardManager;
-use serenity::framework::standard::macros::group;
 use serenity::framework::StandardFramework;
 use serenity::http::Http;
 use serenity::model::application::interaction::Interaction;
@@ -13,8 +13,6 @@ use serenity::model::gateway::Ready;
 use serenity::model::prelude::GuildId;
 use serenity::prelude::*;
 use tracing::{error, info};
-
-use crate::commands::command::Command;
 
 pub struct ShardManagerContainer;
 
@@ -32,8 +30,8 @@ impl EventHandler for Handler {
             println!("Received command interaction: {:#?}", command);
 
             let content = match command.data.name.as_str() {
-                "ping" => commands::ping::Ping::run(&command.data.options),
-                "meetup" => commands::meetup::Meetup::run(&command.data.options),
+                "ping" => commands::ping::Ping::run(&command.data.options).await,
+                "meetup" => commands::meetup::Meetup::run(&command.data.options).await,
                 _ => "not implemented :(".to_string(),
             };
 
