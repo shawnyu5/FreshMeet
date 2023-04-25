@@ -11,6 +11,7 @@ pub struct Meetup;
 
 impl Command for Meetup {
     fn run(options: &[CommandDataOption]) -> String {
+        // TODO: send query to meetup.com
         options
             .get(0)
             .unwrap()
