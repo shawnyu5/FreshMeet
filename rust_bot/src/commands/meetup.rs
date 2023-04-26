@@ -6,8 +6,12 @@ use chrono::FixedOffset;
 use chrono::{DateTime, Utc};
 use networking_accumlator::search;
 use networking_accumlator::SearchData;
-use serenity::builder::{CreateButton, CreateComponents, EditInteractionResponse};
+use serenity::builder::{
+    CreateButton, CreateComponents, CreateInteractionResponseData,
+    CreateInteractionResponseFollowup, EditInteractionResponse,
+};
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
+use serenity::model::prelude::interaction::message_component::MessageComponentInteraction;
 use serenity::model::prelude::interaction::{Interaction, InteractionResponseType};
 use serenity::prelude::Context;
 use serenity::utils::MessageBuilder;
@@ -27,32 +31,38 @@ fn to_iso8601(st: &std::time::SystemTime) -> String {
     // formats like "2001-07-08T00:34:60.026490+09:30"
 }
 
-pub fn components(c: &mut CreateComponents) -> &mut CreateComponents {
-    c.create_action_row(|a| a.create_button(|b| b.label("Click me!").custom_id("click me")))
+pub fn create_components(c: &mut CreateComponents) -> &mut CreateComponents {
+    let ids = component_ids();
+    c.create_action_row(|a| {
+        a.create_button(|b| {
+            b.label("Click me!")
+                .custom_id(ids.get(0).expect("component ID not found"))
+        })
+    })
     // let mut button = CreateButton::default();
     // button.label("Click me!");
     // return button;
 }
 
-// pub async fn handle_button_click() {
-// let interaction = match m
-// .await_component_interaction(&ctx)
-// .timeout(Duration::from_secs(60 * 3))
-// .await
-// {
-// Some(x) => x,
-// None => {
-// m.reply(&ctx, "Timed out").await.unwrap();
-// return;
-// }
-// };
-// }
+pub fn component_ids<'a>() -> Vec<&'a str> {
+    vec!["click me"]
+}
+
+pub async fn handle_button_click(interaction: &MessageComponentInteraction, ctx: &Context) {
+    interaction
+        .create_interaction_response(&ctx.http, |r| {
+            r.kind(InteractionResponseType::ChannelMessageWithSource)
+                .interaction_response_data(|d| d.content("You clicked the button!"))
+        })
+        .await
+        .unwrap();
+}
 
 #[async_trait]
 impl Command for Meetup {
     async fn run(
-        interaction: &ApplicationCommandInteraction,
-        ctx: &Context,
+        _interaction: &ApplicationCommandInteraction,
+        _ctx: &Context,
         options: &[CommandDataOption],
     ) -> String {
         // interaction

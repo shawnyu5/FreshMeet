@@ -45,7 +45,7 @@ impl EventHandler for Handler {
             if let Err(why) = command
                 .edit_original_interaction_response(&ctx.http, |response| {
                     response.content(content).components(|c| {
-                        commands::meetup::components(c)
+                        commands::meetup::create_components(c)
                         // c.create_action_row(|a| a.create_button(|b| b.label("Click me!")))
                     })
                 })
@@ -53,9 +53,10 @@ impl EventHandler for Handler {
             {
                 println!("Cannot respond to slash command: {}", why);
             }
+        } else if let Interaction::MessageComponent(component) = &interaction {
+            dbg!(&component.data.custom_id);
+            commands::meetup::handle_button_click(&component, &ctx).await;
         }
-        // else if let InteractionMessageComponent(component_interaction) = &interaction {
-        // }
     }
 
     async fn ready(&self, ctx: Context, ready: Ready) {
