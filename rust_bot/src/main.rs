@@ -28,24 +28,34 @@ impl EventHandler for Handler {
     async fn interaction_create(&self, ctx: Context, interaction: Interaction) {
         if let Interaction::ApplicationCommand(command) = interaction {
             println!("Received command interaction: {:#?}", command);
+            command
+                .create_interaction_response(&ctx.http, |r| {
+                    r.kind(InteractionResponseType::DeferredChannelMessageWithSource)
+                })
+                .await
+                .unwrap();
 
             let content = match command.data.name.as_str() {
-                "ping" => commands::ping::Ping::run(&command.data.options).await,
-                "meetup" => commands::meetup::Meetup::run(&command.data.options).await,
+                "meetup" => {
+                    commands::meetup::Meetup::run(&command, &ctx, &command.data.options).await
+                }
                 _ => "not implemented :(".to_string(),
             };
 
             if let Err(why) = command
-                .create_interaction_response(&ctx.http, |response| {
-                    response
-                        .kind(InteractionResponseType::ChannelMessageWithSource)
-                        .interaction_response_data(|message| message.content(content))
+                .edit_original_interaction_response(&ctx.http, |response| {
+                    response.content(content).components(|c| {
+                        commands::meetup::components(c)
+                        // c.create_action_row(|a| a.create_button(|b| b.label("Click me!")))
+                    })
                 })
                 .await
             {
                 println!("Cannot respond to slash command: {}", why);
             }
         }
+        // else if let InteractionMessageComponent(component_interaction) = &interaction {
+        // }
     }
 
     async fn ready(&self, ctx: Context, ready: Ready) {
@@ -70,9 +80,7 @@ impl EventHandler for Handler {
 async fn register_commands(guild_id: &GuildId, ctx: &Context) {
     // check if the guild is cached
     let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
-        commands
-            .create_application_command(|command| commands::ping::Ping::register(command))
-            .create_application_command(|command| commands::meetup::Meetup::register(command))
+        commands.create_application_command(|command| commands::meetup::Meetup::register(command))
     })
     .await;
     dbg!(&commands);

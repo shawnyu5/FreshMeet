@@ -1,9 +1,15 @@
+use std::time::Duration;
+
 use super::command::Command;
 use async_trait::async_trait;
 use chrono::FixedOffset;
 use chrono::{DateTime, Utc};
 use networking_accumlator::search;
 use networking_accumlator::SearchData;
+use serenity::builder::{CreateButton, CreateComponents, EditInteractionResponse};
+use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
+use serenity::model::prelude::interaction::{Interaction, InteractionResponseType};
+use serenity::prelude::Context;
 use serenity::utils::MessageBuilder;
 use serenity::{
     builder::CreateApplicationCommand,
@@ -21,9 +27,40 @@ fn to_iso8601(st: &std::time::SystemTime) -> String {
     // formats like "2001-07-08T00:34:60.026490+09:30"
 }
 
+pub fn components(c: &mut CreateComponents) -> &mut CreateComponents {
+    c.create_action_row(|a| a.create_button(|b| b.label("Click me!").custom_id("click me")))
+    // let mut button = CreateButton::default();
+    // button.label("Click me!");
+    // return button;
+}
+
+// pub async fn handle_button_click() {
+// let interaction = match m
+// .await_component_interaction(&ctx)
+// .timeout(Duration::from_secs(60 * 3))
+// .await
+// {
+// Some(x) => x,
+// None => {
+// m.reply(&ctx, "Timed out").await.unwrap();
+// return;
+// }
+// };
+// }
+
 #[async_trait]
 impl Command for Meetup {
-    async fn run(options: &[CommandDataOption]) -> String {
+    async fn run(
+        interaction: &ApplicationCommandInteraction,
+        ctx: &Context,
+        options: &[CommandDataOption],
+    ) -> String {
+        // interaction
+        // .create_interaction_response(&ctx.http, |r| {
+        // r.kind(InteractionResponseType::DeferredChannelMessageWithSource)
+        // })
+        // .await
+        // .unwrap();
         let query = options.get(0).unwrap().value.as_ref().unwrap().to_string();
 
         // today's date
@@ -49,6 +86,7 @@ impl Command for Meetup {
                 builder.push_bold("description: ").push_line(&e.description);
                 let datetime = DateTime::parse_from_str(&e.dateTime, "%Y-%m-%dT%H:%M%z")
                     .unwrap()
+                    // TODO: dont use this deprecated function
                     .with_timezone(&FixedOffset::west(4 * 60 * 60)); // convert to EST
 
                 let formatted_time = datetime.format("%Y-%m-%d %H:%M:%S").to_string();
@@ -65,7 +103,6 @@ impl Command for Meetup {
             response = MessageBuilder::new().push("failed...").build();
         }
 
-        // let response = MessageBuilder::new().push("Result").build();
         return response;
     }
 
