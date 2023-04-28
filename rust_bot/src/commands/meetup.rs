@@ -1,18 +1,16 @@
-use std::time::Duration;
+use std::collections::HashMap;
+use std::fmt::Display;
 
-use super::command::Command;
+use super::command::SlashCommand;
 use async_trait::async_trait;
 use chrono::FixedOffset;
 use chrono::{DateTime, Utc};
 use networking_accumlator::search;
 use networking_accumlator::SearchData;
-use serenity::builder::{
-    CreateButton, CreateComponents, CreateInteractionResponseData,
-    CreateInteractionResponseFollowup, EditInteractionResponse,
-};
+use serenity::builder::CreateComponents;
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
 use serenity::model::prelude::interaction::message_component::MessageComponentInteraction;
-use serenity::model::prelude::interaction::{Interaction, InteractionResponseType};
+use serenity::model::prelude::interaction::InteractionResponseType;
 use serenity::prelude::Context;
 use serenity::utils::MessageBuilder;
 use serenity::{
@@ -25,30 +23,29 @@ use serenity::{
 /// the /meetup command
 pub struct Meetup;
 
+enum ComponentId {
+    ClickMe,
+    Next,
+    Previous,
+}
+
+impl Display for ComponentId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ComponentId::ClickMe => write!(f, "click me"),
+            ComponentId::Next => write!(f, "next"),
+            ComponentId::Previous => write!(f, "previous"),
+        }
+    }
+}
+
 fn to_iso8601(st: &std::time::SystemTime) -> String {
     let dt: DateTime<Utc> = st.clone().into();
     return format!("{}", dt.format("%+"));
     // formats like "2001-07-08T00:34:60.026490+09:30"
 }
 
-pub fn create_components(c: &mut CreateComponents) -> &mut CreateComponents {
-    let ids = component_ids();
-    c.create_action_row(|a| {
-        a.create_button(|b| {
-            b.label("Click me!")
-                .custom_id(ids.get(0).expect("component ID not found"))
-        })
-    })
-    // let mut button = CreateButton::default();
-    // button.label("Click me!");
-    // return button;
-}
-
-pub fn component_ids<'a>() -> Vec<&'a str> {
-    vec!["click me"]
-}
-
-pub async fn handle_button_click(interaction: &MessageComponentInteraction, ctx: &Context) {
+pub async fn handle_click_me(interaction: &MessageComponentInteraction, ctx: &Context) {
     interaction
         .create_interaction_response(&ctx.http, |r| {
             r.kind(InteractionResponseType::ChannelMessageWithSource)
@@ -59,18 +56,13 @@ pub async fn handle_button_click(interaction: &MessageComponentInteraction, ctx:
 }
 
 #[async_trait]
-impl Command for Meetup {
+impl SlashCommand for Meetup {
     async fn run(
+        &self,
         _interaction: &ApplicationCommandInteraction,
         _ctx: &Context,
         options: &[CommandDataOption],
     ) -> String {
-        // interaction
-        // .create_interaction_response(&ctx.http, |r| {
-        // r.kind(InteractionResponseType::DeferredChannelMessageWithSource)
-        // })
-        // .await
-        // .unwrap();
         let query = options.get(0).unwrap().value.as_ref().unwrap().to_string();
 
         // today's date
@@ -116,7 +108,7 @@ impl Command for Meetup {
         return response;
     }
 
-    fn register(command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
+    fn register(self, command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
         command
             .name("meetup")
             .description("Search meetup.com for events")
@@ -127,5 +119,40 @@ impl Command for Meetup {
                     .kind(CommandOptionType::String)
                     .required(true)
             })
+    }
+
+    /// create forward and back buttons
+    fn create_components(self, c: &mut CreateComponents) -> &mut CreateComponents {
+        c.create_action_row(|a| {
+            a.create_button(|b| b.label("Click me!").custom_id(ComponentId::ClickMe as u32))
+        })
+    }
+
+    /// handle previous and next page pagination
+    async fn handle_component_interaction(
+        self,
+        interaction: &MessageComponentInteraction,
+        ctx: &Context,
+    ) {
+        interaction
+            .create_interaction_response(&ctx.http, |r| {
+                r.kind(InteractionResponseType::ChannelMessageWithSource)
+                    .interaction_response_data(|d| d.content("You clicked the button!"))
+            })
+            .await
+            .unwrap();
+    }
+
+    fn component_handlers<'a>(
+        &self,
+        interaction: &MessageComponentInteraction,
+        ctx: &Context,
+    ) -> HashMap<String, Box<dyn std::future::Future<Output = ()>>> {
+        let mut map = HashMap::new();
+        map.insert(
+            ComponentId::ClickMe.to_string(),
+            Box::new(handle_click_me(interaction, ctx)),
+        );
+        return map;
     }
 }

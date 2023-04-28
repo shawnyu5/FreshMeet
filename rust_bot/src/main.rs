@@ -1,7 +1,9 @@
+use std::collections::HashMap;
 use std::env;
 use std::{collections::HashSet, sync::Arc};
 mod commands;
-use crate::commands::command::Command;
+use crate::commands::command::SlashCommand;
+use lazy_static::lazy_static;
 use serenity::async_trait;
 use serenity::client::bridge::gateway::ShardManager;
 use serenity::framework::StandardFramework;
@@ -12,12 +14,39 @@ use serenity::model::event::ResumedEvent;
 use serenity::model::gateway::Ready;
 use serenity::model::prelude::GuildId;
 use serenity::prelude::*;
+use tokio::runtime::Runtime;
+use tokio::task;
 use tracing::{error, info};
 
 pub struct ShardManagerContainer;
 
 impl TypeMapKey for ShardManagerContainer {
     type Value = Arc<Mutex<ShardManager>>;
+}
+
+lazy_static! {
+    /// hashmap of all commands name to their command struct
+    static ref COMMANDS: Mutex<HashMap<&'static str, &'static dyn SlashCommand>> = {
+        let mut map = HashMap::<&'static str, &'static dyn SlashCommand>::new();
+        map.insert("meetup", &commands::meetup::Meetup);
+        return Mutex::new(map);
+    };
+
+    /// hashmap of all component ids and their handler functions
+    static ref COMPONENT_IDS: Mutex<HashMap<String, fn()>> = {
+        let rt = Runtime::new().unwrap();
+        let result = rt.block_on(async {
+            let mut map = HashMap::<String, fn()>::new();
+            let commands = COMMANDS.lock().await;
+            for (_, cmd_def) in commands.iter() {
+                map.extend(cmd_def.component_handlers());
+            }
+            return map;
+        });
+
+        return Mutex::new(result);
+    };
+
 }
 
 /// the event handler
@@ -35,27 +64,35 @@ impl EventHandler for Handler {
                 .await
                 .unwrap();
 
-            let content = match command.data.name.as_str() {
-                "meetup" => {
-                    commands::meetup::Meetup::run(&command, &ctx, &command.data.options).await
-                }
-                _ => "not implemented :(".to_string(),
+            let commands = COMMANDS.lock().await;
+            // get the command struct with the name of the
+            let cmd_obj = commands.get(command.data.name.as_str());
+
+            let content = if cmd_obj.is_some() {
+                cmd_obj
+                    .unwrap()
+                    .run(&command, &ctx, &command.data.options)
+                    .await
+            } else {
+                "not implemented :(".to_string()
             };
 
             if let Err(why) = command
                 .edit_original_interaction_response(&ctx.http, |response| {
-                    response.content(content).components(|c| {
-                        commands::meetup::create_components(c)
-                        // c.create_action_row(|a| a.create_button(|b| b.label("Click me!")))
-                    })
+                    response
+                        .content(content)
+                        .components(|c| commands::meetup::Meetup.create_components(c))
                 })
                 .await
             {
                 println!("Cannot respond to slash command: {}", why);
             }
         } else if let Interaction::MessageComponent(component) = &interaction {
-            dbg!(&component.data.custom_id);
-            commands::meetup::handle_button_click(&component, &ctx).await;
+            // let commands = COMMANDS.lock().await;
+            // let cmd_obj = commands.get(component.data.custom_id.as_str());
+            commands::meetup::Meetup
+                .handle_component_interaction(&component, &ctx)
+                .await;
         }
     }
 
@@ -81,7 +118,7 @@ impl EventHandler for Handler {
 async fn register_commands(guild_id: &GuildId, ctx: &Context) {
     // check if the guild is cached
     let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
-        commands.create_application_command(|command| commands::meetup::Meetup::register(command))
+        commands.create_application_command(|command| commands::meetup::Meetup.register(command))
     })
     .await;
     dbg!(&commands);
@@ -90,6 +127,13 @@ async fn register_commands(guild_id: &GuildId, ctx: &Context) {
     // sender
     // .send(format!("Registered commands for guild {}", guild_id))
     // .unwrap();
+}
+
+async fn delete_commands(guild_id: &GuildId, http: Http) {
+    // TODO: how to delete commands
+    println!("Deleting commands for guild {}", guild_id)
+    // guild_id.delete_application_command(http);
+    // http.delete_guild_application_command(guild_id)
 }
 
 #[tokio::main]
@@ -139,6 +183,11 @@ async fn main() {
             .await
             .expect("Could not register ctrl+c handler");
         shard_manager.lock().await.shutdown_all().await;
+        dbg!("Shutting down");
+        // let ctx = &client.cache_and_http.cache;
+        // for guild_id in ctx.guilds() {
+        // register_commands(&guild_id, &ctx).await;
+        // }
     });
 
     if let Err(why) = client.start().await {
