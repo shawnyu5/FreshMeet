@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-use std::env;
-use std::{collections::HashSet, sync::Arc};
 mod commands;
+mod utils;
+
 use crate::commands::command::SlashCommand;
 use lazy_static::lazy_static;
 use serenity::async_trait;
@@ -14,8 +13,12 @@ use serenity::model::event::ResumedEvent;
 use serenity::model::gateway::Ready;
 use serenity::model::prelude::GuildId;
 use serenity::prelude::*;
+use std::collections::hash_map::DefaultHasher;
+use std::collections::HashMap;
+use std::hash::{Hash, Hasher};
+use std::{collections::HashSet, sync::Arc};
+use std::{dbg, env};
 use tokio::runtime::Runtime;
-use tokio::task;
 use tracing::{error, info};
 
 pub struct ShardManagerContainer;
@@ -32,20 +35,20 @@ lazy_static! {
         return Mutex::new(map);
     };
 
-    /// hashmap of all component ids and their handler functions
-    static ref COMPONENT_IDS: Mutex<HashMap<String, fn()>> = {
-        let rt = Runtime::new().unwrap();
-        let result = rt.block_on(async {
-            let mut map = HashMap::<String, fn()>::new();
-            let commands = COMMANDS.lock().await;
-            for (_, cmd_def) in commands.iter() {
-                map.extend(cmd_def.component_handlers());
-            }
-            return map;
-        });
+    // /// hashmap of all component ids and their handler functions
+    // static ref COMPONENT_IDS: Mutex<HashMap<String, fn()>> = {
+        // let rt = Runtime::new().unwrap();
+        // let result = rt.block_on(async {
+            // let mut map = HashMap::<String, fn()>::new();
+            // let commands = COMMANDS.lock().await;
+            // for (_, cmd_def) in commands.iter() {
+                // map.extend(cmd_def.component_handlers());
+            // }
+            // return map;
+        // });
 
-        return Mutex::new(result);
-    };
+        // return Mutex::new(result);
+    // };
 
 }
 
@@ -88,11 +91,16 @@ impl EventHandler for Handler {
                 println!("Cannot respond to slash command: {}", why);
             }
         } else if let Interaction::MessageComponent(component) = &interaction {
-            // let commands = COMMANDS.lock().await;
-            // let cmd_obj = commands.get(component.data.custom_id.as_str());
-            commands::meetup::Meetup
-                .handle_component_interaction(&component, &ctx)
-                .await;
+            for (_, cmd_def) in COMMANDS.lock().await.iter() {
+                let component_ids = cmd_def.all_component_ids();
+                // check if the current slash command handles this component interaction
+                if component_ids
+                    .values()
+                    .any(|value| value == &component.data.custom_id)
+                {
+                    cmd_def.handle_component_interaction(&component, &ctx).await;
+                }
+            }
         }
     }
 
@@ -140,6 +148,7 @@ async fn delete_commands(guild_id: &GuildId, http: Http) {
 async fn main() {
     // This will load the environment variables located at `./.env`, relative to
     dotenv::dotenv().expect("Failed to load .env file");
+    // commands::meetup::test();
 
     // Initialize the logger to use environment variables.
     //

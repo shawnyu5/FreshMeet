@@ -1,8 +1,9 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, future::Future, pin::Pin};
 
 use async_trait::async_trait;
 use serenity::{
     builder::{CreateApplicationCommand, CreateComponents},
+    futures::future::BoxFuture,
     model::prelude::interaction::{
         application_command::{ApplicationCommandInteraction, CommandDataOption},
         message_component::MessageComponentInteraction,
@@ -44,10 +45,11 @@ pub trait SlashCommand: Send + Sync {
 
     /// handle the component interaction
     ///
+    /// * `interaction_id`: the component interaction id
     /// * `interaction`: component interaction object
     /// * `ctx`: command context
     async fn handle_component_interaction(
-        self,
+        &self,
         interaction: &MessageComponentInteraction,
         ctx: &Context,
     );
@@ -58,7 +60,19 @@ pub trait SlashCommand: Send + Sync {
     /// returns a map of component id to component handler function
     fn component_handlers<'a>(
         &self,
-        interaction: &MessageComponentInteraction,
-        ctx: &Context,
-    ) -> HashMap<String, Box<dyn std::future::Future<Output = ()>>>;
+        // interaction: &'static MessageComponentInteraction,
+        // ctx: &'static Context,
+    ) -> HashMap<
+        String,
+        Box<
+            dyn Fn(
+                &'a MessageComponentInteraction,
+                &'a Context,
+            ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>,
+        >,
+    >;
+
+    fn all_component_ids(&self) -> HashMap<String, String>;
+    // -> HashMap<String, Box<Pin<Box<dyn Future<Output = ()> + Send>>>>;
+    // -> HashMap<String, Box<dyn Fn(&MessageComponentInteraction, &Context) -> BoxFuture<'a, ()>>>;
 }

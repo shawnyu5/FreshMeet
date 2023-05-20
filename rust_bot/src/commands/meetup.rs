@@ -1,6 +1,3 @@
-use std::collections::HashMap;
-use std::fmt::Display;
-
 use super::command::SlashCommand;
 use async_trait::async_trait;
 use chrono::FixedOffset;
@@ -19,14 +16,39 @@ use serenity::{
         command::CommandOptionType, interaction::application_command::CommandDataOption,
     },
 };
+use std::collections::hash_map::DefaultHasher;
+use std::collections::HashMap;
+use std::fmt::Display;
+use std::future::Future;
+use std::hash::{Hash, Hasher};
+use std::pin::Pin;
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 
 /// the /meetup command
 pub struct Meetup;
 
-enum ComponentId {
+#[derive(EnumIter)]
+pub enum ComponentId {
     ClickMe,
     Next,
     Previous,
+}
+
+impl Hash for ComponentId {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        match self {
+            ComponentId::ClickMe => {
+                "ClickMe".hash(state);
+            }
+            ComponentId::Next => {
+                "Next".hash(state);
+            }
+            ComponentId::Previous => {
+                "Previous".hash(state);
+            }
+        }
+    }
 }
 
 impl Display for ComponentId {
@@ -123,36 +145,137 @@ impl SlashCommand for Meetup {
 
     /// create forward and back buttons
     fn create_components(self, c: &mut CreateComponents) -> &mut CreateComponents {
+        let hashed_component_ids = self.all_component_ids();
+        let mut hasher = DefaultHasher::new();
+        ComponentId::ClickMe.hash(&mut hasher);
         c.create_action_row(|a| {
-            a.create_button(|b| b.label("Click me!").custom_id(ComponentId::ClickMe as u32))
+            a.create_button(|b| {
+                b.label("Click me!").custom_id(
+                    hashed_component_ids
+                        .get(&ComponentId::ClickMe.to_string())
+                        .unwrap(),
+                )
+            })
+            .create_button(|b| {
+                b.label("Next").custom_id(
+                    hashed_component_ids
+                        .get(&ComponentId::Next.to_string())
+                        .unwrap(),
+                )
+            })
         })
     }
 
     /// handle previous and next page pagination
     async fn handle_component_interaction(
-        self,
+        &self,
         interaction: &MessageComponentInteraction,
         ctx: &Context,
     ) {
-        interaction
-            .create_interaction_response(&ctx.http, |r| {
-                r.kind(InteractionResponseType::ChannelMessageWithSource)
-                    .interaction_response_data(|d| d.content("You clicked the button!"))
-            })
-            .await
+        let component_ids = self.all_component_ids();
+        let click_me_id = component_ids
+            .get(&ComponentId::ClickMe.to_string())
             .unwrap();
+        let next_id = component_ids.get(&ComponentId::Next.to_string()).unwrap();
+        let previous_id = component_ids
+            .get(&ComponentId::Previous.to_string())
+            .unwrap();
+
+        dbg!(&interaction.data.custom_id);
+        dbg!(next_id);
+        match &interaction.data.custom_id {
+            value if value == click_me_id => {
+                interaction
+                    .create_interaction_response(&ctx.http, |r| {
+                        r.kind(InteractionResponseType::ChannelMessageWithSource)
+                            .interaction_response_data(|d| d.content("You clicked the button!!!!"))
+                    })
+                    .await
+                    .unwrap();
+            }
+            value if value == next_id => {
+                interaction
+                    .create_interaction_response(&ctx.http, |r| {
+                        r.kind(InteractionResponseType::ChannelMessageWithSource)
+                            .interaction_response_data(|d| d.content("Next button"))
+                    })
+                    .await
+                    .unwrap();
+            }
+            value if value == previous_id => {
+                interaction
+                    .create_interaction_response(&ctx.http, |r| {
+                        r.kind(InteractionResponseType::ChannelMessageWithSource)
+                            .interaction_response_data(|d| d.content("previous button"))
+                    })
+                    .await
+                    .unwrap();
+            }
+            _ => {
+                println!("no match");
+            }
+        }
     }
 
     fn component_handlers<'a>(
         &self,
-        interaction: &MessageComponentInteraction,
-        ctx: &Context,
-    ) -> HashMap<String, Box<dyn std::future::Future<Output = ()>>> {
-        let mut map = HashMap::new();
+        // interaction: &'static MessageComponentInteraction,
+        // ctx: &Context,
+    ) -> HashMap<
+        String,
+        Box<
+            dyn Fn(
+                &'a MessageComponentInteraction,
+                &'a Context,
+            ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>,
+        >,
+    > {
+        let mut map: HashMap<
+            String,
+            Box<
+                dyn Fn(
+                    &'a MessageComponentInteraction,
+                    &'a Context,
+                ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>,
+            >,
+        > = HashMap::new();
+
         map.insert(
             ComponentId::ClickMe.to_string(),
-            Box::new(handle_click_me(interaction, ctx)),
+            Box::new(|interaction, ctx| Box::pin(handle_click_me(interaction, ctx))),
         );
+        // map.insert(
+        // ComponentId::ClickMe.to_string(),
+        // Box::new(|interaction, ctx| Box::pin(Meetup::handle_click_me(interaction, ctx))),
+        // );
         return map;
     }
+
+    /// hashmap of component name to component custom id
+    fn all_component_ids(&self) -> HashMap<String, String> {
+        // TODO: Could this be auto generated using a macro?
+
+        let mut component_ids = HashMap::new();
+        // let mut component_ids = Vec::<String>::new();
+        let mut hasher = DefaultHasher::new();
+
+        for component_id in ComponentId::iter() {
+            component_id.hash(&mut hasher);
+            component_ids.insert(component_id.to_string(), hasher.finish().to_string());
+        }
+        return component_ids;
+    }
 }
+
+// pub fn test() {
+// let mut map = HashMap::new();
+// map.insert(
+// ComponentId::ClickMe.to_string(),
+// Box::new(|interaction, ctx| (handle_click_me(interaction, ctx)).boxed()),
+// );
+// // map.insert(
+// // ComponentId::ClickMe.to_string(),
+// // Box::new(|interaction, ctx| Box::pin(Meetup::handle_click_me(interaction, ctx))),
+// // );
+// // return map;
+// }
