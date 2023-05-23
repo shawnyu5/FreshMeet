@@ -1,14 +1,13 @@
-use super::command::SlashCommand;
 use async_trait::async_trait;
 use chrono::FixedOffset;
 use chrono::{DateTime, Utc};
-use networking_accumlator::search;
 use networking_accumlator::SearchData;
+use networking_accumlator::{search, Response};
 use serenity::builder::CreateComponents;
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
 use serenity::model::prelude::interaction::message_component::MessageComponentInteraction;
 use serenity::model::prelude::interaction::InteractionResponseType;
-use serenity::prelude::Context;
+use serenity::prelude::{Context, TypeMapKey};
 use serenity::utils::MessageBuilder;
 use serenity::{
     builder::CreateApplicationCommand,
@@ -19,18 +18,30 @@ use serenity::{
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
 use std::fmt::Display;
-use std::future::Future;
 use std::hash::{Hash, Hasher};
-use std::pin::Pin;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
+use super::command::SlashCommand;
+
 /// the /meetup command
-pub struct Meetup;
+#[derive(Clone)]
+pub struct Meetup {
+    search_query: String,
+    page_number: i32,
+}
+
+impl Default for Meetup {
+    fn default() -> Self {
+        Self {
+            page_number: 1,
+            search_query: "".to_string(),
+        }
+    }
+}
 
 #[derive(EnumIter)]
 pub enum ComponentId {
-    ClickMe,
     Next,
     Previous,
 }
@@ -38,9 +49,6 @@ pub enum ComponentId {
 impl Hash for ComponentId {
     fn hash<H: Hasher>(&self, state: &mut H) {
         match self {
-            ComponentId::ClickMe => {
-                "ClickMe".hash(state);
-            }
             ComponentId::Next => {
                 "Next".hash(state);
             }
@@ -54,7 +62,6 @@ impl Hash for ComponentId {
 impl Display for ComponentId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ComponentId::ClickMe => write!(f, "click me"),
             ComponentId::Next => write!(f, "next"),
             ComponentId::Previous => write!(f, "previous"),
         }
@@ -67,62 +74,36 @@ fn to_iso8601(st: &std::time::SystemTime) -> String {
     // formats like "2001-07-08T00:34:60.026490+09:30"
 }
 
-pub async fn handle_click_me(interaction: &MessageComponentInteraction, ctx: &Context) {
-    interaction
-        .create_interaction_response(&ctx.http, |r| {
-            r.kind(InteractionResponseType::ChannelMessageWithSource)
-                .interaction_response_data(|d| d.content("You clicked the button!"))
-        })
-        .await
-        .unwrap();
+impl TypeMapKey for Meetup {
+    type Value = Meetup;
 }
-
 #[async_trait]
 impl SlashCommand for Meetup {
-    async fn run(
-        &self,
-        _interaction: &ApplicationCommandInteraction,
-        _ctx: &Context,
-        options: &[CommandDataOption],
-    ) -> String {
-        let query = options.get(0).unwrap().value.as_ref().unwrap().to_string();
+    async fn run(&mut self, interaction: &ApplicationCommandInteraction, ctx: &Context) -> String {
+        self.search_query = interaction
+            .data
+            .options
+            .get(0)
+            .unwrap()
+            .value
+            .as_ref()
+            .unwrap()
+            .to_string();
 
         // today's date
         let today = to_iso8601(&std::time::SystemTime::now());
 
-        let result = search(SearchData {
-            query: query.as_str(),
-            page: 1,
+        let search_result = search(SearchData {
+            query: self.search_query.as_str(),
+            page: self.page_number,
             per_page: 3,
             start_date: today.into(),
         })
         .await;
 
         let response: String;
-        if let Ok(events) = result {
-            let mut builder = MessageBuilder::new();
-            events.into_iter().for_each(|mut e| {
-                builder.push_bold("title: ").push_line(&e.title);
-                if &e.description.len() > &250 {
-                    e.description = e.description[0..249].to_string();
-                    e.description.push_str("...");
-                }
-                builder.push_bold("description: ").push_line(&e.description);
-                let datetime = DateTime::parse_from_str(&e.dateTime, "%Y-%m-%dT%H:%M%z")
-                    .unwrap()
-                    // TODO: dont use this deprecated function
-                    .with_timezone(&FixedOffset::west(4 * 60 * 60)); // convert to EST
-
-                let formatted_time = datetime.format("%Y-%m-%d %H:%M:%S").to_string();
-                builder
-                    .push_bold("date: ")
-                    .push_line(formatted_time)
-                    .push_bold("link: ")
-                    .push_line(String::from("<".to_owned() + &e.eventUrl + ">"))
-                    .push_line(" ");
-            });
-
-            response = builder.build();
+        if let Ok(events) = search_result {
+            response = format_search_result(events);
         } else {
             response = MessageBuilder::new().push("failed...").build();
         }
@@ -144,19 +125,10 @@ impl SlashCommand for Meetup {
     }
 
     /// create forward and back buttons
-    fn create_components(self, c: &mut CreateComponents) -> &mut CreateComponents {
+    fn create_components<'a>(&self, c: &'a mut CreateComponents) -> &'a mut CreateComponents {
         let hashed_component_ids = self.all_component_ids();
-        let mut hasher = DefaultHasher::new();
-        ComponentId::ClickMe.hash(&mut hasher);
         c.create_action_row(|a| {
             a.create_button(|b| {
-                b.label("Click me!").custom_id(
-                    hashed_component_ids
-                        .get(&ComponentId::ClickMe.to_string())
-                        .unwrap(),
-                )
-            })
-            .create_button(|b| {
                 b.label("Next").custom_id(
                     hashed_component_ids
                         .get(&ComponentId::Next.to_string())
@@ -166,95 +138,71 @@ impl SlashCommand for Meetup {
         })
     }
 
-    /// handle previous and next page pagination
+    /// handle next page pagination
     async fn handle_component_interaction(
-        &self,
+        &mut self,
         interaction: &MessageComponentInteraction,
         ctx: &Context,
     ) {
         let component_ids = self.all_component_ids();
-        let click_me_id = component_ids
-            .get(&ComponentId::ClickMe.to_string())
-            .unwrap();
         let next_id = component_ids.get(&ComponentId::Next.to_string()).unwrap();
-        let previous_id = component_ids
-            .get(&ComponentId::Previous.to_string())
-            .unwrap();
+        // let previous_id = component_ids
+        // .get(&ComponentId::Previous.to_string())
+        // .unwrap();
+        let today = to_iso8601(&std::time::SystemTime::now());
 
-        dbg!(&interaction.data.custom_id);
-        dbg!(next_id);
         match &interaction.data.custom_id {
-            value if value == click_me_id => {
-                interaction
-                    .create_interaction_response(&ctx.http, |r| {
-                        r.kind(InteractionResponseType::ChannelMessageWithSource)
-                            .interaction_response_data(|d| d.content("You clicked the button!!!!"))
-                    })
-                    .await
-                    .unwrap();
-            }
             value if value == next_id => {
+                self.page_number += 1;
+                let search_result = search(SearchData {
+                    query: self.search_query.as_str(),
+                    page: self.page_number,
+                    per_page: 3,
+                    start_date: today.into(),
+                })
+                .await
+                .unwrap();
+
+                let reply = format_search_result(search_result);
                 interaction
                     .create_interaction_response(&ctx.http, |r| {
                         r.kind(InteractionResponseType::ChannelMessageWithSource)
-                            .interaction_response_data(|d| d.content("Next button"))
+                            .interaction_response_data(|d| {
+                                d.content(reply).components(|c| self.create_components(c))
+                            })
                     })
                     .await
                     .unwrap();
+
+                // interaction
+                // .delete_original_interaction_response(&ctx.http)
+                // .await
+                // .unwrap();
+                // interaction
+                // .edit_original_interaction_response(&ctx.http, |response| {
+                // response.content(reply)
+                // })
+                // .await
+                // .unwrap();
             }
-            value if value == previous_id => {
-                interaction
-                    .create_interaction_response(&ctx.http, |r| {
-                        r.kind(InteractionResponseType::ChannelMessageWithSource)
-                            .interaction_response_data(|d| d.content("previous button"))
-                    })
-                    .await
-                    .unwrap();
-            }
+            // value if value == previous_id => {
+            // interaction
+            // .create_interaction_response(&ctx.http, |r| {
+            // r.kind(InteractionResponseType::ChannelMessageWithSource)
+            // .interaction_response_data(|d| d.content("Previous page button"))
+            // })
+            // .await
+            // .unwrap();
+            // }
             _ => {
                 println!("no match");
             }
         }
     }
 
-    fn component_handlers<'a>(
-        &self,
-        // interaction: &'static MessageComponentInteraction,
-        // ctx: &Context,
-    ) -> HashMap<
-        String,
-        Box<
-            dyn Fn(
-                &'a MessageComponentInteraction,
-                &'a Context,
-            ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>,
-        >,
-    > {
-        let mut map: HashMap<
-            String,
-            Box<
-                dyn Fn(
-                    &'a MessageComponentInteraction,
-                    &'a Context,
-                ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>,
-            >,
-        > = HashMap::new();
-
-        map.insert(
-            ComponentId::ClickMe.to_string(),
-            Box::new(|interaction, ctx| Box::pin(handle_click_me(interaction, ctx))),
-        );
-        // map.insert(
-        // ComponentId::ClickMe.to_string(),
-        // Box::new(|interaction, ctx| Box::pin(Meetup::handle_click_me(interaction, ctx))),
-        // );
-        return map;
-    }
-
     /// hashmap of component name to component custom id
     fn all_component_ids(&self) -> HashMap<String, String> {
         // TODO: Could this be auto generated using a macro?
-
         let mut component_ids = HashMap::new();
         // let mut component_ids = Vec::<String>::new();
         let mut hasher = DefaultHasher::new();
@@ -267,15 +215,36 @@ impl SlashCommand for Meetup {
     }
 }
 
-// pub fn test() {
-// let mut map = HashMap::new();
-// map.insert(
-// ComponentId::ClickMe.to_string(),
-// Box::new(|interaction, ctx| (handle_click_me(interaction, ctx)).boxed()),
-// );
-// // map.insert(
-// // ComponentId::ClickMe.to_string(),
-// // Box::new(|interaction, ctx| Box::pin(Meetup::handle_click_me(interaction, ctx))),
-// // );
-// // return map;
-// }
+/// format the search result into a string to be sent to discord
+///
+/// * `events`: events returned from meetup.com
+/// return: formatted string to be sent to discord
+fn format_search_result(events: Response) -> String {
+    let mut builder = MessageBuilder::new();
+    events.into_iter().for_each(|mut e| {
+        builder.push_bold("title: ").push_line(&e.title);
+        // truncate description if it is too long
+        if &e.description.len() > &250 {
+            e.description = e.description[0..249].to_string();
+            e.description.push_str("...");
+        }
+        // delete bold marks
+        e.description = e.description.replace("**", "");
+
+        builder.push_bold("description: ").push_line(&e.description);
+        let datetime = DateTime::parse_from_str(&e.dateTime, "%Y-%m-%dT%H:%M%z")
+            .unwrap()
+            // TODO: dont use this deprecated function
+            .with_timezone(&FixedOffset::west(4 * 60 * 60)); // convert to EST
+
+        let formatted_time = datetime.format("%Y-%m-%d %H:%M:%S").to_string();
+        builder
+            .push_bold("date: ")
+            .push_line(formatted_time)
+            .push_bold("link: ")
+            .push_line(String::from("<".to_owned() + &e.eventUrl + ">"))
+            .push_line(" ");
+    });
+
+    return builder.build();
+}

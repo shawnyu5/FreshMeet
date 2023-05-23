@@ -1,20 +1,14 @@
-use std::{collections::HashMap, future::Future, pin::Pin};
+use std::collections::HashMap;
 
 use async_trait::async_trait;
 use serenity::{
     builder::{CreateApplicationCommand, CreateComponents},
-    futures::future::BoxFuture,
     model::prelude::interaction::{
-        application_command::{ApplicationCommandInteraction, CommandDataOption},
+        application_command::ApplicationCommandInteraction,
         message_component::MessageComponentInteraction,
     },
     prelude::Context,
 };
-
-pub type AsyncFunc = fn(
-    interaction: &MessageComponentInteraction,
-    ctx: &Context,
-) -> dyn std::future::Future<Output = ()>;
 
 #[async_trait]
 pub trait SlashCommand: Send + Sync {
@@ -24,12 +18,7 @@ pub trait SlashCommand: Send + Sync {
     /// * `ctx`: the context
     /// * `options`: command options
     /// * returns a string that will be sent to the user
-    async fn run(
-        &self,
-        interaction: &ApplicationCommandInteraction,
-        ctx: &Context,
-        options: &[CommandDataOption],
-    ) -> String;
+    async fn run(&mut self, interaction: &ApplicationCommandInteraction, ctx: &Context) -> String;
 
     /// register a slash command
     ///
@@ -41,7 +30,7 @@ pub trait SlashCommand: Send + Sync {
     ///
     /// * `c`: create components object
     /// returns a mutable reference to the create components object
-    fn create_components(self, c: &mut CreateComponents) -> &mut CreateComponents;
+    fn create_components<'a>(&self, c: &'a mut CreateComponents) -> &'a mut CreateComponents;
 
     /// handle the component interaction
     ///
@@ -49,30 +38,22 @@ pub trait SlashCommand: Send + Sync {
     /// * `interaction`: component interaction object
     /// * `ctx`: command context
     async fn handle_component_interaction(
-        &self,
+        &mut self,
         interaction: &MessageComponentInteraction,
         ctx: &Context,
     );
-    /// return a map of component id to component handler function
-    ///
-    /// * `interaction`: the message component interaction
-    /// * `ctx`: command context
-    /// returns a map of component id to component handler function
-    fn component_handlers<'a>(
-        &self,
-        // interaction: &'static MessageComponentInteraction,
-        // ctx: &'static Context,
-    ) -> HashMap<
-        String,
-        Box<
-            dyn Fn(
-                &'a MessageComponentInteraction,
-                &'a Context,
-            ) -> Pin<Box<dyn Future<Output = ()> + Send + 'a>>,
-        >,
-    >;
 
+    // create a hashmap of component names and their component id
     fn all_component_ids(&self) -> HashMap<String, String>;
     // -> HashMap<String, Box<Pin<Box<dyn Future<Output = ()> + Send>>>>;
     // -> HashMap<String, Box<dyn Fn(&MessageComponentInteraction, &Context) -> BoxFuture<'a, ()>>>;
 }
+
+// /// return a hashmap of all commands
+// /// return: a hashmap of command names to their slash command object
+// pub fn all_commands() -> HashMap<String, Box<dyn SlashCommand>> {
+// let mut map: HashMap<String, Box<dyn SlashCommand>> = HashMap::new();
+// let meetup = meetup::Meetup::default();
+// map.insert("meetup".to_string(), Box::new(meetup));
+// return map;
+// }

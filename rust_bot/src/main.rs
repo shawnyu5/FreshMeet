@@ -1,5 +1,4 @@
 mod commands;
-mod utils;
 
 use crate::commands::command::SlashCommand;
 use lazy_static::lazy_static;
@@ -13,12 +12,9 @@ use serenity::model::event::ResumedEvent;
 use serenity::model::gateway::Ready;
 use serenity::model::prelude::GuildId;
 use serenity::prelude::*;
-use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
-use std::hash::{Hash, Hasher};
 use std::{collections::HashSet, sync::Arc};
 use std::{dbg, env};
-use tokio::runtime::Runtime;
 use tracing::{error, info};
 
 pub struct ShardManagerContainer;
@@ -29,26 +25,12 @@ impl TypeMapKey for ShardManagerContainer {
 
 lazy_static! {
     /// hashmap of all commands name to their command struct
-    static ref COMMANDS: Mutex<HashMap<&'static str, &'static dyn SlashCommand>> = {
-        let mut map = HashMap::<&'static str, &'static dyn SlashCommand>::new();
-        map.insert("meetup", &commands::meetup::Meetup);
+    static ref COMMANDS: Mutex<HashMap<&'static str, Box<dyn SlashCommand>>> = {
+        let mut map = HashMap::<&'static str, Box<dyn SlashCommand>>::new();
+        let meetup = commands::meetup::Meetup::default();
+        map.insert("meetup", Box::new(meetup));
         return Mutex::new(map);
     };
-
-    // /// hashmap of all component ids and their handler functions
-    // static ref COMPONENT_IDS: Mutex<HashMap<String, fn()>> = {
-        // let rt = Runtime::new().unwrap();
-        // let result = rt.block_on(async {
-            // let mut map = HashMap::<String, fn()>::new();
-            // let commands = COMMANDS.lock().await;
-            // for (_, cmd_def) in commands.iter() {
-                // map.extend(cmd_def.component_handlers());
-            // }
-            // return map;
-        // });
-
-        // return Mutex::new(result);
-    // };
 
 }
 
@@ -67,31 +49,32 @@ impl EventHandler for Handler {
                 .await
                 .unwrap();
 
-            let commands = COMMANDS.lock().await;
-            // get the command struct with the name of the
-            let cmd_obj = commands.get(command.data.name.as_str());
+            let mut commands = COMMANDS.lock().await;
+            // let mut commands = commands::command::all_commands();
+            let cmd = commands.get_mut(command.data.name.as_str()).unwrap();
 
-            let content = if cmd_obj.is_some() {
-                cmd_obj
-                    .unwrap()
-                    .run(&command, &ctx, &command.data.options)
-                    .await
-            } else {
-                "not implemented :(".to_string()
-            };
+            let content = cmd.run(&command, &ctx).await;
+
+            // let content = if let Some(cmd) = cmd_obj {
+            // cmd.run(&command, &ctx).await
+            // } else {
+            // "not implemented :(".to_string()
+            // };
 
             if let Err(why) = command
                 .edit_original_interaction_response(&ctx.http, |response| {
                     response
                         .content(content)
-                        .components(|c| commands::meetup::Meetup.create_components(c))
+                        .components(|c| cmd.create_components(c))
                 })
                 .await
             {
                 println!("Cannot respond to slash command: {}", why);
             }
         } else if let Interaction::MessageComponent(component) = &interaction {
-            for (_, cmd_def) in COMMANDS.lock().await.iter() {
+            let mut commands = COMMANDS.lock().await;
+            // let mut commands = commands::command::all_commands();
+            for (_, cmd_def) in commands.iter_mut() {
                 let component_ids = cmd_def.all_component_ids();
                 // check if the current slash command handles this component interaction
                 if component_ids
@@ -126,7 +109,9 @@ impl EventHandler for Handler {
 async fn register_commands(guild_id: &GuildId, ctx: &Context) {
     // check if the guild is cached
     let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
-        commands.create_application_command(|command| commands::meetup::Meetup.register(command))
+        commands.create_application_command(|command| {
+            commands::meetup::Meetup::default().register(command)
+        })
     })
     .await;
     dbg!(&commands);
