@@ -9,12 +9,7 @@ use serenity::model::prelude::interaction::message_component::MessageComponentIn
 use serenity::model::prelude::interaction::InteractionResponseType;
 use serenity::prelude::{Context, TypeMapKey};
 use serenity::utils::MessageBuilder;
-use serenity::{
-    builder::CreateApplicationCommand,
-    model::prelude::{
-        command::CommandOptionType, interaction::application_command::CommandDataOption,
-    },
-};
+use serenity::{builder::CreateApplicationCommand, model::prelude::command::CommandOptionType};
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
 use std::fmt::Display;
@@ -43,7 +38,6 @@ impl Default for Meetup {
 #[derive(EnumIter)]
 pub enum ComponentId {
     Next,
-    Previous,
 }
 
 impl Hash for ComponentId {
@@ -51,9 +45,6 @@ impl Hash for ComponentId {
         match self {
             ComponentId::Next => {
                 "Next".hash(state);
-            }
-            ComponentId::Previous => {
-                "Previous".hash(state);
             }
         }
     }
@@ -63,7 +54,6 @@ impl Display for ComponentId {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             ComponentId::Next => write!(f, "next"),
-            ComponentId::Previous => write!(f, "previous"),
         }
     }
 }
@@ -146,9 +136,6 @@ impl SlashCommand for Meetup {
     ) {
         let component_ids = self.all_component_ids();
         let next_id = component_ids.get(&ComponentId::Next.to_string()).unwrap();
-        // let previous_id = component_ids
-        // .get(&ComponentId::Previous.to_string())
-        // .unwrap();
         let today = to_iso8601(&std::time::SystemTime::now());
 
         match &interaction.data.custom_id {
@@ -173,27 +160,7 @@ impl SlashCommand for Meetup {
                     })
                     .await
                     .unwrap();
-
-                // interaction
-                // .delete_original_interaction_response(&ctx.http)
-                // .await
-                // .unwrap();
-                // interaction
-                // .edit_original_interaction_response(&ctx.http, |response| {
-                // response.content(reply)
-                // })
-                // .await
-                // .unwrap();
             }
-            // value if value == previous_id => {
-            // interaction
-            // .create_interaction_response(&ctx.http, |r| {
-            // r.kind(InteractionResponseType::ChannelMessageWithSource)
-            // .interaction_response_data(|d| d.content("Previous page button"))
-            // })
-            // .await
-            // .unwrap();
-            // }
             _ => {
                 println!("no match");
             }
