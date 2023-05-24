@@ -18,7 +18,11 @@ pub trait SlashCommand: Send + Sync {
     /// * `ctx`: the context
     /// * `options`: command options
     /// * returns a string that will be sent to the user
-    async fn run(&mut self, interaction: &ApplicationCommandInteraction, ctx: &Context) -> String;
+    async fn run(
+        &mut self,
+        interaction: &ApplicationCommandInteraction,
+        ctx: &Context,
+    ) -> Vec<String>;
 
     /// register a slash command
     ///

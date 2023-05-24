@@ -1,4 +1,5 @@
 mod commands;
+mod utils;
 
 use crate::commands::command::SlashCommand;
 use lazy_static::lazy_static;
@@ -28,7 +29,9 @@ lazy_static! {
     static ref COMMANDS: Mutex<HashMap<&'static str, Box<dyn SlashCommand>>> = {
         let mut map = HashMap::<&'static str, Box<dyn SlashCommand>>::new();
         let meetup = commands::meetup::Meetup::default();
+        let tech_events = commands::tech_events::TechEvents::default();
         map.insert("meetup", Box::new(meetup));
+        map.insert("tech-events", Box::new(tech_events));
         return Mutex::new(map);
     };
 
@@ -53,7 +56,7 @@ impl EventHandler for Handler {
             // let mut commands = commands::command::all_commands();
             let cmd = commands.get_mut(command.data.name.as_str()).unwrap();
 
-            let content = cmd.run(&command, &ctx).await;
+            let content_vec = cmd.run(&command, &ctx).await;
 
             // let content = if let Some(cmd) = cmd_obj {
             // cmd.run(&command, &ctx).await
@@ -64,12 +67,27 @@ impl EventHandler for Handler {
             if let Err(why) = command
                 .edit_original_interaction_response(&ctx.http, |response| {
                     response
-                        .content(content)
+                        .content(content_vec.get(0).unwrap())
                         .components(|c| cmd.create_components(c))
                 })
                 .await
             {
                 println!("Cannot respond to slash command: {}", why);
+            }
+
+            // if there are more content, send as follow up message
+            if content_vec.len() > 1 {
+                for (_, content) in content_vec.iter().enumerate().skip(1) {
+                    command
+                        .channel_id
+                        .send_message(&ctx.http, |c| c.content(content))
+                        .await
+                        .unwrap();
+                    // command
+                    // .create_followup_message(&ctx.http, |f| f.content(content))
+                    // .await
+                    // .unwrap();
+                }
             }
         } else if let Interaction::MessageComponent(component) = &interaction {
             let mut commands = COMMANDS.lock().await;
@@ -109,9 +127,13 @@ impl EventHandler for Handler {
 async fn register_commands(guild_id: &GuildId, ctx: &Context) {
     // check if the guild is cached
     let commands = GuildId::set_application_commands(&guild_id, &ctx.http, |commands| {
-        commands.create_application_command(|command| {
-            commands::meetup::Meetup::default().register(command)
-        })
+        commands
+            .create_application_command(|command| {
+                commands::meetup::Meetup::default().register(command)
+            })
+            .create_application_command(|command| {
+                commands::tech_events::TechEvents::default().register(command)
+            })
     })
     .await;
     dbg!(&commands);

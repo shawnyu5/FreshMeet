@@ -17,13 +17,15 @@ use std::hash::{Hash, Hasher};
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
+use crate::utils::utils;
+
 use super::command::SlashCommand;
 
 /// the /meetup command
 #[derive(Clone)]
 pub struct Meetup {
-    search_query: String,
-    page_number: i32,
+    pub search_query: String,
+    pub page_number: i32,
 }
 
 impl Default for Meetup {
@@ -58,18 +60,16 @@ impl Display for ComponentId {
     }
 }
 
-fn to_iso8601(st: &std::time::SystemTime) -> String {
-    let dt: DateTime<Utc> = st.clone().into();
-    return format!("{}", dt.format("%+"));
-    // formats like "2001-07-08T00:34:60.026490+09:30"
-}
-
 impl TypeMapKey for Meetup {
     type Value = Meetup;
 }
 #[async_trait]
 impl SlashCommand for Meetup {
-    async fn run(&mut self, interaction: &ApplicationCommandInteraction, ctx: &Context) -> String {
+    async fn run(
+        &mut self,
+        interaction: &ApplicationCommandInteraction,
+        ctx: &Context,
+    ) -> Vec<String> {
         self.search_query = interaction
             .data
             .options
@@ -81,7 +81,7 @@ impl SlashCommand for Meetup {
             .to_string();
 
         // today's date
-        let today = to_iso8601(&std::time::SystemTime::now());
+        let today = utils::to_iso8601(&std::time::SystemTime::now());
 
         let search_result = search(SearchData {
             query: self.search_query.as_str(),
@@ -98,7 +98,7 @@ impl SlashCommand for Meetup {
             response = MessageBuilder::new().push("failed...").build();
         }
 
-        return response;
+        return vec![response];
     }
 
     fn register(self, command: &mut CreateApplicationCommand) -> &mut CreateApplicationCommand {
@@ -136,7 +136,7 @@ impl SlashCommand for Meetup {
     ) {
         let component_ids = self.all_component_ids();
         let next_id = component_ids.get(&ComponentId::Next.to_string()).unwrap();
-        let today = to_iso8601(&std::time::SystemTime::now());
+        let today = utils::to_iso8601(&std::time::SystemTime::now());
 
         match &interaction.data.custom_id {
             value if value == next_id => {
@@ -186,7 +186,7 @@ impl SlashCommand for Meetup {
 ///
 /// * `events`: events returned from meetup.com
 /// return: formatted string to be sent to discord
-fn format_search_result(events: Response) -> String {
+pub fn format_search_result(events: Response) -> String {
     let mut builder = MessageBuilder::new();
     events.into_iter().for_each(|mut e| {
         builder.push_bold("title: ").push_line(&e.title);
