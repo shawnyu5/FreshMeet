@@ -100,6 +100,8 @@ impl SlashCommand for TechEvents {
         let next_id = component_ids.get(&ComponentId::Next.to_string()).unwrap();
         match &interaction.data.custom_id {
             value if value == next_id => {
+                interaction.defer(&ctx.http).await.unwrap();
+
                 self.tech_meetups.page_number += 1;
                 self.programming_meetups.page_number += 1;
                 self.coding_meetups.page_number += 1;
