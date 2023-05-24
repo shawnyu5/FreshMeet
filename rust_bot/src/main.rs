@@ -55,7 +55,6 @@ impl EventHandler for Handler {
             let mut commands = COMMANDS.lock().await;
             // let mut commands = commands::command::all_commands();
             let cmd = commands.get_mut(command.data.name.as_str()).unwrap();
-
             let content_vec = cmd.run(&command, &ctx).await;
 
             // if there are more content, send as follow up message
@@ -63,9 +62,8 @@ impl EventHandler for Handler {
                 if index == 0 {
                     if let Err(why) = command
                         .edit_original_interaction_response(&ctx.http, |response| {
-                            response
-                                .content(content_vec.get(0).unwrap())
-                                .components(|c| cmd.create_components(c))
+                            response.content(content_vec.get(0).unwrap())
+                            // .components(|c| cmd.create_components(c))
                         })
                         .await
                     {
@@ -79,6 +77,11 @@ impl EventHandler for Handler {
                     println!("Failed to send follow up message: {}", e)
                 }
             }
+            command
+                .channel_id
+                .send_message(&ctx.http, |m| m.components(|c| cmd.create_components(c)))
+                .await
+                .unwrap();
         } else if let Interaction::MessageComponent(component) = &interaction {
             let mut commands = COMMANDS.lock().await;
             // let mut commands = commands::command::all_commands();

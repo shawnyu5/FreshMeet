@@ -15,7 +15,7 @@ pub struct SearchData<'a> {
     pub start_date: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone)]
 /// response object for /search
 ///
 /// * `page_info`: meta data for current page
@@ -34,6 +34,7 @@ impl IntoIterator for Response {
         return self.nodes.into_iter();
     }
 }
+
 pub async fn search(data: SearchData<'_>) -> Result<Response, String> {
     // make sure page is not less than 1
     if data.page < 1 {

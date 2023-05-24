@@ -119,7 +119,7 @@ impl SlashCommand for Meetup {
         let hashed_component_ids = self.all_component_ids();
         c.create_action_row(|a| {
             a.create_button(|b| {
-                b.label("Next").custom_id(
+                b.label("next").custom_id(
                     hashed_component_ids
                         .get(&ComponentId::Next.to_string())
                         .unwrap(),
