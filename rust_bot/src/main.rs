@@ -58,35 +58,25 @@ impl EventHandler for Handler {
 
             let content_vec = cmd.run(&command, &ctx).await;
 
-            // let content = if let Some(cmd) = cmd_obj {
-            // cmd.run(&command, &ctx).await
-            // } else {
-            // "not implemented :(".to_string()
-            // };
-
-            if let Err(why) = command
-                .edit_original_interaction_response(&ctx.http, |response| {
-                    response
-                        .content(content_vec.get(0).unwrap())
-                        .components(|c| cmd.create_components(c))
-                })
-                .await
-            {
-                println!("Cannot respond to slash command: {}", why);
-            }
-
             // if there are more content, send as follow up message
-            if content_vec.len() > 1 {
-                for (_, content) in content_vec.iter().enumerate().skip(1) {
-                    command
-                        .channel_id
-                        .send_message(&ctx.http, |c| c.content(content))
+            for (index, content) in content_vec.iter().enumerate() {
+                if index == 0 {
+                    if let Err(why) = command
+                        .edit_original_interaction_response(&ctx.http, |response| {
+                            response
+                                .content(content_vec.get(0).unwrap())
+                                .components(|c| cmd.create_components(c))
+                        })
                         .await
-                        .unwrap();
-                    // command
-                    // .create_followup_message(&ctx.http, |f| f.content(content))
-                    // .await
-                    // .unwrap();
+                    {
+                        println!("Failed to respond to slash command: {}", why);
+                    }
+                } else if let Err(e) = command
+                    .channel_id
+                    .send_message(&ctx.http, |c| c.content(content))
+                    .await
+                {
+                    println!("Failed to send follow up message: {}", e)
                 }
             }
         } else if let Interaction::MessageComponent(component) = &interaction {
