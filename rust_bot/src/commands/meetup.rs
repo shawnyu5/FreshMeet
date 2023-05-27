@@ -3,7 +3,7 @@ use chrono::FixedOffset;
 use chrono::{DateTime, Utc};
 use networking_accumlator::SearchData;
 use networking_accumlator::{search, Response};
-use serenity::builder::CreateComponents;
+use serenity::builder::{CreateComponents, CreateInteractionResponse};
 use serenity::model::prelude::interaction::application_command::ApplicationCommandInteraction;
 use serenity::model::prelude::interaction::message_component::MessageComponentInteraction;
 use serenity::model::prelude::interaction::InteractionResponseType;
@@ -134,6 +134,8 @@ impl SlashCommand for Meetup {
         interaction: &MessageComponentInteraction,
         ctx: &Context,
     ) {
+        interaction.defer(&ctx.http).await.unwrap();
+
         let component_ids = self.all_component_ids();
         let next_id = component_ids.get(&ComponentId::Next.to_string()).unwrap();
         let today = utils::to_iso8601(&std::time::SystemTime::now());
@@ -150,13 +152,13 @@ impl SlashCommand for Meetup {
                 .await
                 .unwrap();
 
+                let interaction_response = interaction.get_interaction_response(&ctx.http).await;
+                dbg!(&interaction_response);
+
                 let reply = format_search_result(search_result);
                 interaction
-                    .create_interaction_response(&ctx.http, |r| {
-                        r.kind(InteractionResponseType::ChannelMessageWithSource)
-                            .interaction_response_data(|d| {
-                                d.content(reply).components(|c| self.create_components(c))
-                            })
+                    .edit_original_interaction_response(&ctx.http, |m| {
+                        m.content(reply).components(|c| self.create_components(c))
                     })
                     .await
                     .unwrap();

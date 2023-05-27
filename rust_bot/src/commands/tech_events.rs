@@ -1,6 +1,5 @@
 use std::{
     collections::{hash_map::DefaultHasher, HashMap},
-    fmt::Display,
     hash::{Hash, Hasher},
 };
 
