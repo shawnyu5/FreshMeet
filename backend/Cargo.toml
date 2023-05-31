@@ -1,7 +1,12 @@
 [package]
 name = "networking_accumlator"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
+
+# [lib]
+# name = "networking_accumlator"
+# path = "src/lib.rs"
+# include = ["src/mod.rs"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
