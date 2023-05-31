@@ -1,5 +1,6 @@
 mod meetup;
-use crate::meetup::search::{request_body, Edge, PageInfo, Result_, RsvpState, SearchResult};
+mod traits;
+use crate::meetup::search::{Edge, PageInfo, RequestBody, Result_, RsvpState, SearchResult};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize)]
@@ -51,7 +52,7 @@ pub async fn search(data: SearchData<'_>) -> Result<Response, String> {
     // if cache value does not exist
     // if cache_value.is_none() {
     loop {
-        let mut request = request_body::Body::default();
+        let mut request = RequestBody::default();
         request.variables.query = data.query.to_string();
         request.variables.first = 20;
         request.variables.after = cursor.to_string().clone();

@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde::{Deserialize, Serialize};
 
@@ -92,29 +93,29 @@ pub struct Result_ {
     pub rsvpState: RsvpState,
 }
 
-pub mod request_body {
-    use chrono::{DateTime, Utc};
-    use serde::{Deserialize, Serialize};
+// pub mod request_body {
+// use chrono::{DateTime, Utc};
+// use serde::{Deserialize, Serialize};
 
-    use super::EventType;
+// use super::EventType;
 
-    /// convert a std::time::SystemTime to a String in ISO 8601 format
-    ///
-    /// * `st`: a system time to be converted
-    // fn iso8601(st: &std::time::SystemTime) -> String {
-    // let dt: DateTime<Utc> = st.clone().into();
-    // return format!("{}", dt.format("%+"));
-    // // formats like "2001-07-08T00:34:60.026490+09:30"
-    // }
+/// convert a std::time::SystemTime to a String in ISO 8601 format
+///
+/// * `st`: a system time to be converted
+// fn iso8601(st: &std::time::SystemTime) -> String {
+// let dt: DateTime<Utc> = st.clone().into();
+// return format!("{}", dt.format("%+"));
+// // formats like "2001-07-08T00:34:60.026490+09:30"
+// }
 
-    impl Default for super::request_body::Body {
-        #[allow(dead_code)]
-        fn default() -> super::request_body::Body {
-            let utc: DateTime<Utc> = Utc::now();
-            let start_date_range = utc.format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
-            return super::request_body::Body {
+impl Default for RequestBody {
+    #[allow(dead_code)]
+    fn default() -> RequestBody {
+        let utc: DateTime<Utc> = Utc::now();
+        let start_date_range = utc.format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
+        return RequestBody {
                 operationName: "eventKeywordSearch".to_string(),
-                variables: super::request_body::Variables {
+                variables: Variables {
                     after: "".to_string(),
                     first: 20,
                     lat: 43.7400016784668,
@@ -133,49 +134,49 @@ pub mod request_body {
                 },
                 query:  "query eventKeywordSearch($first: Int, $after: String, $query: String!, $lat: Float!, $lon: Float!, $startDateRange: ZonedDateTime, $endDateRange: ZonedDateTime, $eventType: EventType, $radius: Int, $source: [SearchSources!]!, $isHappeningNow: Boolean, $isStartingSoon: Boolean, $categoryId: Int, $topicCategoryId: Int, $city: String, $state: String, $country: String, $zip: String, $sortField: KeywordSortField) {\n  results: keywordSearch(\n    input: {first: $first, after: $after}\n    filter: {query: $query, lat: $lat, lon: $lon, source: $source, startDateRange: $startDateRange, endDateRange: $endDateRange, eventType: $eventType, radius: $radius, isHappeningNow: $isHappeningNow, isStartingSoon: $isStartingSoon, categoryId: $categoryId, topicCategoryId: $topicCategoryId, city: $city, state: $state, country: $country, zip: $zip}\n    sort: {sortField: $sortField}\n  ) {\n    pageInfo {\n      ...PageInfoDetails\n      __typename\n    }\n    count\n    edges {\n      node {\n        id\n        result {\n          ... on Event {\n            isNewGroup\n            ...BuildMeetupEvent\n            covidPrecautions {\n              venueType\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      recommendationSource\n      recommendationId\n      __typename\n    }\n    __typename\n  }\n}\n\nfragment PageInfoDetails on PageInfo {\n  hasNextPage\n  endCursor\n  __typename\n}\n\nfragment BuildMeetupEvent on Event {\n  id\n  title\n  dateTime\n  endTime\n  description\n  duration\n  timezone\n  eventType\n  currency\n  images {\n    ...PhotoDetails\n    __typename\n  }\n  venue {\n    id\n    address\n    neighborhood\n    city\n    state\n    country\n    lat\n    lng\n    zoom\n    name\n    radius\n    __typename\n  }\n  onlineVenue {\n    type\n    url\n    __typename\n  }\n  isSaved\n  eventUrl\n  group {\n    ...BuildMeetupGroup\n    __typename\n  }\n  going\n  maxTickets\n  tickets(input: {first: 3}) {\n    ...TicketsConnection\n    __typename\n  }\n  isAttending\n  rsvpState\n  __typename\n}\n\nfragment PhotoDetails on Image {\n  id\n  baseUrl\n  preview\n  source\n  __typename\n}\n\nfragment BuildMeetupGroup on Group {\n  id\n  slug\n  isPrivate\n  isOrganizer\n  isNewGroup\n  ...GroupDetails\n  __typename\n}\n\nfragment GroupDetails on Group {\n  id\n  name\n  urlname\n  timezone\n  link\n  city\n  state\n  country\n  groupPhoto {\n    ...PhotoDetails\n    __typename\n  }\n  __typename\n}\n\nfragment TicketsConnection on EventTicketsConnection {\n  count\n  edges {\n    node {\n      id\n      user {\n        id\n        name\n        memberPhoto {\n          ...PhotoDetails\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n  __typename\n}\n".to_string(),
             };
-        }
-    }
-    #[allow(non_snake_case)]
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct Body {
-        pub operationName: String,
-        pub variables: Variables,
-        pub query: String,
-    }
-
-    #[allow(non_snake_case)]
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct Variables {
-        pub after: String,
-        pub first: i32,
-        pub lat: f64,
-        pub lon: f64,
-        pub eventType: Option<super::EventType>,
-        pub topicCategoryId: Option<String>,
-        pub startDateRange: String,
-        pub startDate: Option<String>,
-        pub source: String,
-        pub query: String,
-        pub sortField: String,
-        pub city: String,
-        pub state: String,
-        pub country: String,
-        pub zip: String,
-    }
-
-    #[allow(non_snake_case)]
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct Extensions {
-        pub persistedQuery: PersistedQuery,
-    }
-
-    #[allow(non_snake_case)]
-    #[derive(Serialize, Deserialize, Debug)]
-    pub struct PersistedQuery {
-        version: i32,
-        sha256Hash: String,
     }
 }
+#[allow(non_snake_case)]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct RequestBody {
+    pub operationName: String,
+    pub variables: Variables,
+    pub query: String,
+}
+
+#[allow(non_snake_case)]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Variables {
+    pub after: String,
+    pub first: i32,
+    pub lat: f64,
+    pub lon: f64,
+    pub eventType: Option<EventType>,
+    pub topicCategoryId: Option<String>,
+    pub startDateRange: String,
+    pub startDate: Option<String>,
+    pub source: String,
+    pub query: String,
+    pub sortField: String,
+    pub city: String,
+    pub state: String,
+    pub country: String,
+    pub zip: String,
+}
+
+#[allow(non_snake_case)]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Extensions {
+    pub persistedQuery: PersistedQuery,
+}
+
+#[allow(non_snake_case)]
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PersistedQuery {
+    version: i32,
+    sha256Hash: String,
+}
+// }
 impl Default for SearchResult {
     fn default() -> SearchResult {
         return SearchResult {
@@ -193,7 +194,13 @@ impl Default for SearchResult {
     }
 }
 
-impl request_body::Body {
+// impl SearchResult {
+// pub fn results(&self) -> &Vec<Edge> {
+// return &self.data.results.edges;
+// }
+// }
+
+impl RequestBody {
     /// search for meetup events
     pub async fn search(&self) -> Result<SearchResult, String> {
         let url = "https://www.meetup.com/gql";
@@ -214,10 +221,7 @@ impl request_body::Body {
             .await
         {
             Ok(search) => {
-                return {
-                    // dbg!(&search);
-                    Ok(search)
-                };
+                return Ok(search);
             }
             Err(e) => {
                 return Err(format!("error: {}", e));
@@ -231,7 +235,7 @@ mod tests {
     #[tokio::test]
     async fn test_search_pysical_events() {
         // let search = Search::default();
-        let mut request = request_body::Body::default();
+        let mut request = RequestBody::default();
         request.variables.query = "tech meetups".to_string();
         request.variables.eventType = Some(EventType::physical);
         request.variables.first = 10;
@@ -242,13 +246,13 @@ mod tests {
 
     #[tokio::test]
     async fn test_search_pagination() {
-        let mut request = request_body::Body::default();
+        let mut request = RequestBody::default();
         request.variables.query = "tech meetups".to_string();
         request.variables.eventType = Some(EventType::physical);
         request.variables.first = 10;
         let page_1 = request.search().await.unwrap();
 
-        let mut request = request_body::Body::default();
+        let mut request = RequestBody::default();
         request.variables.query = "tech meetups".to_string();
         request.variables.eventType = Some(EventType::physical);
         request.variables.first = 10;
