@@ -1,5 +1,6 @@
 use crate::meetup;
-use crate::meetup::search::{Edge, PageInfo, RequestBody, Result_, RsvpState, SearchResult};
+use crate::meetup::search_request::RequestBody;
+use crate::meetup::search_types::*;
 use lazy_static::lazy_static;
 use retainer::Cache;
 use rocket::response::status::BadRequest;
@@ -21,7 +22,7 @@ lazy_static! {
 /// * `nodes`: list of event nodes
 pub struct Response {
     page_info: PageInfo,
-    nodes: Vec<meetup::search::Result_>,
+    nodes: Vec<Result_>,
 }
 
 #[deprecated(since = "0.1.0", note = "use the post route /search instead")]
@@ -48,10 +49,15 @@ pub async fn search(
     let mut result: SearchResult = SearchResult::default();
 
     loop {
-        let mut request = RequestBody::default();
-        request.variables.query = query.to_string();
-        request.variables.first = 20;
+        let mut request = meetup::search_request::RequestBuilder::new()
+            .query(query.as_str())
+            .first(20)
+            .build();
         request.variables.after = cursor.to_string().clone();
+
+        // let mut request = meetup::search_result::default();
+        // request.variables.query = query.to_string();
+        // request.variables.first = 20;
 
         let search_result = request.search().await.unwrap();
 
