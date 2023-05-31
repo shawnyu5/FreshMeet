@@ -87,7 +87,7 @@ impl Default for SearchResult {
 /// * `event_type`: the event type
 /// * `first`: number of results to return
 #[derive(Default, Debug, PartialEq)]
-struct RequestBuilder {
+pub struct RequestBuilder {
     pub query: String,
     pub event_type: EventType,
     pub first: i32,

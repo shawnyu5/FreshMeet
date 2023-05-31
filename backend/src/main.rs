@@ -2,7 +2,7 @@
 extern crate rocket;
 
 use lazy_static::lazy_static;
-use meetup::search::Result_;
+use meetup::search_types::Result_;
 use retainer::*;
 use std::sync::Arc;
 

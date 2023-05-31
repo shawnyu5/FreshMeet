@@ -49,10 +49,15 @@ pub async fn search(
     let mut result: SearchResult = SearchResult::default();
 
     loop {
-        let mut request = meetup::searchRequest::RequestBody::default();
-        request.variables.query = query.to_string();
-        request.variables.first = 20;
+        let mut request = meetup::search_request::RequestBuilder::new()
+            .query(query.as_str())
+            .first(20)
+            .build();
         request.variables.after = cursor.to_string().clone();
+
+        // let mut request = meetup::search_result::default();
+        // request.variables.query = query.to_string();
+        // request.variables.first = 20;
 
         let search_result = request.search().await.unwrap();
 
