@@ -1,5 +1,4 @@
 mod meetup;
-mod traits;
 use crate::meetup::search::{Edge, PageInfo, RequestBody, Result_, RsvpState, SearchResult};
 use serde::{Deserialize, Serialize};
 

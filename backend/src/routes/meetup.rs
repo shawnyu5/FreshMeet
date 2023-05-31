@@ -1,5 +1,5 @@
 use crate::meetup;
-use crate::meetup::search::{request_body, Edge, PageInfo, Result_, RsvpState, SearchResult};
+use crate::meetup::search::{Edge, PageInfo, RequestBody, Result_, RsvpState, SearchResult};
 use lazy_static::lazy_static;
 use retainer::Cache;
 use rocket::response::status::BadRequest;
@@ -43,17 +43,12 @@ pub async fn search(
         )));
     }
 
-    // let cache_read = CACHE.read().unwrap();
-    // let cache_key = "search".to_string();
-    // let cache_value = cache_read.get(&cache_key).await;
     let mut cursor = "".to_string();
 
     let mut result: SearchResult = SearchResult::default();
 
-    // if cache value does not exist
-    // if cache_value.is_none() {
     loop {
-        let mut request = request_body::Body::default();
+        let mut request = RequestBody::default();
         request.variables.query = query.to_string();
         request.variables.first = 20;
         request.variables.after = cursor.to_string().clone();
@@ -83,19 +78,6 @@ pub async fn search(
             break;
         }
     }
-    // } else {
-    // result = cache_value.unwrap().value().clone();
-    // }
-
-    // create new cache with updated search results
-    // let updated_cache = Cache::<String, SearchResult>::new();
-    // updated_cache
-    // .insert(cache_key, result.clone(), Duration::from_secs(20 * 60))
-    // .await;
-
-    // update global cache
-    // let mut cache_write = CACHE.write().unwrap();
-    // *cache_write = Arc::new(updated_cache);
 
     if result.data.results.edges.len() == 0 {
         return Err(BadRequest(Some("no results found".to_string())));
@@ -165,17 +147,13 @@ pub async fn search_post(data: Json<SearchData<'_>>) -> Result<Json<Response>, B
         )));
     }
 
-    // let cache_read = CACHE.read().unwrap();
-    // let cache_key = "search".to_string();
-    // let cache_value = cache_read.get(&cache_key).await;
     let mut cursor = "".to_string();
 
     let mut result: SearchResult = SearchResult::default();
 
     // if cache value does not exist
-    // if cache_value.is_none() {
     loop {
-        let mut request = request_body::Body::default();
+        let mut request = RequestBody::default();
         request.variables.query = data.query.to_string();
         request.variables.first = 20;
         request.variables.after = cursor.to_string().clone();
