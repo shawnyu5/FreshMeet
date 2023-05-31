@@ -163,8 +163,33 @@ mod tests {
         let result = request.search().await.unwrap();
         assert_eq!(result.data.results.count, 10);
         assert_eq!(result.data.results.edges.len(), 10);
+
+        let events = result.events();
+        events.iter().for_each(|event| {
+            assert_eq!(event.eventType, EventType::physical.to_string());
+        });
     }
 
+    /// test we are able to search for only online events
+    #[tokio::test]
+    async fn test_search_online_events() {
+        let request = RequestBuilder::new()
+            .query("tech meetups")
+            .event_type(EventType::online)
+            .first(10)
+            .build();
+
+        let result = request.search().await.unwrap();
+        assert_eq!(result.data.results.count, 10);
+        assert_eq!(result.data.results.edges.len(), 10);
+
+        let events = result.events();
+        events.iter().for_each(|event| {
+            assert_eq!(event.eventType, EventType::online.to_string());
+        });
+    }
+
+    /// test pagination works
     #[tokio::test]
     async fn test_search_pagination() {
         let request = RequestBuilder::new()
@@ -187,7 +212,7 @@ mod tests {
         assert_ne!(page_1, page_2);
     }
 
-    /// test SearchResult.events() will return a list of events
+    /// test `SearchResult.events()` will return a list of events
     #[tokio::test]
     async fn test_search_result_events() {
         let request = RequestBuilder::new()

@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
@@ -6,6 +8,15 @@ use serde::{Deserialize, Serialize};
 pub enum EventType {
     physical,
     online,
+}
+
+impl Display for EventType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            EventType::physical => write!(f, "PHYSICAL"),
+            EventType::online => write!(f, "ONLINE"),
+        }
+    }
 }
 
 #[allow(non_camel_case_types)]
