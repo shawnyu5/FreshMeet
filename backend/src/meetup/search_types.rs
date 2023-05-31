@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 #[allow(non_camel_case_types)]
@@ -78,7 +79,7 @@ pub struct Result_ {
 }
 
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Variables {
     pub after: String,
     pub first: i32,
@@ -95,6 +96,30 @@ pub struct Variables {
     pub state: String,
     pub country: String,
     pub zip: String,
+}
+
+impl Default for Variables {
+    fn default() -> Self {
+        let utc: DateTime<Utc> = Utc::now();
+        let start_date_range = utc.format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
+        Self {
+            after: "".to_string(),
+            first: 20,
+            lat: 43.7400016784668,
+            lon: -79.36000061035156,
+            topicCategoryId: None,
+            eventType: Some(EventType::physical),
+            startDateRange: start_date_range.to_string(),
+            startDate: None,
+            source: "EVENTS".to_string(),
+            query: "".to_string(),
+            sortField: "RELEVANCE".to_string(),
+            city: "Toronto".to_string(),
+            state: "ON".to_string(),
+            country: "ca".to_string(),
+            zip: "M3B 0A3".to_string(),
+        }
+    }
 }
 
 #[allow(non_snake_case)]
