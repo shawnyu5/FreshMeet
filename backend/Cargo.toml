@@ -3,11 +3,6 @@ name = "networking_accumlator"
 version = "0.2.0"
 edition = "2021"
 
-# [lib]
-# name = "networking_accumlator"
-# path = "src/lib.rs"
-# include = ["src/mod.rs"]
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -23,7 +18,3 @@ chrono = "0.4.23"
 retainer = "0.3"
 lazy_static = "1.4.0"
 rand = "0.8.5"
-
-
-# [toolchain]
-# channel = "nightly"
