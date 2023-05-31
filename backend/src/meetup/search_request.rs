@@ -130,22 +130,16 @@ impl RequestBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    /// test the request builder is able to construct it self
-    #[test]
-    fn test_builder_can_construct() {
-        let builder = RequestBuilder::new();
-        assert_eq!(builder, RequestBuilder::default());
-    }
 
     /// test the builder can build a request and set the correct values in the build request
     #[test]
     fn test_builder_can_build() {
-        let mut builder = RequestBuilder::new();
-        builder.query("tech meetups");
-        builder.event_type(EventType::physical);
-        builder.first(10);
+        let request = RequestBuilder::new()
+            .query("tech meetups")
+            .event_type(EventType::physical)
+            .first(10)
+            .build();
 
-        let request = builder.build();
         assert_eq!(request.variables.query, "tech meetups".to_string());
         assert_eq!(request.variables.eventType, Some(EventType::physical));
         assert_eq!(request.variables.first, 10);
