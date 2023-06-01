@@ -139,13 +139,25 @@ pub async fn search(
 /// * `per_page`: number of nodes to return in a single page
 pub struct SearchData<'a> {
     pub query: &'a str,
-    pub page: i32,
-    pub per_page: i32,
+    pub page: &'a str,
+    pub per_page: &'a str,
     pub start_date: Option<String>,
 }
 
 #[post("/search", data = "<data>")]
 pub async fn search_post(data: Json<SearchData<'_>>) -> Result<Json<Response>, BadRequest<String>> {
+    struct SearchData<'a> {
+        pub query: &'a str,
+        pub page: i32,
+        pub per_page: i32,
+        pub start_date: Option<String>,
+    }
+    let data = SearchData {
+        query: data.query,
+        page: data.page.parse().unwrap_or(-1),
+        per_page: data.per_page.parse().unwrap_or(-1),
+        start_date: data.start_date.clone(),
+    };
     // make sure page is not less than 1
     if data.page < 1 {
         return Err(BadRequest(Some(
@@ -218,7 +230,7 @@ pub async fn search_post(data: Json<SearchData<'_>>) -> Result<Json<Response>, B
         // calculate where the end of the page is
         // page = 2
         // per_page = 10
-        let end = data.per_page * data.page; // end = 20
+        let end: i32 = data.per_page * data.page; // end = 20
 
         // if end is larger than the max size of vector, return vector max size
         if end > nodes.len() as i32 {
@@ -228,7 +240,7 @@ pub async fn search_post(data: Json<SearchData<'_>>) -> Result<Json<Response>, B
         }
     };
     let vec_begin: usize = {
-        let result = vec_end as i32 - data.per_page;
+        let result: i32 = vec_end as i32 - data.per_page;
         if result < 0 {
             0
         } else {
@@ -275,8 +287,8 @@ mod test {
         let client = Client::tracked(rocket()).await.unwrap();
         let data = SearchData {
             query: "tech",
-            page: 1,
-            per_page: 10,
+            page: "1",
+            per_page: "10",
             start_date: None,
         };
         let response = client
@@ -338,8 +350,8 @@ mod test {
             .body(
                 serde_json::to_string(&SearchData {
                     query: "tech",
-                    page: 1,
-                    per_page: 10,
+                    page: "1",
+                    per_page: "10",
                     start_date: None,
                 })
                 .unwrap(),
@@ -353,8 +365,8 @@ mod test {
             .body(
                 serde_json::to_string(&SearchData {
                     query: "tech",
-                    page: 2,
-                    per_page: 10,
+                    page: "2",
+                    per_page: "10",
                     start_date: None,
                 })
                 .unwrap(),
@@ -393,8 +405,8 @@ mod test {
             .body(
                 serde_json::to_string(&SearchData {
                     query: "tech",
-                    page: 0,
-                    per_page: 10,
+                    page: "0",
+                    per_page: "10",
                     start_date: None,
                 })
                 .unwrap(),
@@ -442,8 +454,8 @@ mod test {
             .body(
                 serde_json::to_string(&SearchData {
                     query: "tech",
-                    page: 1,
-                    per_page: 4,
+                    page: "1",
+                    per_page: "4",
                     start_date: None,
                 })
                 .unwrap(),
@@ -462,8 +474,8 @@ mod test {
             .body(
                 serde_json::to_string(&SearchData {
                     query: "tech",
-                    page: 200,
-                    per_page: 4,
+                    page: "200",
+                    per_page: "4",
                     start_date: None,
                 })
                 .unwrap(),

@@ -19,7 +19,7 @@ Json body:
 - `query`: the search query
 - `page`: page number to display
 - `per_page`: number of nodes to return
-- `start_date`: start date of events in ISO 8601 format
+- `start_date`(optional): start date of events in ISO 8601 format
 
 Returns:
 
