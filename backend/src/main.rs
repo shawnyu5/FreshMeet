@@ -1,17 +1,37 @@
 #[macro_use]
 extern crate rocket;
 
-use lazy_static::lazy_static;
-use meetup::search_types::Result_;
-use retainer::*;
-use std::sync::Arc;
+use rocket::fairing::{Fairing, Info, Kind};
+use rocket::http::Header;
+use rocket::{Request, Response};
 
 mod eventbrite;
 mod meetup;
 mod routes;
 
-lazy_static! {
-    pub static ref CACHE: Arc<Cache<String, Result_>> = Arc::new(Cache::<String, Result_>::new());
+// lazy_static! {
+// pub static ref CACHE: Arc<Cache<String, Result_>> = Arc::new(Cache::<String, Result_>::new());
+// }
+pub struct CORS;
+
+#[rocket::async_trait]
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response,
+        }
+    }
+
+    async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new(
+            "Access-Control-Allow-Methods",
+            "POST, GET, PATCH, OPTIONS",
+        ));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
 }
 
 #[get("/")]
@@ -22,14 +42,11 @@ fn index() -> &'static str {
 #[launch]
 fn rocket() -> _ {
     println!("Starting on port 8000");
-    // let cache_clone = CACHE.clone();
-
-    // don't forget to monitor your cache to evict entries
-    // let monitor =
-    // tokio::spawn(async move { cache_clone.monitor(4, 0.25, Duration::from_secs(3)).compact().await });
-
-    rocket::build().mount("/", routes![index]).mount(
-        "/meetup",
-        routes![routes::meetup::search, routes::meetup::search_post],
-    )
+    rocket::build()
+        .attach(CORS)
+        .mount("/", routes![index])
+        .mount(
+            "/meetup",
+            routes![routes::meetup::search, routes::meetup::search_post],
+        )
 }
