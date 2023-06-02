@@ -12,3 +12,4 @@ leptos_router = { version = "0.3.0", features = ["csr"] }
 log = "0.4.18"
 reqwest-wasm = { version = "0.11.16", features = ["json"] }
 serde = "1.0.163"
+types = { path = "../types" }

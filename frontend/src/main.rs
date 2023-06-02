@@ -1,9 +1,10 @@
 use dotenv::dotenv;
-use leptos::{html::br, *};
+use leptos::*;
 use leptos_router::*;
 use reqwest_wasm::Client;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use types::meetup::search_response::Response;
 
 #[component]
 fn App(cx: Scope) -> impl IntoView {
@@ -34,117 +35,18 @@ fn Button(cx: Scope, label: String) -> impl IntoView {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
-pub enum EventType {
-    physical,
-    online,
-}
-
-#[allow(non_camel_case_types)]
-#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
-pub enum RsvpState {
-    #[default]
-    JOIN_OPEN,
-    CLOSED,
-    JOIN_APPROVAL,
-    NOT_OPEN_YET,
-}
-
-#[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone)]
-/// response object for /search
-pub struct Response {
-    page_info: PageInfo,
-    nodes: Vec<Result_>,
-}
-
-impl IntoIterator for Response {
-    type Item = Result_;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
-    fn into_iter(self) -> Self::IntoIter {
-        self.nodes.into_iter()
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SearchResult {
-    pub data: Data,
-}
-#[derive(Serialize, Deserialize, Debug, Default, Clone)]
-pub struct Data {
-    pub results: Results,
-}
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug, Default, Clone)]
-pub struct Results {
-    pub pageInfo: PageInfo,
-    pub count: i32,
-    pub edges: Vec<Edge>,
-}
-
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
-pub struct PageInfo {
-    pub hasNextPage: bool,
-    pub endCursor: Option<String>,
-}
-
-#[derive(Serialize, Deserialize, Debug, Default, Clone)]
-pub struct Edge {
-    pub node: Node,
-}
-
-#[derive(Serialize, Deserialize, Debug, Default, Clone)]
-pub struct Node {
-    pub id: String,
-    pub result: Result_,
-}
-
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
-/// Details about a meetup event
-pub struct Result_ {
-    pub id: String,
-    pub title: String,
-    pub dateTime: String,
-    pub endTime: String,
-    pub description: String,
-    pub duration: String,
-    pub timezone: String,
-    pub eventType: String,
-    pub currency: String,
-    pub eventUrl: String,
-    pub going: Option<i32>,
-    pub isAttending: bool,
-    pub rsvpState: RsvpState,
-}
-
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Variables {
-    pub after: String,
-    pub first: i32,
-    pub lat: f64,
-    pub lon: f64,
-    pub eventType: Option<EventType>,
-    pub topicCategoryId: Option<String>,
-    pub startDateRange: String,
-    pub startDate: Option<String>,
-    pub source: String,
-    pub query: String,
-    pub sortField: String,
-    pub city: String,
-    pub state: String,
-    pub country: String,
-    pub zip: String,
-}
-
 #[component]
-fn TechEvents(cx: Scope) -> impl IntoView {
+/// fetches events from the meetup api
+///
+/// * `page_number`: the page number of events to fetch
+fn TechEvents(cx: Scope, page_number: ReadSignal<u32>) -> impl IntoView {
     let data: Resource<(), Response> = create_resource(
         cx,
         || (),
-        |_| async move {
+        move |_| async move {
+            let page_number = page_number.get().to_string();
+            let page_number = page_number.as_str();
+
             log!("fetching data");
             let mut map = HashMap::new();
             // - `query`: the search query
@@ -152,11 +54,9 @@ fn TechEvents(cx: Scope) -> impl IntoView {
             // - `per_page`: number of nodes to return
             // - `start_date`: start date of events in ISO 8601 format
             map.insert("query", "tech");
-            map.insert("page", "1");
+            map.insert("page", page_number);
             map.insert("per_page", "10");
             map.insert("start_date", "2023-05-31T00:00:00");
-
-            log!("sending request");
 
             let events = Client::new()
                 .post("http://localhost:8000/meetup/search")
@@ -168,19 +68,12 @@ fn TechEvents(cx: Scope) -> impl IntoView {
                 .await
                 .unwrap();
 
-            events
-                .clone()
-                .into_iter()
-                .for_each(|e| log!("{}", e.description));
-
             return events;
         },
     );
 
-    fn format_description(cx: Scope, description: String) -> Vec<String> {
-        let des = description.split("\n").map(|s| s.to_string()).collect();
-
-        return des;
+    fn format_description(description: String) -> Vec<String> {
+        return description.split("\n").map(|s| s.to_string()).collect();
     }
 
     view! {
@@ -192,7 +85,7 @@ fn TechEvents(cx: Scope) -> impl IntoView {
                                               <div>
                                                   <h3>{event.title.clone()}</h3>
                                                   {
-                                                      format_description(cx, event.description.clone())
+                                                      format_description(event.description.clone())
                                                       .into_iter()
                                                       .map(|d| view! { cx, <p>{d}</p>})
                                                       .collect_view(cx)
@@ -216,12 +109,51 @@ fn NavBar(cx: Scope) -> impl IntoView {
     }
 }
 
+/// the home page
 #[component]
 fn Home(cx: Scope) -> impl IntoView {
+    let (page_number, set_page_number) = create_signal(cx, 1 as u32);
+    create_effect(cx, move |_| {
+        log!("page number changed to {}", page_number.get());
+    });
+    // pass to components page number, and container of events.
+    // every time page number changes, update events
+
     view! { cx,
         <div>
-            <TechEvents/>
+            <TechEvents page_number = page_number/>
+            <Pagination set_page_number = set_page_number/>
         </div>
+    }
+}
+
+/// pagination buttons
+///
+/// * `page_number`: the current page number
+#[component]
+fn Pagination(cx: Scope, set_page_number: WriteSignal<u32>) -> impl IntoView {
+    view! { cx,
+    <div>
+        <button
+            on:click = move |_| set_page_number.update(|value| {
+                if *value != 1 {
+                    *value -= 1 as u32;
+                }
+
+            })
+            >
+            "Previous"
+        </button>
+
+        <button
+            on:click = move |_| set_page_number.update(|value| {
+                *value += 1 as u32;
+            })
+            >
+            "Next"
+        </button>
+
+    </div>
     }
 }
 
