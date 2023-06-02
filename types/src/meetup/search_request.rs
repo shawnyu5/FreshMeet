@@ -41,6 +41,36 @@ impl Default for EventType {
 pub struct SearchResult {
     pub data: Data,
 }
+
+impl SearchResult {
+    /// return all events from the search result
+    pub fn events(&self) -> Vec<Result_> {
+        self.data
+            .results
+            .edges
+            .iter()
+            .map(|e| e.node.result.clone())
+            .collect()
+    }
+}
+
+impl Default for SearchResult {
+    fn default() -> SearchResult {
+        return SearchResult {
+            data: Data {
+                results: Results {
+                    pageInfo: PageInfo {
+                        hasNextPage: false,
+                        endCursor: None,
+                    },
+                    count: 0,
+                    edges: vec![],
+                },
+            },
+        };
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct Data {
     pub results: Results,

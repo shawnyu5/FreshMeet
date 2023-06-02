@@ -1,12 +1,14 @@
 use crate::meetup;
 use crate::meetup::search_request::RequestBody;
-use crate::meetup::search_types::*;
 use lazy_static::lazy_static;
 use retainer::Cache;
 use rocket::response::status::BadRequest;
 use rocket::serde::{json::Json, Serialize};
 use serde::Deserialize;
 use std::sync::{Arc, RwLock};
+use types::meetup::search_request::{Edge, RsvpState};
+use types::meetup::search_request::{Result_, SearchResult};
+use types::meetup::search_response::Response;
 
 lazy_static! {
     static ref CACHE: RwLock<Arc<Cache<String, SearchResult>>> =
@@ -15,12 +17,12 @@ lazy_static! {
     // static ref CURSOR: RwLock<Arc<String>> = RwLock::new(Arc::new("".to_string()));
 }
 
-#[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
-/// response object for /search
-pub struct Response {
-    page_info: PageInfo,
-    nodes: Vec<Result_>,
-}
+// #[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
+// /// response object for /search
+// pub struct Response {
+// page_info: PageInfo,
+// nodes: Vec<Result_>,
+// }
 
 #[deprecated(since = "0.1.0", note = "use the post route /search instead")]
 #[get("/search?<query>&<page>&<per_page>")]

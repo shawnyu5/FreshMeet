@@ -19,3 +19,4 @@ retainer = "0.3"
 lazy_static = "1.4.0"
 rand = "0.8.5"
 rocket_cors = "0.5.2"
+types = { path = "../types" }
