@@ -130,8 +130,8 @@ pub async fn search(
 /// data body for /search
 ///
 /// * `query`: search query
-/// * `page`: page number
 /// * `per_page`: number of nodes to return in a single page
+/// * `after`: pagination cursor
 pub struct SearchData<'a> {
     pub query: &'a str,
     pub per_page: &'a str,
@@ -151,7 +151,6 @@ pub async fn search_post(data: Json<SearchData<'_>>) -> Result<Json<Response>, B
         per_page: data.per_page.parse().unwrap_or(20),
         after: data.after.unwrap_or(""),
     };
-    dbg!("after: {}", &data.after);
 
     let request = RequestBuilder::new()
         .query(data.query)
@@ -244,5 +243,32 @@ mod test {
 
         // make sure both pages are different
         assert_ne!(page_1_response, page_2_response);
+    }
+
+    /// test all events have RSVP open
+    #[rocket::async_test]
+    async fn test_all_rsvp_open() {
+        use rocket::local::asynchronous::Client;
+
+        let client = Client::tracked(rocket()).await.unwrap();
+        let page_1_response = client
+            .post(uri!("/meetup", search_post()))
+            .body(
+                serde_json::to_string(&SearchData {
+                    query: "tech",
+                    per_page: "10",
+                    after: None,
+                })
+                .unwrap(),
+            )
+            .dispatch()
+            .await;
+
+        let page_1_response: Response = page_1_response.into_json().await.unwrap();
+
+        page_1_response.nodes.iter().for_each(|n| {
+            assert_eq!(n.isAttending, false);
+            assert_ne!(n.rsvpState, RsvpState::CLOSED);
+        });
     }
 }
