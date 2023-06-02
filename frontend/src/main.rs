@@ -35,24 +35,18 @@ fn Button(cx: Scope, label: String) -> impl IntoView {
     }
 }
 
-#[component]
 /// fetches events from the meetup api
-///
-/// * `page_number`: the page number of events to fetch
-fn TechEvents(cx: Scope, page_number: ReadSignal<u32>) -> impl IntoView {
-    let data: Resource<(), Response> = create_resource(
-        cx,
-        || (),
-        move |_| async move {
+#[component]
+fn TechEvents(cx: Scope) -> impl IntoView {
+    let page_number = use_context::<ReadSignal<u32>>(cx).expect("a read signal");
+
+    let data: Resource<u32, Response> =
+        create_resource(cx, page_number.clone(), move |_| async move {
             let page_number = page_number.get().to_string();
             let page_number = page_number.as_str();
 
             log!("fetching data");
             let mut map = HashMap::new();
-            // - `query`: the search query
-            // - `page`: page number to display
-            // - `per_page`: number of nodes to return
-            // - `start_date`: start date of events in ISO 8601 format
             map.insert("query", "tech");
             map.insert("page", page_number);
             map.insert("per_page", "10");
@@ -69,8 +63,7 @@ fn TechEvents(cx: Scope, page_number: ReadSignal<u32>) -> impl IntoView {
                 .unwrap();
 
             return events;
-        },
-    );
+        });
 
     fn format_description(description: String) -> Vec<String> {
         return description.split("\n").map(|s| s.to_string()).collect();
@@ -112,7 +105,10 @@ fn NavBar(cx: Scope) -> impl IntoView {
 /// the home page
 #[component]
 fn Home(cx: Scope) -> impl IntoView {
-    let (page_number, set_page_number) = create_signal(cx, 1 as u32);
+    let (page_number, set_page_number) = create_signal(cx, 2 as u32);
+    provide_context(cx, page_number);
+    provide_context(cx, set_page_number);
+
     create_effect(cx, move |_| {
         log!("page number changed to {}", page_number.get());
     });
@@ -121,8 +117,8 @@ fn Home(cx: Scope) -> impl IntoView {
 
     view! { cx,
         <div>
-            <TechEvents page_number = page_number/>
-            <Pagination set_page_number = set_page_number/>
+            <TechEvents/>
+            <Pagination/>
         </div>
     }
 }
@@ -131,7 +127,9 @@ fn Home(cx: Scope) -> impl IntoView {
 ///
 /// * `page_number`: the current page number
 #[component]
-fn Pagination(cx: Scope, set_page_number: WriteSignal<u32>) -> impl IntoView {
+fn Pagination(cx: Scope) -> impl IntoView {
+    let set_page_number = use_context::<WriteSignal<u32>>(cx).expect("a write signal");
+
     view! { cx,
     <div>
         <button
