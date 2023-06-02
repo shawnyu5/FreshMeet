@@ -17,9 +17,8 @@ POST `/meetup/search` - search for events on meetup
 Json body:
 
 - `query`: the search query
-- `page`: page number to display
+- `after`(optional. Default to ""): the end cursor of the previous request
 - `per_page`: number of nodes to return
-- `start_date`(optional): start date of events in ISO 8601 format
 
 Returns:
 

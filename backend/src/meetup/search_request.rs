@@ -57,11 +57,13 @@ impl Default for RequestBody {
 /// * `query`: the search query
 /// * `event_type`: the event type
 /// * `first`: number of results to return
+/// * `after`: pagination cursor
 #[derive(Default, Debug, PartialEq)]
 pub struct RequestBuilder {
     pub query: String,
     pub event_type: EventType,
     pub first: i32,
+    pub after: String,
 }
 
 impl RequestBuilder {
@@ -84,6 +86,11 @@ impl RequestBuilder {
         return self;
     }
 
+    pub fn after(&mut self, after: String) -> &mut RequestBuilder {
+        self.after = after;
+        return self;
+    }
+
     /// build the request body
     pub fn build(&self) -> RequestBody {
         return RequestBody {
@@ -91,6 +98,7 @@ impl RequestBuilder {
                 query: self.query.clone(),
                 eventType: Some(self.event_type.clone()),
                 first: self.first,
+                after: self.after.clone(),
                 ..Default::default()
             },
             ..Default::default()

@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local, Utc};
 use serde::{Deserialize, Serialize};
 
 /// types of events a meetup can be
@@ -144,6 +144,7 @@ impl Default for Variables {
     fn default() -> Self {
         let utc: DateTime<Utc> = Utc::now();
         let start_date_range = utc.format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
+        let today = Local::now().format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
         Self {
             after: "".to_string(),
             first: 20,
@@ -152,7 +153,7 @@ impl Default for Variables {
             topicCategoryId: None,
             eventType: Some(EventType::physical),
             startDateRange: start_date_range.to_string(),
-            startDate: None,
+            startDate: Some(today.to_string()),
             source: "EVENTS".to_string(),
             query: "".to_string(),
             sortField: "RELEVANCE".to_string(),
