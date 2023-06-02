@@ -17,9 +17,6 @@ lazy_static! {
 
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq)]
 /// response object for /search
-///
-/// * `page_info`: meta data for current page
-/// * `nodes`: list of event nodes
 pub struct Response {
     page_info: PageInfo,
     nodes: Vec<Result_>,
