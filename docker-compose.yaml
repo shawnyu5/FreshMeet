@@ -1,12 +1,10 @@
 services:
-  api:
+  backend:
     build: ./backend
     image: shawnyu5/networking_accumulator
-    # ports:
-      # - "8000:8000"
-    hostname: api
-    networks:
-      - mynet
+    ports:
+      - 8000:8000
+    hostname: backend
     restart: always
 
   bot:
@@ -15,13 +13,7 @@ services:
     env_file:
       - ./bot/.env
     environment:
-      - API_URL=http://api:8000
+      - API_URL=http://backend:8000
     depends_on:
-      - api
-    networks:
-      - mynet
+      - backend
     restart: always
-
-networks:
-  mynet:
-    driver: bridge

@@ -1,7 +1,6 @@
-use super::search_types::*;
-use chrono::{DateTime, Utc};
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde::{Deserialize, Serialize};
+use types::meetup::search_request::{EventType, Result_, SearchResult, Variables};
 
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]
@@ -42,17 +41,6 @@ impl RequestBody {
     }
 }
 
-impl SearchResult {
-    /// return all events from the search result
-    pub fn events(&self) -> Vec<Result_> {
-        self.data
-            .results
-            .edges
-            .iter()
-            .map(|e| e.node.result.clone())
-            .collect()
-    }
-}
 impl Default for RequestBody {
     #[allow(dead_code)]
     fn default() -> RequestBody {
@@ -64,33 +52,18 @@ impl Default for RequestBody {
     }
 }
 
-impl Default for SearchResult {
-    fn default() -> SearchResult {
-        return SearchResult {
-            data: Data {
-                results: Results {
-                    pageInfo: PageInfo {
-                        hasNextPage: false,
-                        endCursor: None,
-                    },
-                    count: 0,
-                    edges: vec![],
-                },
-            },
-        };
-    }
-}
-
 /// construct a request object
 ///
 /// * `query`: the search query
 /// * `event_type`: the event type
 /// * `first`: number of results to return
+/// * `after`: pagination cursor
 #[derive(Default, Debug, PartialEq)]
 pub struct RequestBuilder {
     pub query: String,
     pub event_type: EventType,
     pub first: i32,
+    pub after: String,
 }
 
 impl RequestBuilder {
@@ -113,6 +86,11 @@ impl RequestBuilder {
         return self;
     }
 
+    pub fn after(&mut self, after: String) -> &mut RequestBuilder {
+        self.after = after;
+        return self;
+    }
+
     /// build the request body
     pub fn build(&self) -> RequestBody {
         return RequestBody {
@@ -120,6 +98,7 @@ impl RequestBuilder {
                 query: self.query.clone(),
                 eventType: Some(self.event_type.clone()),
                 first: self.first,
+                after: self.after.clone(),
                 ..Default::default()
             },
             ..Default::default()

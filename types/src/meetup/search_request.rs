@@ -1,8 +1,9 @@
 use std::fmt::Display;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local, Utc};
 use serde::{Deserialize, Serialize};
 
+/// types of events a meetup can be
 #[allow(non_camel_case_types)]
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub enum EventType {
@@ -40,6 +41,36 @@ impl Default for EventType {
 pub struct SearchResult {
     pub data: Data,
 }
+
+impl SearchResult {
+    /// return all events from the search result
+    pub fn events(&self) -> Vec<Result_> {
+        self.data
+            .results
+            .edges
+            .iter()
+            .map(|e| e.node.result.clone())
+            .collect()
+    }
+}
+
+impl Default for SearchResult {
+    fn default() -> SearchResult {
+        return SearchResult {
+            data: Data {
+                results: Results {
+                    pageInfo: PageInfo {
+                        hasNextPage: false,
+                        endCursor: None,
+                    },
+                    count: 0,
+                    edges: vec![],
+                },
+            },
+        };
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct Data {
     pub results: Results,
@@ -113,6 +144,7 @@ impl Default for Variables {
     fn default() -> Self {
         let utc: DateTime<Utc> = Utc::now();
         let start_date_range = utc.format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
+        let today = Local::now().format("%Y-%m-%dT%H:%M:%S-05:00[US/Eastern]");
         Self {
             after: "".to_string(),
             first: 20,
@@ -121,7 +153,7 @@ impl Default for Variables {
             topicCategoryId: None,
             eventType: Some(EventType::physical),
             startDateRange: start_date_range.to_string(),
-            startDate: None,
+            startDate: Some(today.to_string()),
             source: "EVENTS".to_string(),
             query: "".to_string(),
             sortField: "RELEVANCE".to_string(),

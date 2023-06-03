@@ -2,8 +2,11 @@
 extern crate rocket;
 
 use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::Header;
+use rocket::http::{Header, Method, Status};
+use rocket::response::Responder;
+use rocket::{get, routes};
 use rocket::{Request, Response};
+use rocket_cors::{AllowedHeaders, AllowedOrigins};
 
 mod eventbrite;
 mod meetup;
@@ -12,6 +15,7 @@ mod routes;
 // lazy_static! {
 // pub static ref CACHE: Arc<Cache<String, Result_>> = Arc::new(Cache::<String, Result_>::new());
 // }
+
 pub struct CORS;
 
 #[rocket::async_trait]
@@ -27,7 +31,7 @@ impl Fairing for CORS {
         response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
         response.set_header(Header::new(
             "Access-Control-Allow-Methods",
-            "POST, GET, PATCH, OPTIONS",
+            "GET, POST, OPTIONS",
         ));
         response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
         response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
@@ -39,12 +43,18 @@ fn index() -> &'static str {
     return "Hello";
 }
 
+#[options("/meetup/search")]
+fn handle_options_request() -> Status {
+    Status::Ok
+}
+
 #[launch]
 fn rocket() -> _ {
     println!("Starting on port 8000");
+
     rocket::build()
         .attach(CORS)
-        .mount("/", routes![index])
+        .mount("/", routes![index, handle_options_request])
         .mount(
             "/meetup",
             routes![routes::meetup::search, routes::meetup::search_post],
