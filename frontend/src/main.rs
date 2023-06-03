@@ -2,9 +2,9 @@ use dotenv::dotenv;
 use leptos::*;
 use leptos_router::*;
 use reqwest_wasm::Client;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use types::meetup::search_response::Response;
+mod environment;
 
 #[component]
 fn App(cx: Scope) -> impl IntoView {
@@ -52,6 +52,8 @@ fn TechEvents(cx: Scope) -> impl IntoView {
     let page_number = use_context::<RwSignal<u32>>(cx).expect("a u32 read signal for page number");
 
     let data: Resource<u32, Response> = create_resource(cx, page_number, move |_| async move {
+        let env = environment::load();
+
         let mut map = HashMap::new();
         let after_value = after.get();
         let after_value = after_value.as_str();
@@ -61,7 +63,7 @@ fn TechEvents(cx: Scope) -> impl IntoView {
         map.insert("per_page", "10");
 
         let events = Client::new()
-            .post("http://localhost:8000/meetup/search")
+            .post(format!("{}/meetup/search", &env.api_url))
             .json(&map)
             .send()
             .await
