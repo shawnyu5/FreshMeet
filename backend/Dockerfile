@@ -4,6 +4,7 @@ WORKDIR /networking_accumlator/
 RUN apt-get update && apt-get -y install pkg-config openssl libssl-dev --no-install-recommends
 
 COPY Cargo.toml .
+COPY rust-toolchain.toml .
 # create a dummy file to force cargo to build the dependencies
 RUN mkdir src \
    && echo "// dummy file" > src/lib.rs \
