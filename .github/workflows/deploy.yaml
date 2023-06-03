@@ -54,7 +54,7 @@ jobs:
           docker compose build
           docker compose push
 
-  deploy:
+  deploy_bot:
     runs-on: ubuntu-latest
     # We'll only build and push when landing on master, not for PRs
     # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
