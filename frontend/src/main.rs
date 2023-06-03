@@ -3,7 +3,7 @@ use leptos::*;
 use leptos_router::*;
 use reqwest_wasm::Client;
 use std::collections::HashMap;
-use types::meetup::search_response::Response;
+use networking_accumlator_types::meetup::search_response::Response;
 mod environment;
 
 #[component]

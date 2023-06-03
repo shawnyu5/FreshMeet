@@ -1,6 +1,8 @@
+use networking_accumlator_types::meetup::search_request::{
+    EventType, Result_, SearchResult, Variables,
+};
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde::{Deserialize, Serialize};
-use types::meetup::search_request::{EventType, Result_, SearchResult, Variables};
 
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug)]

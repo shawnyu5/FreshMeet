@@ -1,14 +1,13 @@
 use crate::meetup;
-use crate::meetup::search_request::{RequestBody, RequestBuilder};
+use crate::meetup::search_request::RequestBuilder;
 use lazy_static::lazy_static;
+use networking_accumlator_types::meetup::search_request::{Edge, Result_, RsvpState, SearchResult};
+use networking_accumlator_types::meetup::search_response::Response;
 use retainer::Cache;
 use rocket::response::status::BadRequest;
 use rocket::serde::{json::Json, Serialize};
 use serde::Deserialize;
 use std::sync::{Arc, RwLock};
-use types::meetup::search_request::{Edge, RsvpState};
-use types::meetup::search_request::{Result_, SearchResult};
-use types::meetup::search_response::Response;
 
 lazy_static! {
     static ref CACHE: RwLock<Arc<Cache<String, SearchResult>>> =
@@ -163,7 +162,9 @@ pub async fn search_post(data: Json<SearchData<'_>>) -> Result<Json<Response>, B
         .events()
         .iter()
         .filter(|s| {
-            !s.isAttending || s.rsvpState != types::meetup::search_request::RsvpState::CLOSED
+            !s.isAttending
+                || s.rsvpState
+                    != networking_accumlator_types::meetup::search_request::RsvpState::CLOSED
         })
         .cloned()
         .collect();
