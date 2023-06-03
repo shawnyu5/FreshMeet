@@ -21,4 +21,4 @@ retainer = "0.3"
 lazy_static = "1.4.0"
 rand = "0.8.5"
 rocket_cors = "0.5.2"
-networking_accumlator_types = { version = "0.1.0", path = "../types", git = "https://github.com/shawnyu5/networking_accumulator" }
+networking_accumlator_types = { version = "0.1.0", git = "https://github.com/shawnyu5/networking_accumulator" }
