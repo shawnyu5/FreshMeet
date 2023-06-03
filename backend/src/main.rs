@@ -45,44 +45,8 @@ fn index() -> &'static str {
 
 #[options("/meetup/search")]
 fn handle_options_request() -> Status {
-    // response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
-    // response.set_header(Header::new(
-    // "Access-Control-Allow-Methods",
-    // "GET, POST, OPTIONS",
-    // ));
-    // response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
-    // response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
     Status::Ok
 }
-
-// fn cors_options() -> Cors {
-// let allowed_origins = AllowedOrigins::all(); // You can specify specific origins if needed
-
-// let allowed_methods = vec![Method::Get, Method::Post, Method::Options]
-// .into_iter()
-// .map(From::from)
-// .collect();
-
-// let cors = CorsOptions::default()
-// .allowed_origins(AllowedOrigins::all())
-// .allowed_methods(
-// vec![Method::Get, Method::Post, Method::Patch]
-// .into_iter()
-// .map(From::from)
-// .collect(),
-// )
-// .allow_credentials(true);
-
-// CorsOptions {
-// allowed_origins,
-// allowed_methods,
-// allowed_headers: AllowedHeaders::all(),
-// allow_credentials: true,
-// ..Default::default()
-// }
-// .to_cors()
-// .expect("Failed to create CORS")
-// }
 
 #[launch]
 fn rocket() -> _ {
