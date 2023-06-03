@@ -1,9 +1,8 @@
 use dotenv::dotenv;
+mod pages;
 use leptos::*;
 use leptos_router::*;
-use reqwest_wasm::Client;
-use std::collections::HashMap;
-use networking_accumlator_types::meetup::search_response::Response;
+use pages::tech_events::*;
 mod environment;
 
 #[component]
@@ -32,73 +31,6 @@ fn Button(cx: Scope, label: String) -> impl IntoView {
             >
             <button>{label}</button>
         </div>
-    }
-}
-
-/// scrolls to the top of the page
-fn scroll_to_top() {
-    let window = web_sys::window().expect("Failed to access window object");
-    window.scroll_to_with_scroll_to_options(
-        web_sys::ScrollToOptions::new()
-            .top(0.0)
-            .behavior(web_sys::ScrollBehavior::Smooth),
-    )
-    // .expect("Failed to scroll to top");
-}
-/// fetches tech events from the meetup api
-#[component]
-fn TechEvents(cx: Scope) -> impl IntoView {
-    let after = use_context::<RwSignal<String>>(cx).expect("a String read write signal for after");
-    let page_number = use_context::<RwSignal<u32>>(cx).expect("a u32 read signal for page number");
-
-    let data: Resource<u32, Response> = create_resource(cx, page_number, move |_| async move {
-        let env = environment::load();
-
-        let mut map = HashMap::new();
-        let after_value = after.get();
-        let after_value = after_value.as_str();
-
-        map.insert("query", "tech");
-        map.insert("after", after_value);
-        map.insert("per_page", "10");
-
-        let events = Client::new()
-            .post(format!("{}/meetup/search", &env.api_url))
-            .json(&map)
-            .send()
-            .await
-            .unwrap()
-            .json::<Response>()
-            .await
-            .unwrap();
-
-        after.set(events.page_info.endCursor.clone().unwrap_or_default());
-        return events;
-    });
-
-    fn format_description(description: String) -> Vec<String> {
-        return description.split("\n").map(|s| s.to_string()).collect();
-    }
-
-    view! {
-    cx,
-    { move || match data.read(cx) {
-                                      None => view! {cx, <div>"loading..."</div> }.into_view(cx),
-                                      Some(data) => {
-                                          data.into_iter().map(|event| view! {cx,
-                                              <div>
-                                                  <h3>{event.title.clone()}</h3>
-                                                  {
-                                                      format_description(event.description.clone())
-                                                      .into_iter()
-                                                      .map(|d| view! { cx, <p>{d}</p>})
-                                                      .collect_view(cx)
-                                                  }
-                                              </div>
-                                          }).collect_view(cx)
-                                      }
-                                  }
-    }
     }
 }
 
@@ -133,6 +65,16 @@ fn Home(cx: Scope) -> impl IntoView {
             <Pagination/>
         </div>
     }
+}
+
+/// scrolls to the top of the page
+fn scroll_to_top() {
+    let window = web_sys::window().expect("Failed to access window object");
+    window.scroll_to_with_scroll_to_options(
+        web_sys::ScrollToOptions::new()
+            .top(0.0)
+            .behavior(web_sys::ScrollBehavior::Smooth),
+    )
 }
 
 /// pagination buttons
