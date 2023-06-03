@@ -1,0 +1,10 @@
+{
+   "buildCommand": "rustup target add wasm32-unknown-unknown && trunk build --release",
+   "outputDirectory": "dist",
+   "rewrites": [
+      {
+         "source": "/(.*)",
+         "destination": "/index.html"
+      }
+   ]
+}
