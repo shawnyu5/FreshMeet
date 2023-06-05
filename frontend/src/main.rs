@@ -49,9 +49,9 @@ fn NavBar(cx: Scope) -> impl IntoView {
 #[component]
 fn Home(cx: Scope) -> impl IntoView {
     let page_signal = create_rw_signal(cx, 1 as u32);
-    let after_signal = create_rw_signal(cx, "".to_string());
+    // let after_signal = create_rw_signal(cx, "".to_string());
     provide_context(cx, page_signal);
-    provide_context(cx, after_signal);
+    // provide_context(cx, after_signal);
 
     create_effect(cx, move |_| {
         log!("page number changed to {}", page_signal.get());

@@ -21,7 +21,7 @@ impl Display for EventType {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone, Ord, Eq, PartialOrd)]
 pub enum RsvpState {
     #[default]
     JOIN_OPEN,
@@ -84,7 +84,7 @@ pub struct Results {
 }
 
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct PageInfo {
     pub hasNextPage: bool,
     pub endCursor: Option<String>,
@@ -102,7 +102,7 @@ pub struct Node {
 }
 
 #[allow(non_snake_case)]
-#[derive(Serialize, Deserialize, Debug, Default, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone, Ord, Eq, PartialOrd)]
 /// Details about a meetup event
 pub struct Result_ {
     pub id: String,
