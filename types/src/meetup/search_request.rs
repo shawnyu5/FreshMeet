@@ -104,6 +104,7 @@ pub struct Node {
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone, Ord, Eq, PartialOrd)]
 /// Details about a meetup event
+// TODO: include venue details in here
 pub struct Result_ {
     pub id: String,
     pub title: String,

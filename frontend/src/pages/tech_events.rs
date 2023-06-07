@@ -12,7 +12,8 @@ use crate::environment;
 ///
 /// * `description`: the description of an event
 fn format_description(cx: Scope, description: String) -> HtmlElement<P> {
-    let description = description.replace("\n", "<br>");
+    // let description = description.replace("\n", "<br>");
+    let description = markdown::to_html(description.as_str());
     p(cx).inner_html(description.clone())
 }
 
@@ -44,7 +45,7 @@ async fn fetch_events<'a>(
 
     map.insert("query", query);
     map.insert("after", after_value);
-    map.insert("per_page", "10");
+    map.insert("per_page", "20");
 
     let events = Client::new()
         .post(format!("{}/meetup/search", &env.api_url))
@@ -91,6 +92,7 @@ pub fn TechEvents(cx: Scope) -> impl IntoView {
         // log!("{}", e.title);
         // });
         events.dedup();
+        events.sort_by(|a, b| a.dateTime.cmp(&b.dateTime));
         // log!("AFTER DE-DUPING");
         // events.iter().for_each(|e| {
         // log!("{}", e.title);
@@ -114,18 +116,14 @@ pub fn TechEvents(cx: Scope) -> impl IntoView {
                                 .into_iter()
                                     .map(|(_, e)| view! {cx, <li>{e.to_string()}</li>})
                                     .collect_view(cx)}
-                        </ul>
-                            </div>
+                            </ul>
+                        </div>
                         }
                     >
-                        <div>
+                    <div>
                         <h3>{event.title.clone()}</h3>
-                        {
-                            format_description(cx, event.description.clone())
-                                // .into_iter()
-                                // .map(|d| view! { cx, <p>{d}</p>})
-                                // .collect_view(cx)
-                        }
+                        <p><b>"Time: "</b>{event.dateTime}</p>
+                        { format_description(cx, event.description.clone()) }
                     </div>
                         </ErrorBoundary>
                 }).collect_view(cx)
