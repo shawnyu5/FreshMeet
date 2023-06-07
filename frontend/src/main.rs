@@ -112,5 +112,5 @@ fn Pagination(cx: Scope) -> impl IntoView {
 
 fn main() {
     dotenv().ok();
-    mount_to_body(|cx| view! { cx,  <App/> });
+    mount_to_body(|cx| view! { cx, <App/> });
 }

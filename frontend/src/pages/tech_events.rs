@@ -1,3 +1,4 @@
+use anyhow::Result;
 use leptos::{
     html::{p, P},
     *,
@@ -19,13 +20,14 @@ fn format_description(cx: Scope, description: String) -> HtmlElement<P> {
 
 /// fetch events from the meetup api
 ///
-/// * `page_number`:
-/// * `after`:
+/// * `query`: the search query
+/// * `page_number`: the current page number to fetch
+/// * `after`: the after cursor
 async fn fetch_events<'a>(
     query: &'a str,
     page_number: u32,
     after: RwSignal<HashMap<String, String>>,
-) -> Response {
+) -> Result<Response> {
     let env = environment::load();
 
     // so going back to first page will still work
@@ -45,17 +47,16 @@ async fn fetch_events<'a>(
 
     map.insert("query", query);
     map.insert("after", after_value);
-    map.insert("per_page", "20");
+    // if we fetch too many events at a time, we will go get events too far into the future
+    map.insert("per_page", "15");
 
     let events = Client::new()
         .post(format!("{}/meetup/search", &env.api_url))
         .json(&map)
         .send()
-        .await
-        .unwrap()
+        .await?
         .json::<Response>()
-        .await
-        .unwrap();
+        .await?;
 
     after.update(|a| {
         a.insert(
@@ -63,8 +64,16 @@ async fn fetch_events<'a>(
             events.page_info.endCursor.clone().unwrap_or_default(),
         );
     });
-    return events;
+    return Ok(events);
 }
+
+// fn format_venue(cx: Scope, venue: Venue) -> HtmlElement<P> {
+// if venue.address {
+// view! {cx, <p><b>"Location: "</b>{venue.unwrap().address}</p>}
+// } else {
+// view! {cx, <p><b>"No location provided"</b></p>}
+// }
+// }
 
 /// fetches tech events from the meetup api
 #[component]
@@ -77,9 +86,21 @@ pub fn TechEvents(cx: Scope) -> impl IntoView {
         let mut events = Vec::<Result_>::new();
 
         let mut responses = Vec::<Response>::new();
-        responses.push(fetch_events("tech events", page_number.get(), after).await);
-        responses.push(fetch_events("programming", page_number.get(), after).await);
-        responses.push(fetch_events("coding", page_number.get(), after).await);
+        responses.push(
+            fetch_events("tech events", page_number.get(), after)
+                .await
+                .unwrap(),
+        );
+        responses.push(
+            fetch_events("programming", page_number.get(), after)
+                .await
+                .unwrap(),
+        );
+        responses.push(
+            fetch_events("coding", page_number.get(), after)
+                .await
+                .unwrap(),
+        );
 
         responses.iter().for_each(|r| {
             r.nodes.iter().for_each(|e| {
@@ -88,14 +109,11 @@ pub fn TechEvents(cx: Scope) -> impl IntoView {
         });
 
         events.sort();
-        // events.iter().for_each(|e| {
-        // log!("{}", e.title);
-        // });
         events.dedup();
         events.sort_by(|a, b| a.dateTime.cmp(&b.dateTime));
-        // log!("AFTER DE-DUPING");
         // events.iter().for_each(|e| {
-        // log!("{}", e.title);
+        // log!("events: {:?}", e.venue.is_some());
+        // log!("events: {:?}", e.venue);
         // });
         return events;
     });
@@ -120,12 +138,20 @@ pub fn TechEvents(cx: Scope) -> impl IntoView {
                         </div>
                         }
                     >
-                    <div>
-                        <h3>{event.title.clone()}</h3>
-                        <p><b>"Time: "</b>{event.dateTime}</p>
-                        { format_description(cx, event.description.clone()) }
-                    </div>
-                        </ErrorBoundary>
+                        <div>
+                            <h3><a href={event.eventUrl} target="_blank">{event.title.clone()}</a></h3>
+                            <p><b>"Time: "</b>{&event.dateTime}</p>
+                            {
+                                if event.venue.is_some() {
+                                    view! {cx, <p><b>"Location: "</b>{event.venue.unwrap().address}</p>}
+                                } else {
+                                    view!{cx, <p><b>"No location provided"</b></p>}
+                                }
+                            }
+                            // <p><b>"Location: "</b>{event.venue.address}</p>
+                            { format_description(cx, event.description.clone()) }
+                        </div>
+                    </ErrorBoundary>
                 }).collect_view(cx)
             }
             </Suspense>
