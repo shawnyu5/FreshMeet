@@ -111,10 +111,10 @@ pub fn TechEvents(cx: Scope) -> impl IntoView {
         events.sort();
         events.dedup();
         events.sort_by(|a, b| a.dateTime.cmp(&b.dateTime));
-        events.iter().for_each(|e| {
-            // log!("events: {:?}", e.venue.is_some());
-            // log!("events: {:?}", e.venue);
-        });
+        // events.iter().for_each(|e| {
+        // log!("events: {:?}", e.venue.is_some());
+        // log!("events: {:?}", e.venue);
+        // });
         return events;
     });
 
