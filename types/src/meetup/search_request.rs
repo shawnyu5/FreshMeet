@@ -110,7 +110,7 @@ pub struct Result_ {
     pub dateTime: String,
     pub endTime: String,
     pub description: String,
-    pub venue: Venue,
+    pub venue: Option<Venue>,
     pub duration: String,
     pub timezone: String,
     pub eventType: String,
