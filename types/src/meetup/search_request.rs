@@ -128,8 +128,6 @@ pub struct Venue {
     pub city: String,
     pub state: String,
     pub country: String,
-    pub lat: i64,
-    pub lng: i64,
     pub name: String,
     pub radius: i64,
 }
