@@ -104,13 +104,13 @@ pub struct Node {
 #[allow(non_snake_case)]
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone, Ord, Eq, PartialOrd)]
 /// Details about a meetup event
-// TODO: include venue details in here
 pub struct Result_ {
     pub id: String,
     pub title: String,
     pub dateTime: String,
     pub endTime: String,
     pub description: String,
+    pub venue: Venue,
     pub duration: String,
     pub timezone: String,
     pub eventType: String,
@@ -119,6 +119,19 @@ pub struct Result_ {
     pub going: Option<i32>,
     pub isAttending: bool,
     pub rsvpState: RsvpState,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone, Ord, Eq, PartialOrd)]
+pub struct Venue {
+    pub id: String,
+    pub address: String,
+    pub city: String,
+    pub state: String,
+    pub country: String,
+    pub lat: i64,
+    pub lng: i64,
+    pub name: String,
+    pub radius: i64,
 }
 
 #[allow(non_snake_case)]
