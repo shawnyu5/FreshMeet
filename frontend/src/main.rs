@@ -1,8 +1,13 @@
+use std::collections::HashMap;
+
 use dotenv::dotenv;
+mod components;
 mod pages;
 use leptos::*;
 use leptos_router::*;
 use pages::tech_events::*;
+
+use crate::pages::bars::Bars;
 mod environment;
 
 #[component]
@@ -15,6 +20,10 @@ fn App(cx: Scope) -> impl IntoView {
                   <Route
                       path="/"
                       view=|cx| view! { cx, <Home/> }
+                  />
+                  <Route
+                      path="/bars"
+                      view=|cx| view! { cx, <BarsMeetups/> }
                   />
                   </Routes>
           </main>
@@ -40,7 +49,7 @@ fn NavBar(cx: Scope) -> impl IntoView {
     view! {cx,
         <div>
             <button><A href="/">"Tech events"</A></button>
-            <button><A href="/about">"About"</A></button>
+            <button><A href="/bars">"Bar meetups"</A></button>
         </div>
     }
 }
@@ -48,10 +57,11 @@ fn NavBar(cx: Scope) -> impl IntoView {
 /// the home page
 #[component]
 fn Home(cx: Scope) -> impl IntoView {
+    // map of query string to end cursor
+    let after_map = create_rw_signal(cx, HashMap::<String, String>::new());
     let page_signal = create_rw_signal(cx, 1 as u32);
-    // let after_signal = create_rw_signal(cx, "".to_string());
+    provide_context(cx, after_map);
     provide_context(cx, page_signal);
-    // provide_context(cx, after_signal);
 
     create_effect(cx, move |_| {
         log!("page number changed to {}", page_signal.get());
@@ -62,6 +72,29 @@ fn Home(cx: Scope) -> impl IntoView {
     view! { cx,
         <div>
             <TechEvents/>
+            <Pagination/>
+        </div>
+    }
+}
+
+/// page for bars meetups
+#[component]
+fn BarsMeetups(cx: Scope) -> impl IntoView {
+    // map of query string to end cursor
+    let after_map = create_rw_signal(cx, HashMap::<String, String>::new());
+    let page_signal = create_rw_signal(cx, 1 as u32);
+    provide_context(cx, after_map);
+    provide_context(cx, page_signal);
+
+    create_effect(cx, move |_| {
+        log!("page number changed to {}", page_signal.get());
+    });
+    // pass to components page number, and container of events.
+    // every time page number changes, update events
+
+    view! { cx,
+        <div>
+            <Bars/>
             <Pagination/>
         </div>
     }
@@ -105,7 +138,6 @@ fn Pagination(cx: Scope) -> impl IntoView {
             >
             "Next"
         </button>
-
     </div>
     }
 }
