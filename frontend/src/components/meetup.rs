@@ -15,8 +15,14 @@ use crate::environment;
 /// * `cx`: scope
 /// * `after_map`: map of search query to end cursor
 /// * `page_number`: the current page number
-pub fn Meetup(cx: Scope, queries: ReadSignal<Vec<String>>) -> impl IntoView {
-    // P: FnMut(&Self::Item) -> bool,
+pub fn Meetup(
+    cx: Scope,
+    queries: ReadSignal<Vec<String>>,
+    // #[prop(optional)] filter_fn: Option<P>,
+) -> impl IntoView
+// where
+    // P: FnMut(&Result_) -> bool,
+{
     let after_map = use_context::<RwSignal<HashMap<String, String>>>(cx)
         .expect("a hashmap read signal for after map");
     let page_number = use_context::<RwSignal<u32>>(cx).expect("a u32 read signal for page number");
@@ -43,9 +49,11 @@ pub fn Meetup(cx: Scope, queries: ReadSignal<Vec<String>>) -> impl IntoView {
         events.dedup();
         events.sort_by(|a, b| a.dateTime.cmp(&b.dateTime));
         // events.iter().filter(|e| e == e);
+
+        // let default_fn = |e: &Result_| e == e;
         // let events: Vec<Result_> = events
         // .into_iter()
-        // .filter(|e| !e.title.to_lowercase().contains("online"))
+        // .filter(filter_fn.unwrap_or_else(default_fn))
         // .collect();
         return events;
     });

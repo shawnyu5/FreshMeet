@@ -13,5 +13,6 @@ pub fn TechEvents(cx: Scope) -> impl IntoView {
         ],
     );
 
+    // let filter_fn = |e: &Result_| e == e;
     view! {cx, <Meetup queries=queries/>}
 }
