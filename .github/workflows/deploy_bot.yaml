@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy bot
 on:
   push:
     branches: ["master"]
