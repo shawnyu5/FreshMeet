@@ -51,10 +51,10 @@ pub fn Meetup(
         // events.iter().filter(|e| e == e);
 
         // let default_fn = |e: &Result_| e == e;
-        // let events: Vec<Result_> = events
-        // .into_iter()
-        // .filter(filter_fn.unwrap_or_else(default_fn))
-        // .collect();
+        let events: Vec<Result_> = events
+            .into_iter()
+            .filter(|e| !e.title.to_lowercase().contains("online"))
+            .collect();
         return events;
     });
 
