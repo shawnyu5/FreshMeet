@@ -79,7 +79,7 @@ pub fn Meetup(
                         }
                     >
                         <div>
-                            <h3><a href={event.eventUrl} target="_blank">{event.title.clone()}</a></h3>
+                            <h3><a href={event.eventUrl} target="_blank">{event.title.clone()}"("{event.going.unwrap_or_default()}")"</a></h3>
                             <p><b>"Time: "</b>{&event.dateTime}</p>
                             {
                                 if event.venue.is_some() {
