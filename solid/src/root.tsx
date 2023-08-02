@@ -21,6 +21,16 @@ export default function Root() {
         <Title>SolidStart - Bare</Title>
         <Meta charset="utf-8" />
         <Meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.5/dist/css/foundation.min.css"
+          crossorigin="anonymous"
+        ></link>
+
+        <script
+          src="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.5/dist/js/foundation.min.js"
+          crossorigin="anonymous"
+        ></script>
       </Head>
       <Body>
         <Suspense>
