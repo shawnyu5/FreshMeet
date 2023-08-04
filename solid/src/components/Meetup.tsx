@@ -2,33 +2,23 @@ import axios, { AxiosResponse } from "axios";
 import { For, createEffect, createSignal, onMount } from "solid-js";
 import Pagination from "./Pagination";
 
-export default function (props: { query: string; per_page: number }) {
+export default function (props: { query: Array<string>; per_page: number }) {
   const { query, per_page } = props;
   const [events, setEvents] = createSignal<MeetupEvent>();
   const [pageNumber, setPageNumber] = createSignal(1);
 
-  // clear the after list in local storage on mount
   onMount(async () => {
     console.log("mounted");
-    localStorage.setItem("after", "");
+    // clear the after list in local storage on mount
+    setCursors([]);
 
-    const events = await fetchEvents(query, per_page, lastCursor());
+    // load initial events
+    const events = await searchAllQueries(query, per_page, lastCursor());
     if (events.page_info.endCursor != "") {
       appendCursors(events.page_info.endCursor);
     }
     setEvents(events);
   });
-
-  // createEffect(async () => {
-  //   const events = await fetchEvents(query, per_page, lastCursor());
-  //   if (events.page_info.endCursor != "") {
-  //     appendCursors(events.page_info.endCursor);
-  //   }
-
-  //   setEvents(() => {
-  //     return events;
-  //   });
-  // });
 
   return (
     <div id="meetups">
@@ -44,7 +34,11 @@ export default function (props: { query: string; per_page: number }) {
           <For each={events()?.nodes}>
             {(event, _) => (
               <tr>
-                <td>{event.title}</td>
+                <td>
+                  <a target="_blank" href={event.eventUrl}>
+                    {event.title}
+                  </a>
+                </td>
                 <td>{event.description}</td>
                 <td>{event.dateTime}</td>
               </tr>
@@ -57,7 +51,7 @@ export default function (props: { query: string; per_page: number }) {
         nextPageCallback={async () => {
           scrollToTop();
           setPageNumber((e) => e + 1);
-          const events = await fetchEvents(query, per_page, lastCursor());
+          const events = await searchAllQueries(query, per_page, lastCursor());
           // if there are more results after this one, keep track of the end cursor
           if (events.page_info.endCursor != "") {
             appendCursors(events.page_info.endCursor);
@@ -74,7 +68,7 @@ export default function (props: { query: string; per_page: number }) {
 
           setCursors(cursorArr);
 
-          const events = await fetchEvents(query, per_page, lastCursor());
+          const events = await searchAllQueries(query, per_page, lastCursor());
           setEvents(events);
         }}
       />
@@ -135,6 +129,30 @@ function lastCursor(): string {
   return afterArr[afterArr.length - 1];
 }
 
+async function searchAllQueries(
+  queries: Array<string>,
+  per_page: number,
+  after: string
+): Promise<MeetupEvent> {
+  let events: MeetupEvent = {
+    nodes: [],
+    page_info: { endCursor: "", hasNextPage: true },
+  };
+  for (const query of queries) {
+    let searchResult = await searchEvents(query, per_page, after);
+    // __AUTO_GENERATED_PRINT_VAR_START__
+    console.log(
+      "searchAllQueries#for_in searchResult: %s",
+      JSON.stringify(searchResult)
+    ); // __AUTO_GENERATED_PRINT_VAR_END__
+
+    events.page_info = searchResult.page_info;
+    events.nodes = events.nodes.concat(searchResult.nodes);
+  }
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("searchAllQueries events: %s", JSON.stringify(events)); // __AUTO_GENERATED_PRINT_VAR_END__
+  return events;
+}
 /**
  * converts a comma separated string to an array of strings
  * @param str - comma separated string
@@ -143,7 +161,7 @@ function lastCursor(): string {
 function stringToArray(str: string): Array<string> {
   return str.split(",");
 }
-async function fetchEvents(
+async function searchEvents(
   query: string,
   per_page: number,
   after: string
