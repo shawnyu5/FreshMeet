@@ -30,4 +30,4 @@ jobs:
         run: cd frontend && vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy project to vercel
-        run: cd frontend && vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: cd frontend && vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
