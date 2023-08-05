@@ -20,7 +20,6 @@
     "axios": "^1.4.0",
     "solid-js": "^1.7.8",
     "solid-start": "^0.2.30",
-    "solid-start-vercel": "^0.2.30",
     "undici": "^5.15.1"
   },
   "engines": {
