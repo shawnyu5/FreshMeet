@@ -1,5 +1,5 @@
 import Meetup from "~/components/Meetup";
 
 export default function () {
-  return <Meetup query={["tech", "programming"]} per_page={10} />;
+  return <Meetup query={["board games", "hangout"]} per_page={20} />;
 }
