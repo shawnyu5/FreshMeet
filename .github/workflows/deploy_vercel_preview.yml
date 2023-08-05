@@ -31,6 +31,3 @@ jobs:
 
       - name: Deploy project to vercel
         run: cd frontend && vercel build --token=${{ secrets.VERCEL_TOKEN }}
-
-      # - name: Deploy Project Artifacts to Vercel
-      #   run: cd frontend && vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
