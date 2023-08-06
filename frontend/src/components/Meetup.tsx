@@ -24,12 +24,13 @@ export default function (props: { query: Array<string>; per_page: number }) {
 
   return (
     <div id="meetups">
-      <table>
+      <table class="table is-striped">
         <thead>
           <tr>
             <th>Name</th>
-            <th>description</th>
             <th>date</th>
+            <th>Attending</th>
+            <th>description</th>
           </tr>
         </thead>
         <tbody>
@@ -41,8 +42,9 @@ export default function (props: { query: Array<string>; per_page: number }) {
                     {event.title}
                   </a>
                 </td>
-                <Desciption description={event.description} />
                 <td>{event.dateTime}</td>
+                <td>{event.going}</td>
+                <Desciption description={event.description} />
               </tr>
             )}
           </For>
