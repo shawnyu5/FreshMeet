@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-import { For, createEffect, createSignal, onMount } from "solid-js";
+import { load } from "~/environment";
+import { For, createSignal, onMount } from "solid-js";
 import Pagination from "./Pagination";
 
 export default function (props: { query: Array<string>; per_page: number }) {
@@ -173,7 +174,8 @@ async function searchEvents(
     let results: MeetupEvent | null = null;
 
     let response: AxiosResponse<MeetupEvent> = await axios.post(
-      "http://localhost:8000/meetup/search",
+      `${load().api_url}/meetup/search`,
+      // "http://localhost:8000/meetup/search",
       {
         query,
         per_page: per_page.toString(),
