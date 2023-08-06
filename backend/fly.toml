@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for networking-accumulator on 2023-05-31T20:33:11-04:00
+# fly.toml app configuration file generated for fresh-meet on 2023-08-06T18:16:32-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "networking-accumulator"
+app = "fresh-meet"
 primary_region = "yyz"
 
 [http_service]
