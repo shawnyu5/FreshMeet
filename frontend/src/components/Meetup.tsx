@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { marked } from "marked";
 import { load } from "~/environment";
 import { For, createSignal, onMount } from "solid-js";
 import Pagination from "./Pagination";
@@ -40,7 +41,7 @@ export default function (props: { query: Array<string>; per_page: number }) {
                     {event.title}
                   </a>
                 </td>
-                <td>{event.description}</td>
+                <Desciption description={event.description} />
                 <td>{event.dateTime}</td>
               </tr>
             )}
@@ -128,6 +129,17 @@ function lastCursor(): string {
   }
   let afterArr = stringToArray(afterString);
   return afterArr[afterArr.length - 1];
+}
+
+/** render the markdown in the description
+ *
+ * @returns a `td` element containing the description
+ */
+function Desciption(props: { description: string }) {
+  let rendered = marked.parse(props.description);
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("formatDescription rendered: %s", rendered); // __AUTO_GENERATED_PRINT_VAR_END__
+  return <td innerHTML={rendered}></td>;
 }
 
 async function searchAllQueries(
