@@ -10,7 +10,7 @@ export function Navbar(props: {
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
-          <img src="../../public/icon.png" />
+          <img src="../icon.png" />
         </a>
       </div>
 
