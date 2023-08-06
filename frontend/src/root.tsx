@@ -12,6 +12,7 @@ import {
   Scripts,
   Title,
 } from "solid-start";
+import { Navbar } from "./components/Navbar";
 import "./root.css";
 
 export default function Root() {
@@ -39,9 +40,13 @@ export default function Root() {
       <Body>
         <Suspense>
           <ErrorBoundary>
-            <A href="/meetup/tech">Tech</A>
-            <A href="/meetup/bars">Bars</A>
-            <A href="/meetup/board-games">Board games + hangout</A>
+            <Navbar
+              labels={[
+                { label: "Tech", path: "/meetup/tech" },
+                { label: "Bars", path: "/meetup/bars" },
+                { label: "Board games + hangout", path: "/meetup/board-games" },
+              ]}
+            />
             <Routes>
               <FileRoutes />
             </Routes>
