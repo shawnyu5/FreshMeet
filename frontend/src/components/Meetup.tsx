@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { For, createEffect, createSignal, onMount } from "solid-js";
+import { For, createSignal, onMount } from "solid-js";
 import Pagination from "./Pagination";
 
 export default function (props: { query: Array<string>; per_page: number }) {
@@ -167,6 +167,7 @@ async function searchEvents(
   after: string
 ): Promise<MeetupEvent> {
   console.log("fetching events");
+  console.log(import.meta.env.VITE_API_URL);
   // __AUTO_GENERATED_PRINT_VAR_START__
   console.log("fetchEvents after: %s", after); // __AUTO_GENERATED_PRINT_VAR_END__
   try {
