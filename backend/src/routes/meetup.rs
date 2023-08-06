@@ -170,7 +170,6 @@ pub async fn search_post(data: Json<SearchData<'_>>) -> Result<Json<Response>, B
         .collect();
 
     search_results.sort_by(|a, b| a.dateTime.cmp(&b.dateTime));
-
     return Ok(Json(Response {
         page_info: search_result.data.results.pageInfo,
         nodes: search_results,
