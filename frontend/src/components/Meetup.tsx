@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { load } from "~/environment";
 import { For, createSignal, onMount } from "solid-js";
 import Pagination from "./Pagination";
 
@@ -167,14 +168,14 @@ async function searchEvents(
   after: string
 ): Promise<MeetupEvent> {
   console.log("fetching events");
-  console.log(import.meta.env.VITE_API_URL);
   // __AUTO_GENERATED_PRINT_VAR_START__
   console.log("fetchEvents after: %s", after); // __AUTO_GENERATED_PRINT_VAR_END__
   try {
     let results: MeetupEvent | null = null;
 
     let response: AxiosResponse<MeetupEvent> = await axios.post(
-      "http://localhost:8000/meetup/search",
+      `${load().api_url}/meetup/search`,
+      // "http://localhost:8000/meetup/search",
       {
         query,
         per_page: per_page.toString(),
