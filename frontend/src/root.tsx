@@ -41,7 +41,7 @@ export default function Root() {
           <ErrorBoundary>
             <A href="/meetup/tech">Tech</A>
             <A href="/meetup/bars">Bars</A>
-            <A href="/meetup/board-games">Board games / hangout</A>
+            <A href="/meetup/board-games">Board games + hangout</A>
             <Routes>
               <FileRoutes />
             </Routes>
