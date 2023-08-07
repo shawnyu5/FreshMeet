@@ -17,7 +17,7 @@ export function Navbar(props: {
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
           <For each={props.labels}>
-            {(label, i) => (
+            {(label, _) => (
               <a class="navbar-item" href={label.path}>
                 {label.label}
               </a>

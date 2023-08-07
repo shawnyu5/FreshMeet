@@ -1,7 +1,6 @@
 // @refresh reload
 import { Suspense } from "solid-js";
 import {
-  A,
   Body,
   ErrorBoundary,
   FileRoutes,
@@ -39,7 +38,7 @@ export default function Root() {
       </Head>
       <Body>
         <Suspense>
-          <ErrorBoundary>
+          <ErrorBoundary fallback={(err) => err}>
             <Navbar
               labels={[
                 { label: "Tech", path: "/meetup/tech" },

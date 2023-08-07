@@ -1,13 +1,18 @@
 import axios, { AxiosResponse } from "axios";
 import { marked } from "marked";
 import { load } from "~/environment";
-import { For, createSignal, onMount } from "solid-js";
+import { For, createSignal, onMount, Suspense, createResource } from "solid-js";
 import Pagination from "./Pagination";
 
+// async function timeout() {
+//   await new Promise((r) => setTimeout(r, 5000));
+//   return "hi";
+// }
 export default function (props: { query: Array<string>; per_page: number }) {
   const { query, per_page } = props;
   const [events, setEvents] = createSignal<MeetupEvent>();
   const [pageNumber, setPageNumber] = createSignal(1);
+  // const [eventResource] = createResource(pageNumber, timeout);
 
   onMount(async () => {
     console.log("mounted");
@@ -23,60 +28,70 @@ export default function (props: { query: Array<string>; per_page: number }) {
   });
 
   return (
-    <div id="meetups">
-      <table class="table is-striped">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>date</th>
-            <th>Attending</th>
-            <th>description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <For each={events()?.nodes}>
-            {(event, _) => (
-              <tr>
-                <td>
-                  <a target="_blank" href={event.eventUrl}>
-                    {event.title}
-                  </a>
-                </td>
-                <td>{event.dateTime}</td>
-                <td>{event.going}</td>
-                <Desciption description={event.description} />
-              </tr>
-            )}
-          </For>
-        </tbody>
-      </table>
+    <Suspense fallback={<p>loading...</p>}>
+      <div id="meetups">
+        <table class="table is-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>date</th>
+              <th>Attending</th>
+              <th>description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <For each={events()?.nodes}>
+              {(event, _) => (
+                <tr>
+                  <td>
+                    <a target="_blank" href={event.eventUrl}>
+                      {event.title}
+                    </a>
+                  </td>
+                  <td>{event.dateTime}</td>
+                  <td>{event.going}</td>
+                  <Desciption description={event.description} />
+                </tr>
+              )}
+            </For>
+          </tbody>
+        </table>
 
-      <Pagination
-        nextPageCallback={async () => {
-          scrollToTop();
-          setPageNumber((e) => e + 1);
-          const events = await searchAllQueries(query, per_page, lastCursor());
-          // if there are more results after this one, keep track of the end cursor
-          if (events.page_info.endCursor != "") {
-            appendCursors(events.page_info.endCursor);
-          }
-          setEvents(events);
-        }}
-        previousPageCallback={async () => {
-          scrollToTop();
-          setPageNumber((e) => e - 1);
-          // remove the last 2 cursor from the cursor list
-          let cursorArr = getCursors();
-          cursorArr.pop();
-          cursorArr.pop();
+        <Pagination
+          nextPageCallback={async () => {
+            scrollToTop();
+            setPageNumber((e) => e + 1);
+            const events = await searchAllQueries(
+              query,
+              per_page,
+              lastCursor()
+            );
+            // if there are more results after this one, keep track of the end cursor
+            if (events.page_info.endCursor != "") {
+              appendCursors(events.page_info.endCursor);
+            }
+            setEvents(events);
+          }}
+          previousPageCallback={async () => {
+            scrollToTop();
+            setPageNumber((e) => e - 1);
+            // remove the last 2 cursor from the cursor list
+            let cursorArr = getCursors();
+            cursorArr.pop();
+            cursorArr.pop();
 
-          setCursors(cursorArr);
+            setCursors(cursorArr);
 
-          const events = await searchAllQueries(query, per_page, lastCursor());
-          setEvents(events);
-        }}
-      />
-    </div>
+            const events = await searchAllQueries(
+              query,
+              per_page,
+              lastCursor()
+            );
+            setEvents(events);
+          }}
+        />
+      </div>
+    </Suspense>
   );
 }
 

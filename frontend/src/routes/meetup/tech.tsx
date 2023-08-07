@@ -1,3 +1,4 @@
+import { Suspense } from "solid-js";
 import Meetup from "~/components/Meetup";
 
 export default function () {
