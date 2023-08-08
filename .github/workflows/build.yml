@@ -1,4 +1,4 @@
-name: CI
+name: Build
 
 on:
   push:
@@ -19,7 +19,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  buildBackend:
+  backend:
+    name: Backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -28,16 +29,31 @@ jobs:
       - name: Run tests
         run: cd backend && cargo test --verbose
 
-  buildBot:
+  frontend:
+    name: Frontend
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go
-        uses: actions/setup-go@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
-          go-version: 1.19
+          node-version: latest
+
       - uses: actions/checkout@v3
+
+
       - name: Build
-        run: cd bot && go build -v ./...
+        run: cd frontend && npm ci && npm run build
+
+  # buildBot:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v3
+  #       with:
+  #         go-version: 1.19
+  #     - uses: actions/checkout@v3
+  #     - name: Build
+  #       run: cd bot && go build -v ./...
 
   generateRelease:
     runs-on: ubuntu-latest
@@ -45,8 +61,8 @@ jobs:
       packages: write
       contents: write
     needs:
-      - buildBackend
-      - buildBot
+      - backend
+      - Frontend
     steps:
       - uses: actions/checkout@v3
       - name: semantic release
