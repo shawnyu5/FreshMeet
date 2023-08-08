@@ -3,16 +3,47 @@ on:
   push:
     branches:
       - master
+      - develop
     paths:
-      - "backend/**"
+      # - "backend/**"
+      - ".github/workflows/**"
+
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths:
+      # - "backend/**"
       - ".github/workflows/**"
 jobs:
   deploy:
-    name: Deploy app
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: cd backend && flyctl deploy --remote-only
+
+      - name: Semantic release
+        id: release
+        uses: codfish/semantic-release-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - run: echo ${{ github.ref_name }}
+
+      - name: Update version in Cargo.toml
+        if: steps.release.outputs.new-release-published == 'true' && github.ref_name == 'master'
+        uses: ciiiii/toml-editor@1.0.0
+        with:
+          file: "backend/Cargo.toml"
+          key: "package.version"
+          value: ${{ steps.release.outputs.release-version }}
+
+      - name: Setup flyctl
+        if: github.ref_name == 'master'
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy backend
+        if: github.ref_name == 'master'
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: cd backend && flyctl deploy --remote-only
