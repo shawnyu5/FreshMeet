@@ -3,16 +3,18 @@ import { marked } from "marked";
 import { load } from "~/environment";
 import { For, createSignal, Suspense, createResource, onMount } from "solid-js";
 import Pagination from "./Pagination";
+import logger from "~/logger";
 
 export default function (props: { query: Array<string>; per_page: number }) {
   const { query, per_page } = props;
   const [pageNumber, setPageNumber] = createSignal(1);
   const [eventResource] = createResource(pageNumber, async () => {
+    logger.info("Fetching events");
     const events = await searchAllQueries(query, per_page, lastCursor());
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log("(anon) events: %s", JSON.stringify(events)); // __AUTO_GENERATED_PRINT_VAR_END__
 
+    logger.info(`End cursor: ${events.page_info.endCursor}`);
     if (events.page_info.endCursor != "") {
+      logger.info("Appending cursor to local storage");
       appendCursors(events.page_info.endCursor);
     }
 
@@ -20,6 +22,7 @@ export default function (props: { query: Array<string>; per_page: number }) {
   });
 
   onMount(async () => {
+    logger.info("Cleared cursor in local storage");
     // clear the after list in local storage on mount
     setCursors([]);
   });
@@ -151,15 +154,9 @@ async function searchAllQueries(
     page_info: { endCursor: "", hasNextPage: true },
   };
   for (const query of queries) {
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log("searchAllQueries#for_in query: %s", query); // __AUTO_GENERATED_PRINT_VAR_END__
-
+    logger.info(`query: ${query}`);
     let searchResult = await searchEvents(query, per_page, after);
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log(
-      "searchAllQueries#for_in searchResult: %s",
-      JSON.stringify(searchResult)
-    ); // __AUTO_GENERATED_PRINT_VAR_END__
+    logger.info(`search result: ${JSON.stringify(searchResult)}`);
 
     events.page_info = searchResult.page_info;
     events.nodes = events.nodes.concat(searchResult.nodes);
@@ -180,8 +177,6 @@ async function searchEvents(
   after: string
 ): Promise<MeetupEvent> {
   console.log("fetching events");
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("fetchEvents after: %s", after); // __AUTO_GENERATED_PRINT_VAR_END__
   try {
     let results: MeetupEvent | null = null;
 

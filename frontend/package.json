@@ -19,6 +19,8 @@
     "@solidjs/router": "^0.8.2",
     "axios": "^1.4.0",
     "marked": "^6.0.0",
+    "pino": "^8.15.0",
+    "pino-pretty": "^10.2.0",
     "solid-js": "^1.7.8",
     "solid-start": "^0.2.30",
     "solid-start-vercel": "^0.2.30",
