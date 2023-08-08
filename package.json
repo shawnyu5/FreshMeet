@@ -1,0 +1,27 @@
+{
+   "name": "networking_accumulator",
+   "version": "0.0.0-development",
+   "private": true,
+   "author": "Shawn Yu",
+   "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/shawnyu5/networking_accumulator/issues"
+   },
+   "homepage": "https://github.com/shawnyu5/networking_accumulator#readme",
+   "description": "",
+   "scripts": {
+      "semantic-release": "semantic-release"
+   },
+   "devDependencies": {
+      "semantic-release": "^20.1.1"
+   },
+   "release": {
+      "branches": [
+         "master",
+         {
+            "name": "develop",
+            "prerelease": true
+         }
+      ]
+   }
+}
