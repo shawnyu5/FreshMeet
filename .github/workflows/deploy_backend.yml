@@ -31,7 +31,7 @@ jobs:
         id: release
         uses: codfish/semantic-release-action@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           branches: |
             [
@@ -56,9 +56,9 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
+          commit_message: "Update backend version in Cargo.toml"
           branch: ${{ github.ref_name }}
           create_branch: false
-          commit_message: "Update backend version in Cargo.toml"
 
       - name: Setup flyctl
         if: github.ref_name == 'master'
