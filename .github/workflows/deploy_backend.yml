@@ -5,16 +5,19 @@ on:
       - master
       - develop
     paths:
-      # - "backend/**"
+      - "backend/**"
       - ".github/workflows/**"
 
-  pull_request:
-    branches:
-      - master
-      - develop
-    paths:
-      # - "backend/**"
-      - ".github/workflows/**"
+  # pull_request:
+  #   branches:
+  #     - master
+  #     - develop
+  #   paths:
+  #     # - "backend/**"
+  #     - ".github/workflows/**"
+
+permissions: write-all
+
 jobs:
   deploy:
     name: Deploy
