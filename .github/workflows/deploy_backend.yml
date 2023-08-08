@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Semantic release
         id: release
@@ -52,10 +52,6 @@ jobs:
           file: "backend/Cargo.toml"
           key: "package.version"
           value: ${{ steps.release.outputs.release-version }}
-
-      - name: Cargo build backend
-        if: steps.release.outputs.new-release-published == 'true'
-        run: cd backend && cargo build
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
