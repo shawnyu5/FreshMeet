@@ -1,6 +1,10 @@
+use anyhow::{anyhow, Result};
+use axum::http::{HeaderMap, HeaderValue};
 use chrono::{DateTime, Local, Utc};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
+
+use super::response::SearchResponse;
 
 /// Builder for building a meetup request
 #[derive(Default, Debug)]
@@ -23,8 +27,8 @@ impl RequestBuilder {
     }
 
     /// number of results to return
-    pub fn len(&mut self, len: i32) -> &mut RequestBuilder {
-        self.first = len;
+    pub fn per_page(&mut self, per_page: i32) -> &mut RequestBuilder {
+        self.first = per_page;
         return self;
     }
 
@@ -79,6 +83,36 @@ pub struct RequestBody {
     pub operationName: String,
     pub variables: Variables,
     pub query: String,
+}
+
+impl RequestBody {
+    /// search for meetup events
+    pub async fn search(&self) -> Result<SearchResponse> {
+        let url = "https://www.meetup.com/gql";
+
+        let mut headers = HeaderMap::new();
+        headers.insert("content-type", HeaderValue::from_static("application/json"));
+
+        let client = reqwest::Client::new();
+        match client
+            .post(url)
+            .json(self)
+            .headers(headers)
+            .send()
+            .await
+            .unwrap()
+            // .text()
+            .json::<SearchResponse>()
+            .await
+        {
+            Ok(search) => {
+                return Ok(search);
+            }
+            Err(e) => {
+                return Err(anyhow!(e));
+            }
+        }
+    }
 }
 
 impl Default for RequestBody {

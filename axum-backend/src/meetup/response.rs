@@ -80,7 +80,7 @@ pub struct Event {
     pub currency: String,
     pub eventUrl: String,
     pub going: Option<i32>,
-    pub isAttending: bool,
+    pub rsvpState: RsvpState,
 }
 
 #[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone, Ord, Eq, PartialOrd)]
@@ -92,4 +92,14 @@ pub struct Venue {
     pub country: String,
     pub name: String,
     pub radius: i64,
+}
+
+#[allow(non_camel_case_types)]
+#[derive(Serialize, Deserialize, Debug, Default, PartialEq, Clone, Ord, Eq, PartialOrd)]
+pub enum RsvpState {
+    #[default]
+    JOIN_OPEN,
+    CLOSED,
+    JOIN_APPROVAL,
+    NOT_OPEN_YET,
 }
