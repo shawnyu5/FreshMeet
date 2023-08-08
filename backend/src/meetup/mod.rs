@@ -1,1 +1,2 @@
-pub mod search_request;
+pub mod request;
+pub mod response;

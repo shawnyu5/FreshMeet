@@ -185,7 +185,7 @@ async function searchEvents(
       // "http://localhost:8000/meetup/search",
       {
         query,
-        per_page: per_page.toString(),
+        per_page: per_page,
         after: after,
       }
     );
