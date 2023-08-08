@@ -53,6 +53,10 @@ jobs:
           key: "package.version"
           value: ${{ steps.release.outputs.release-version }}
 
+      - name: Cargo build backend
+        if: steps.release.outputs.new-release-published == 'true'
+        run: cd backend && cargo build
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
