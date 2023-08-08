@@ -51,6 +51,13 @@ jobs:
           key: "package.version"
           value: ${{ steps.release.outputs.release-version }}
 
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: ${{ github.ref_name }}
+          create_branch: false
+          commit_message: "Update backend version in Cargo.toml"
+
       - name: Setup flyctl
         if: github.ref_name == 'master'
         uses: superfly/flyctl-actions/setup-flyctl@master

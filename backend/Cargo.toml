@@ -3,7 +3,6 @@ name = "fresh_meet"
 version = "0.1.0-develop"
 edition = "2021"
 
-
 [dependencies]
 anyhow = "1.0.72"
 axum = "0.6.20"
