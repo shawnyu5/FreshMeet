@@ -1,30 +1,27 @@
 import axios, { AxiosResponse } from "axios";
 import { marked } from "marked";
 import { load } from "~/environment";
-import { For, createSignal, onMount, Suspense, createResource } from "solid-js";
+import { For, createSignal, Suspense, createResource, onMount } from "solid-js";
 import Pagination from "./Pagination";
 
-// async function timeout() {
-//   await new Promise((r) => setTimeout(r, 5000));
-//   return "hi";
-// }
 export default function (props: { query: Array<string>; per_page: number }) {
   const { query, per_page } = props;
-  const [events, setEvents] = createSignal<MeetupEvent>();
   const [pageNumber, setPageNumber] = createSignal(1);
-  // const [eventResource] = createResource(pageNumber, timeout);
-
-  onMount(async () => {
-    console.log("mounted");
-    // clear the after list in local storage on mount
-    setCursors([]);
-
-    // load initial events
+  const [eventResource] = createResource(pageNumber, async () => {
     const events = await searchAllQueries(query, per_page, lastCursor());
+    // __AUTO_GENERATED_PRINT_VAR_START__
+    console.log("(anon) events: %s", JSON.stringify(events)); // __AUTO_GENERATED_PRINT_VAR_END__
+
     if (events.page_info.endCursor != "") {
       appendCursors(events.page_info.endCursor);
     }
-    setEvents(events);
+
+    return events;
+  });
+
+  onMount(async () => {
+    // clear the after list in local storage on mount
+    setCursors([]);
   });
 
   return (
@@ -40,7 +37,7 @@ export default function (props: { query: Array<string>; per_page: number }) {
             </tr>
           </thead>
           <tbody>
-            <For each={events()?.nodes}>
+            <For each={eventResource()?.nodes}>
               {(event, _) => (
                 <tr>
                   <td>
@@ -61,33 +58,16 @@ export default function (props: { query: Array<string>; per_page: number }) {
           nextPageCallback={async () => {
             scrollToTop();
             setPageNumber((e) => e + 1);
-            const events = await searchAllQueries(
-              query,
-              per_page,
-              lastCursor()
-            );
-            // if there are more results after this one, keep track of the end cursor
-            if (events.page_info.endCursor != "") {
-              appendCursors(events.page_info.endCursor);
-            }
-            setEvents(events);
           }}
           previousPageCallback={async () => {
             scrollToTop();
-            setPageNumber((e) => e - 1);
             // remove the last 2 cursor from the cursor list
             let cursorArr = getCursors();
             cursorArr.pop();
             cursorArr.pop();
-
             setCursors(cursorArr);
 
-            const events = await searchAllQueries(
-              query,
-              per_page,
-              lastCursor()
-            );
-            setEvents(events);
+            setPageNumber((e) => e - 1);
           }}
         />
       </div>
@@ -153,9 +133,11 @@ function lastCursor(): string {
  * @returns a `td` element containing the description
  */
 function Desciption(props: { description: string }) {
+  marked.use({
+    mangle: false,
+    headerIds: false,
+  });
   let rendered = marked.parse(props.description);
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("formatDescription rendered: %s", rendered); // __AUTO_GENERATED_PRINT_VAR_END__
   return <td innerHTML={rendered}></td>;
 }
 
@@ -169,6 +151,9 @@ async function searchAllQueries(
     page_info: { endCursor: "", hasNextPage: true },
   };
   for (const query of queries) {
+    // __AUTO_GENERATED_PRINT_VAR_START__
+    console.log("searchAllQueries#for_in query: %s", query); // __AUTO_GENERATED_PRINT_VAR_END__
+
     let searchResult = await searchEvents(query, per_page, after);
     // __AUTO_GENERATED_PRINT_VAR_START__
     console.log(
@@ -179,8 +164,6 @@ async function searchAllQueries(
     events.page_info = searchResult.page_info;
     events.nodes = events.nodes.concat(searchResult.nodes);
   }
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("searchAllQueries events: %s", JSON.stringify(events)); // __AUTO_GENERATED_PRINT_VAR_END__
   return events;
 }
 /**
