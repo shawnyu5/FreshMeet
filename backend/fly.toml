@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for fresh-meet on 2023-08-06T18:16:32-04:00
+# fly.toml app configuration file generated for broken-wildflower-7559 on 2023-08-08T17:04:11-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "fresh-meet"
+app = "broken-wildflower-7559"
 primary_region = "yyz"
 
 [http_service]
