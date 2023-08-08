@@ -1,82 +1,80 @@
 import axios, { AxiosResponse } from "axios";
 import { marked } from "marked";
 import { load } from "~/environment";
-import { For, createSignal, onMount } from "solid-js";
+import { For, createSignal, Suspense, createResource, onMount } from "solid-js";
 import Pagination from "./Pagination";
+import logger from "~/logger";
 
 export default function (props: { query: Array<string>; per_page: number }) {
   const { query, per_page } = props;
-  const [events, setEvents] = createSignal<MeetupEvent>();
   const [pageNumber, setPageNumber] = createSignal(1);
-
-  onMount(async () => {
-    console.log("mounted");
-    // clear the after list in local storage on mount
-    setCursors([]);
-
-    // load initial events
+  const [eventResource] = createResource(pageNumber, async () => {
+    logger.info("Fetching events");
     const events = await searchAllQueries(query, per_page, lastCursor());
+
+    logger.info(`End cursor: ${events.page_info.endCursor}`);
     if (events.page_info.endCursor != "") {
+      logger.info("Appending cursor to local storage");
       appendCursors(events.page_info.endCursor);
     }
-    setEvents(events);
+
+    return events;
+  });
+
+  onMount(async () => {
+    logger.info("Cleared cursor in local storage");
+    // clear the after list in local storage on mount
+    setCursors([]);
   });
 
   return (
-    <div id="meetups">
-      <table class="table is-striped">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>date</th>
-            <th>Attending</th>
-            <th>description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <For each={events()?.nodes}>
-            {(event, _) => (
-              <tr>
-                <td>
-                  <a target="_blank" href={event.eventUrl}>
-                    {event.title}
-                  </a>
-                </td>
-                <td>{event.dateTime}</td>
-                <td>{event.going}</td>
-                <Desciption description={event.description} />
-              </tr>
-            )}
-          </For>
-        </tbody>
-      </table>
+    <Suspense fallback={<p>loading...</p>}>
+      <div id="meetups">
+        <table class="table is-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>date</th>
+              <th>Attending</th>
+              <th>description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <For each={eventResource()?.nodes}>
+              {(event, _) => (
+                <tr>
+                  <td>
+                    <a target="_blank" href={event.eventUrl}>
+                      {event.title}
+                    </a>
+                  </td>
+                  <td>{event.dateTime}</td>
+                  <td>{event.going}</td>
+                  <Desciption description={event.description} />
+                </tr>
+              )}
+            </For>
+          </tbody>
+        </table>
 
-      <Pagination
-        nextPageCallback={async () => {
-          scrollToTop();
-          setPageNumber((e) => e + 1);
-          const events = await searchAllQueries(query, per_page, lastCursor());
-          // if there are more results after this one, keep track of the end cursor
-          if (events.page_info.endCursor != "") {
-            appendCursors(events.page_info.endCursor);
-          }
-          setEvents(events);
-        }}
-        previousPageCallback={async () => {
-          scrollToTop();
-          setPageNumber((e) => e - 1);
-          // remove the last 2 cursor from the cursor list
-          let cursorArr = getCursors();
-          cursorArr.pop();
-          cursorArr.pop();
+        <Pagination
+          nextPageCallback={async () => {
+            scrollToTop();
+            setPageNumber((e) => e + 1);
+          }}
+          previousPageCallback={async () => {
+            scrollToTop();
+            // remove the last 2 cursor from the cursor list
+            let cursorArr = getCursors();
+            cursorArr.pop();
+            cursorArr.pop();
+            setCursors(cursorArr);
 
-          setCursors(cursorArr);
-
-          const events = await searchAllQueries(query, per_page, lastCursor());
-          setEvents(events);
-        }}
-      />
-    </div>
+            setPageNumber((e) => e - 1);
+          }}
+        />
+      </div>
+    </Suspense>
   );
 }
 
@@ -138,9 +136,11 @@ function lastCursor(): string {
  * @returns a `td` element containing the description
  */
 function Desciption(props: { description: string }) {
+  marked.use({
+    mangle: false,
+    headerIds: false,
+  });
   let rendered = marked.parse(props.description);
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("formatDescription rendered: %s", rendered); // __AUTO_GENERATED_PRINT_VAR_END__
   return <td innerHTML={rendered}></td>;
 }
 
@@ -154,18 +154,13 @@ async function searchAllQueries(
     page_info: { endCursor: "", hasNextPage: true },
   };
   for (const query of queries) {
+    logger.info(`query: ${query}`);
     let searchResult = await searchEvents(query, per_page, after);
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log(
-      "searchAllQueries#for_in searchResult: %s",
-      JSON.stringify(searchResult)
-    ); // __AUTO_GENERATED_PRINT_VAR_END__
+    logger.info(`search result: ${JSON.stringify(searchResult)}`);
 
     events.page_info = searchResult.page_info;
     events.nodes = events.nodes.concat(searchResult.nodes);
   }
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("searchAllQueries events: %s", JSON.stringify(events)); // __AUTO_GENERATED_PRINT_VAR_END__
   return events;
 }
 /**
@@ -182,8 +177,6 @@ async function searchEvents(
   after: string
 ): Promise<MeetupEvent> {
   console.log("fetching events");
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("fetchEvents after: %s", after); // __AUTO_GENERATED_PRINT_VAR_END__
   try {
     let results: MeetupEvent | null = null;
 
