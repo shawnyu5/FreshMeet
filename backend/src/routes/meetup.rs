@@ -42,7 +42,7 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
     let mut events: Vec<Event> = response
         .events()
         .iter()
-        .filter(|e| e.rsvpState != RsvpState::CLOSED)
+        .filter(|e| e.rsvpState != RsvpState::CLOSED && !e.title.to_lowercase().contains("online"))
         .cloned()
         .collect();
     events.sort_by(|a, b| a.dateTime.cmp(&b.dateTime));
@@ -92,5 +92,37 @@ mod tests {
         let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
         let body: Response = serde_json::from_slice(&body).unwrap();
         assert_eq!(body.nodes.len(), 10 as usize);
+    }
+
+    /// test all meetup event titles does not contain `online`
+    #[tokio::test]
+    async fn no_online_in_title() {
+        let app = app();
+
+        let body = RequestBody {
+            query: "dating".to_string(),
+            per_page: 20,
+            after: None,
+        };
+        let json_data = serde_json::to_string(&body).unwrap();
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method(http::Method::POST)
+                    .uri("/meetup/search")
+                    .header("Content-Type", "application/json")
+                    .body(Body::from(json_data))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), http::StatusCode::OK);
+        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body: Response = serde_json::from_slice(&body).unwrap();
+        body.nodes.iter().for_each(|e| {
+            assert_eq!(e.title.contains("online"), false);
+        });
     }
 }
