@@ -26,7 +26,6 @@ pub struct Response {
 }
 /// handles /meetup/search post route
 pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, StatusCode> {
-    dbg!(&body);
     let request = RequestBuilder::new()
         .query(body.query.as_str())
         .per_page(body.per_page)
@@ -56,7 +55,10 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
 
 #[cfg(test)]
 mod tests {
-    use crate::routes::{app, meetup::RequestBody};
+    use crate::routes::{
+        app,
+        meetup::{RequestBody, Response},
+    };
     use axum::{
         body::Body,
         http::{self, Request},
@@ -64,16 +66,15 @@ mod tests {
     use tower::ServiceExt; // for `oneshot` and `ready`
 
     #[tokio::test]
-    async fn meetup() {
+    async fn check_status_code() {
         let app = app();
 
         let body = RequestBody {
-            query: "rust".to_string(),
+            query: "programming".to_string(),
             per_page: 10,
             after: None,
         };
         let json_data = serde_json::to_string(&body).unwrap();
-        dbg!(&json_data);
 
         let response = app
             .oneshot(
@@ -88,5 +89,8 @@ mod tests {
             .unwrap();
 
         assert_eq!(response.status(), http::StatusCode::OK);
+        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body: Response = serde_json::from_slice(&body).unwrap();
+        assert_eq!(body.nodes.len(), 10 as usize);
     }
 }
