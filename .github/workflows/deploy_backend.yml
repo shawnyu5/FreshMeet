@@ -53,12 +53,13 @@ jobs:
           key: "package.version"
           value: ${{ steps.release.outputs.release-version }}
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Update backend version in Cargo.toml"
-          branch: ${{ github.ref_name }}
-          create_branch: false
+      # TODO: Idk why I get permission denied here... AHHH
+      # - name: Commit changes
+      #   uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     commit_message: "Update backend version in Cargo.toml"
+      #     branch: ${{ github.ref_name }}
+      #     create_branch: false
 
       - name: Setup flyctl
         if: github.ref_name == 'master'
