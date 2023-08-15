@@ -3,7 +3,7 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 use crate::meetup::{
-    request::RequestBuilder,
+    request_builder::RequestBuilder,
     response::{Event, PageInfo, RsvpState},
 };
 
@@ -52,6 +52,8 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
         nodes: events,
     }));
 }
+
+pub async fn suggested_events() {}
 
 #[cfg(test)]
 mod tests {
