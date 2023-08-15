@@ -1,8 +1,9 @@
-use super::request::{RequestBody, Variables};
+use super::request::{OperationName, RequestBody, Variables};
 
 /// Builder for building a meetup request
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct RequestBuilder {
+    pub operation_name: OperationName,
     pub query: Option<String>,
     pub first: i32,
     pub after: Option<String>,
@@ -11,7 +12,12 @@ pub struct RequestBuilder {
 impl RequestBuilder {
     /// construct a new request builder
     pub fn new() -> RequestBuilder {
-        return RequestBuilder::default();
+        return RequestBuilder {
+            operation_name: OperationName::getYourEventsSuggestedEvents,
+            query: None,
+            first: 10,
+            after: None,
+        };
     }
 
     /// set the query to search for
@@ -33,7 +39,13 @@ impl RequestBuilder {
     }
 
     /// build the request body
-    pub fn build(&self) -> RequestBody {
+    pub fn build(&mut self) -> RequestBody {
+        // if a query is supplied, then its a search operation
+        if self.query.is_some() {
+            self.operation_name = OperationName::eventKeywordSearch;
+        } else {
+            self.operation_name = OperationName::getYourEventsSuggestedEvents;
+        }
         return RequestBody {
             variables: Variables {
                 query: self.query.clone(),
@@ -41,7 +53,10 @@ impl RequestBuilder {
                 after: self.after.clone(),
                 ..Default::default()
             },
-            ..Default::default()
+            ..RequestBody::new(&self.operation_name) // ..Default::default()
         };
     }
 }
+
+#[cfg(test)]
+mod tests {}
