@@ -7,9 +7,13 @@ use std::net::SocketAddr;
 
 #[tokio::main]
 async fn main() {
-    println!("Hello, world!");
+    tracing_subscriber::fmt()
+        .with_target(false)
+        .compact()
+        .init();
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+    tracing::info!("Listening on {}", addr);
 
     axum::Server::bind(&addr)
         .serve(app().into_make_service())
