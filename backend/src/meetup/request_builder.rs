@@ -42,9 +42,9 @@ impl RequestBuilder {
     pub fn build(&mut self) -> RequestBody {
         // if a query is supplied, then its a search operation
         if self.query.is_some() {
-            self.operation_name = OperationName::eventKeywordSearch;
+            self.operation_name = OperationName::eventKeywordSearch
         } else {
-            self.operation_name = OperationName::getYourEventsSuggestedEvents;
+            self.operation_name = OperationName::getYourEventsSuggestedEvents
         }
         return RequestBody {
             variables: Variables {
@@ -68,7 +68,10 @@ mod tests {
         let request = RequestBuilder::new().query("tech").build();
         assert_eq!(request.variables.query, Some("tech".to_string()));
         // setting a query should mean its a keyword search
-        assert_eq!(request.operationName, OperationName::eventKeywordSearch);
+        assert_eq!(
+            request.operationName,
+            OperationName::eventKeywordSearch.to_string()
+        );
     }
 
     /// test not setting query after yields the correct request operation name
@@ -79,7 +82,7 @@ mod tests {
         // default operation name is getYourEventsSuggestedEvents without setting query
         assert_eq!(
             request.operationName,
-            OperationName::getYourEventsSuggestedEvents
+            OperationName::getYourEventsSuggestedEvents.to_string()
         );
     }
 }
