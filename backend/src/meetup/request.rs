@@ -30,7 +30,7 @@ impl Default for EventType {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[allow(non_camel_case_types)]
 pub enum OperationName {
     /// search for events by keywords

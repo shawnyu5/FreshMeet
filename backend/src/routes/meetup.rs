@@ -53,7 +53,8 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
     }));
 }
 
-pub async fn suggested_events() {}
+// TODO
+// pub async fn suggested_events() {}
 
 #[cfg(test)]
 mod tests {
