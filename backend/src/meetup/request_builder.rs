@@ -1,25 +1,37 @@
-use super::request::{OperationName, RequestBody, Variables};
+use std::marker::PhantomData;
+
+use super::request::{EventKeywordSearch, Variables};
 
 /// Builder for building a meetup request
+///
+/// T: the type of request to build
 #[derive(Debug)]
-pub struct RequestBuilder {
-    operation_name: OperationName,
+pub struct RequestBuilder<T> {
+    operation_name: PhantomData<T>,
     query: Option<String>,
     first: i32,
     after: Option<String>,
 }
 
-impl RequestBuilder {
+impl<T> RequestBuilder<T>
+where
+    T: Default,
+{
     /// construct a new request builder
-    pub fn new() -> RequestBuilder {
+    pub fn new() -> RequestBuilder<T>
+    where
+        T: Default,
+    {
         return RequestBuilder {
-            operation_name: OperationName::getYourEventsSuggestedEvents,
+            operation_name: PhantomData::<T>,
             query: None,
             first: 10,
             after: None,
         };
     }
+}
 
+impl RequestBuilder<EventKeywordSearch> {
     /// set the query to search for
     pub fn query(&mut self, query: &str) -> &mut Self {
         self.query = Some(query.to_string());
@@ -39,21 +51,15 @@ impl RequestBuilder {
     }
 
     /// build the request body
-    pub fn build(&mut self) -> RequestBody {
-        // if a query is supplied, then its a search operation
-        if self.query.is_some() {
-            self.operation_name = OperationName::eventKeywordSearch
-        } else {
-            self.operation_name = OperationName::getYourEventsSuggestedEvents
-        }
-        return RequestBody {
+    pub fn build(&mut self) -> EventKeywordSearch {
+        return EventKeywordSearch {
             variables: Variables {
                 query: self.query.clone(),
                 first: self.first,
                 after: self.after.clone(),
                 ..Default::default()
             },
-            ..RequestBody::new(&self.operation_name) // ..Default::default()
+            ..EventKeywordSearch::default()
         };
     }
 }
@@ -62,27 +68,13 @@ impl RequestBuilder {
 mod tests {
     use super::*;
 
-    /// test setting query yields the correct request operation name
     #[test]
-    fn can_set_query() {
-        let request = RequestBuilder::new().query("tech").build();
-        assert_eq!(request.variables.query, Some("tech".to_string()));
-        // setting a query should mean its a keyword search
-        assert_eq!(
-            request.operationName,
-            OperationName::eventKeywordSearch.to_string()
-        );
-    }
+    fn get_construct() {
+        let mut builder = RequestBuilder::<EventKeywordSearch>::new();
+        builder.query("tech");
+        builder.per_page(10);
+        let request = builder.build();
 
-    /// test not setting query after yields the correct request operation name
-    #[test]
-    fn get_suggested_events_by_default() {
-        let request = RequestBuilder::new().per_page(20).build();
-        assert_eq!(request.variables.first, 20);
-        // default operation name is getYourEventsSuggestedEvents without setting query
-        assert_eq!(
-            request.operationName,
-            OperationName::getYourEventsSuggestedEvents.to_string()
-        );
+        assert_eq!(request.variables.query, Some("tech".to_string()));
     }
 }

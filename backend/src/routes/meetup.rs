@@ -3,6 +3,7 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 use crate::meetup::{
+    request::EventKeywordSearch,
     request_builder::RequestBuilder,
     response::{Event, PageInfo, RsvpState},
 };
@@ -26,7 +27,7 @@ pub struct Response {
 }
 /// handles /meetup/search post route
 pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, StatusCode> {
-    let request = RequestBuilder::new()
+    let request = RequestBuilder::<EventKeywordSearch>::new()
         .query(body.query.as_str())
         .per_page(body.per_page)
         .after(body.after)
@@ -53,8 +54,23 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
     }));
 }
 
-// TODO
-// pub async fn suggested_events() {}
+pub async fn suggested_events() -> Result<(), StatusCode> {
+    // let request = RequestBuilder::new()
+    //     .per_page(10)
+    //     .operation_name(OperationName::getYourEventsSuggestedEvents)
+    //     .build();
+
+    // let response = match request.search().await {
+    //     Ok(r) => r,
+    //     Err(e) => {
+    //         dbg!(&e);
+    //         return Err(StatusCode::INTERNAL_SERVER_ERROR);
+    //     }
+    // };
+    // dbg!(&response);
+
+    return Ok(());
+}
 
 #[cfg(test)]
 mod tests {

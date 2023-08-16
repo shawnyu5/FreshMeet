@@ -11,7 +11,7 @@ use tower_http::{
 };
 use tracing::Level;
 
-use self::meetup::search;
+use self::meetup::{search, suggested_events};
 
 pub fn app() -> Router {
     let cors = CorsLayer::new()
@@ -26,6 +26,7 @@ pub fn app() -> Router {
     return Router::new()
         .route("/", get(hello))
         .route("/meetup/search", post(search))
+        .route("/meetup/suggested", get(suggested_events))
         .layer(tracing)
         .layer(cors);
 }
