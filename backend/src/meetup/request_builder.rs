@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use super::request::request::{EventKeywordSearchRequest, Variables};
+use super::request::event_keyword_search::{EventKeywordSearchRequest, Variables};
 
 /// Builder for building a meetup request
 ///
