@@ -1,8 +1,10 @@
-use super::request::{EventType, OperationName};
+use super::{
+    request::{EventType, OperationName},
+    search,
+};
 use crate::meetup::response::EventKeywordSearchResponse;
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use chrono::{DateTime, Local, Utc};
-use hyper::{http::HeaderValue, HeaderMap};
 use serde::{Deserialize, Serialize};
 
 #[allow(non_snake_case)]
@@ -15,32 +17,9 @@ pub struct EventKeywordSearchRequest {
 }
 
 impl EventKeywordSearchRequest {
-    /// search for meetup events
     pub async fn search(&self) -> Result<EventKeywordSearchResponse> {
-        let url = "https://www.meetup.com/gql";
-        let mut headers = HeaderMap::new();
-        headers.insert("content-type", HeaderValue::from_static("application/json"));
-
-        let client = reqwest::Client::new();
-        let response = client
-            .post(url)
-            .json(&self)
-            .headers(headers)
-            .send()
-            .await
-            .unwrap();
-
-        // dbg!(&response.text().await?);
-        // return Ok(SearchResponse::default());
-
-        match response.json::<EventKeywordSearchResponse>().await {
-            Ok(search) => {
-                return Ok(search);
-            }
-            Err(e) => {
-                return Err(anyhow!(e));
-            }
-        }
+        let result = search::<EventKeywordSearchRequest, EventKeywordSearchResponse>(self).await;
+        return result;
     }
 }
 

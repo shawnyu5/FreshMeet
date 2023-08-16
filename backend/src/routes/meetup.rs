@@ -3,7 +3,8 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 use crate::meetup::{
-    request::event_keyword_search::EventKeywordSearchRequest,
+    self,
+    request::{self, event_keyword_search::EventKeywordSearchRequest},
     request_builder::RequestBuilder,
     response::{Event, PageInfo, RsvpState},
 };
