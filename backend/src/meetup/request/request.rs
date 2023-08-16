@@ -4,7 +4,7 @@ use chrono::{DateTime, Local, Utc};
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
-use super::response::EventKeywordSearchResponse;
+use crate::meetup::response::EventKeywordSearchResponse;
 
 /// types of events a meetup can be
 #[allow(non_camel_case_types)]
