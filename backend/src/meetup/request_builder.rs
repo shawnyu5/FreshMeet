@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use super::request::{EventKeywordSearch, Variables};
+use super::request::{EventKeywordSearchRequest, Variables};
 
 /// Builder for building a meetup request
 ///
@@ -31,7 +31,7 @@ where
     }
 }
 
-impl RequestBuilder<EventKeywordSearch> {
+impl RequestBuilder<EventKeywordSearchRequest> {
     /// set the query to search for
     pub fn query(&mut self, query: &str) -> &mut Self {
         self.query = Some(query.to_string());
@@ -51,15 +51,15 @@ impl RequestBuilder<EventKeywordSearch> {
     }
 
     /// build the request body
-    pub fn build(&mut self) -> EventKeywordSearch {
-        return EventKeywordSearch {
+    pub fn build(&mut self) -> EventKeywordSearchRequest {
+        return EventKeywordSearchRequest {
             variables: Variables {
                 query: self.query.clone(),
                 first: self.first,
                 after: self.after.clone(),
                 ..Default::default()
             },
-            ..EventKeywordSearch::default()
+            ..EventKeywordSearchRequest::default()
         };
     }
 }
@@ -70,7 +70,7 @@ mod tests {
 
     #[test]
     fn get_construct() {
-        let mut builder = RequestBuilder::<EventKeywordSearch>::new();
+        let mut builder = RequestBuilder::<EventKeywordSearchRequest>::new();
         builder.query("tech");
         builder.per_page(10);
         let request = builder.build();
