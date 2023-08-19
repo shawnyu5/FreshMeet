@@ -3,8 +3,13 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 use crate::meetup::{
-    self,
-    request::{self, event_keyword_search::EventKeywordSearchRequest},
+    request::{
+        common::OperationName,
+        event_keyword_search::EventKeywordSearchRequest,
+        get_your_events_suggested_events::{
+            GetYourEventsSuggestedEventsRequest, GetYourEventsSuggestedEventsResponse,
+        },
+    },
     request_builder::RequestBuilder,
     response::{Event, PageInfo, RsvpState},
 };
@@ -55,22 +60,18 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
     }));
 }
 
-pub async fn suggested_events() -> Result<(), StatusCode> {
-    // let request = RequestBuilder::new()
-    //     .per_page(10)
-    //     .operation_name(OperationName::getYourEventsSuggestedEvents)
-    //     .build();
+pub async fn suggested_events() -> Result<Json<GetYourEventsSuggestedEventsResponse>, StatusCode> {
+    let request = RequestBuilder::<GetYourEventsSuggestedEventsRequest>::build();
 
-    // let response = match request.search().await {
-    //     Ok(r) => r,
-    //     Err(e) => {
-    //         dbg!(&e);
-    //         return Err(StatusCode::INTERNAL_SERVER_ERROR);
-    //     }
-    // };
-    // dbg!(&response);
+    let response = match request.search().await {
+        Ok(r) => r,
+        Err(e) => {
+            dbg!(&e);
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    };
 
-    return Ok(());
+    return Ok(Json(response));
 }
 
 #[cfg(test)]

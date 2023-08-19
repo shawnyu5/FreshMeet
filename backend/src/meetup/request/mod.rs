@@ -1,22 +1,24 @@
+pub mod common;
 pub mod event_keyword_search;
-pub mod request;
+pub mod get_your_events_suggested_events;
 use anyhow::{anyhow, Result};
 use hyper::{http::HeaderValue, HeaderMap};
 use serde::{de::DeserializeOwned, Serialize};
 
-/// Make a request to the meetup api
+/// Send a post request to the Meetup API
 ///
 /// request_body: the request body to send
-/// R: the type of response to return, wrapped in a Result
-pub async fn search<T, R>(request_body: &T) -> Result<R>
+/// T: the type of the request body
+/// R: the type of response to return
+/// returns: a Result containing the response of type R
+pub async fn post<T, R>(request_body: &T) -> Result<R>
 where
-    T: Serialize,
-    R: DeserializeOwned,
+    T: Serialize + std::fmt::Debug,
+    R: DeserializeOwned + std::fmt::Debug,
 {
     let url = "https://www.meetup.com/gql";
     let mut headers = HeaderMap::new();
     headers.insert("content-type", HeaderValue::from_static("application/json"));
-
     let client = reqwest::Client::new();
     let response = client
         .post(url)
@@ -27,7 +29,7 @@ where
         .unwrap();
 
     // dbg!(&response.text().await?);
-    // return Ok(SearchResponse::default());
+    // return Err(anyhow!("AHHH"));
 
     match response.json::<R>().await {
         Ok(search) => {

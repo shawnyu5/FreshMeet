@@ -1,16 +1,21 @@
 use std::marker::PhantomData;
 
-use super::request::event_keyword_search::{EventKeywordSearchRequest, Variables};
+use super::request::{
+    common::OperationName,
+    event_keyword_search::{EventKeywordSearchRequest, Variables},
+    get_your_events_suggested_events::GetYourEventsSuggestedEventsRequest,
+};
 
 /// Builder for building a meetup request
 ///
 /// T: the type of request to build
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct RequestBuilder<T> {
     operation_name: PhantomData<T>,
     query: Option<String>,
     first: i32,
     after: Option<String>,
+    variable: Option<Variables>,
 }
 
 impl<T> RequestBuilder<T>
@@ -27,6 +32,7 @@ where
             query: None,
             first: 10,
             after: None,
+            ..Default::default()
         };
     }
 }
@@ -61,6 +67,12 @@ impl RequestBuilder<EventKeywordSearchRequest> {
             },
             ..EventKeywordSearchRequest::default()
         };
+    }
+}
+
+impl RequestBuilder<GetYourEventsSuggestedEventsRequest> {
+    pub fn build() -> GetYourEventsSuggestedEventsRequest {
+        return GetYourEventsSuggestedEventsRequest::default();
     }
 }
 

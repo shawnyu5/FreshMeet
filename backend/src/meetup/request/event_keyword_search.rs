@@ -1,6 +1,6 @@
 use super::{
-    request::{EventType, OperationName},
-    search,
+    common::{EventType, OperationName},
+    post,
 };
 use crate::meetup::response::EventKeywordSearchResponse;
 use anyhow::Result;
@@ -18,7 +18,7 @@ pub struct EventKeywordSearchRequest {
 
 impl EventKeywordSearchRequest {
     pub async fn search(&self) -> Result<EventKeywordSearchResponse> {
-        let result = search::<EventKeywordSearchRequest, EventKeywordSearchResponse>(self).await;
+        let result = post::<Self, EventKeywordSearchResponse>(self).await;
         return result;
     }
 }
