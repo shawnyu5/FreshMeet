@@ -79,7 +79,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn get_construct() {
+    fn cet_construct() {
         let mut builder = RequestBuilder::<EventKeywordSearchRequest>::new();
         builder.query("tech");
         builder.per_page(10);
