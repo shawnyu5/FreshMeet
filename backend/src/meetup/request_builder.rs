@@ -1,7 +1,6 @@
 use std::marker::PhantomData;
 
 use super::request::{
-    common::OperationName,
     event_keyword_search::{EventKeywordSearchRequest, Variables},
     get_your_events_suggested_events::GetYourEventsSuggestedEventsRequest,
 };
@@ -15,7 +14,6 @@ pub struct RequestBuilder<T> {
     query: Option<String>,
     first: i32,
     after: Option<String>,
-    variable: Option<Variables>,
 }
 
 impl<T> RequestBuilder<T>
