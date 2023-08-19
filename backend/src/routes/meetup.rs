@@ -3,7 +3,13 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
 use crate::meetup::{
-    request::RequestBuilder,
+    request::{
+        event_keyword_search::EventKeywordSearchRequest,
+        get_your_events_suggested_events::{
+            GetYourEventsSuggestedEventsRequest, GetYourEventsSuggestedEventsResponse,
+        },
+    },
+    request_builder::RequestBuilder,
     response::{Event, PageInfo, RsvpState},
 };
 
@@ -26,7 +32,7 @@ pub struct Response {
 }
 /// handles /meetup/search post route
 pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, StatusCode> {
-    let request = RequestBuilder::new()
+    let request = RequestBuilder::<EventKeywordSearchRequest>::new()
         .query(body.query.as_str())
         .per_page(body.per_page)
         .after(body.after)
@@ -53,11 +59,29 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
     }));
 }
 
+/// Handles `meetup/suggested` route. Fetches suggested events from Meetup API
+pub async fn suggested_events() -> Result<Json<GetYourEventsSuggestedEventsResponse>, StatusCode> {
+    let request = RequestBuilder::<GetYourEventsSuggestedEventsRequest>::build();
+
+    let response = match request.search().await {
+        Ok(r) => r,
+        Err(e) => {
+            dbg!(&e);
+            return Err(StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    };
+
+    return Ok(Json(response));
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::routes::{
-        app,
-        meetup::{RequestBody, Response},
+    use crate::{
+        meetup::request::get_your_events_suggested_events::GetYourEventsSuggestedEventsResponse,
+        routes::{
+            app,
+            meetup::{RequestBody, Response},
+        },
     };
     use axum::{
         body::Body,
@@ -66,7 +90,7 @@ mod tests {
     use tower::ServiceExt; // for `oneshot` and `ready`
 
     #[tokio::test]
-    async fn check_status_code() {
+    async fn meetup_search_status_code() {
         let app = app();
 
         let body = RequestBody {
@@ -94,9 +118,9 @@ mod tests {
         assert_eq!(body.nodes.len(), 10 as usize);
     }
 
-    /// test all meetup event titles does not contain `online`
+    /// test all meetup search result titles does not contain `online`
     #[tokio::test]
-    async fn no_online_in_title() {
+    async fn no_online_in_search_result_title() {
         let app = app();
 
         let body = RequestBody {
@@ -124,5 +148,29 @@ mod tests {
         body.nodes.iter().for_each(|e| {
             assert_eq!(e.title.contains("online"), false);
         });
+    }
+
+    /// Make sure suggested events route returns events
+    #[tokio::test]
+    async fn able_to_get_suggested_events() {
+        let app = app();
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method(http::Method::GET)
+                    .uri("/meetup/suggested")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), http::StatusCode::OK);
+        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body: GetYourEventsSuggestedEventsResponse = serde_json::from_slice(&body).unwrap();
+
+        assert_ne!(body.data.ranked_events.count, 0);
+        assert_ne!(body.data.ranked_events.edges.len(), 0);
     }
 }

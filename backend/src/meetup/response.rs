@@ -1,13 +1,14 @@
 use serde::{Deserialize, Serialize};
 
+/// response body for event keyword search
 #[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SearchResponse {
+pub struct EventKeywordSearchResponse {
     pub data: Data,
 }
 
-impl Default for SearchResponse {
-    fn default() -> SearchResponse {
-        return SearchResponse {
+impl Default for EventKeywordSearchResponse {
+    fn default() -> EventKeywordSearchResponse {
+        return EventKeywordSearchResponse {
             data: Data {
                 results: Results {
                     pageInfo: PageInfo {
@@ -22,7 +23,7 @@ impl Default for SearchResponse {
     }
 }
 
-impl SearchResponse {
+impl EventKeywordSearchResponse {
     /// return all events from the search result
     pub fn events(&self) -> Vec<Event> {
         self.data
