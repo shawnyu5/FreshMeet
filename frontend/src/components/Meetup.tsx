@@ -131,7 +131,8 @@ function lastCursor(): string {
   return afterArr[afterArr.length - 1];
 }
 
-/** render the markdown in the description
+/**
+ * render the markdown in the description
  *
  * @returns a `td` element containing the description
  */
@@ -176,10 +177,8 @@ async function searchEvents(
   per_page: number,
   after: string
 ): Promise<MeetupEvent> {
-  console.log("fetching events");
+  logger.info("fetching events");
   try {
-    let results: MeetupEvent | null = null;
-
     let response: AxiosResponse<MeetupEvent> = await axios.post(
       `${load().api_url}/meetup/search`,
       // "http://localhost:8000/meetup/search",
@@ -189,8 +188,7 @@ async function searchEvents(
         after: after,
       }
     );
-    results = response.data;
-    return Promise.resolve(results as MeetupEvent);
+    return response.data;
   } catch (e: any) {
     console.log(e);
   }

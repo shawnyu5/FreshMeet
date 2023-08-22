@@ -40,10 +40,11 @@ export default function Root() {
         <Suspense>
           <ErrorBoundary fallback={(err) => err}>
             <Navbar
-              labels={[
+              sections={[
                 { label: "Tech", path: "/meetup/tech" },
                 { label: "Bars", path: "/meetup/bars" },
                 { label: "Board games + hangout", path: "/meetup/board-games" },
+                { label: "Suggested", path: "/meetup/suggested" },
               ]}
             />
             <Routes>

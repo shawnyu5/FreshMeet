@@ -4,12 +4,11 @@ use serde::{Deserialize, Serialize};
 
 use crate::meetup::{
     request::{
-        event_keyword_search::EventKeywordSearchRequest,
-        get_your_events_suggested_events::{
-            GetYourEventsSuggestedEventsRequest, GetYourEventsSuggestedEventsResponse,
-        },
+        common::EventType, event_keyword_search_builder::EventKeyWrodSearchBuilder,
+        get_your_events_suggested_events::GetYourEventsSuggestedEventsResponse,
+        get_your_events_suggested_events_builder::GetYourEventsSuggestedEventsBuilder,
     },
-    request_builder::RequestBuilder,
+    request_builder::Builder,
     response::{Event, PageInfo, RsvpState},
 };
 
@@ -32,7 +31,7 @@ pub struct Response {
 }
 /// handles /meetup/search post route
 pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, StatusCode> {
-    let request = RequestBuilder::<EventKeywordSearchRequest>::new()
+    let request = EventKeyWrodSearchBuilder::new()
         .query(body.query.as_str())
         .per_page(body.per_page)
         .after(body.after)
@@ -61,15 +60,23 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
 
 /// Handles `meetup/suggested` route. Fetches suggested events from Meetup API
 pub async fn suggested_events() -> Result<Json<GetYourEventsSuggestedEventsResponse>, StatusCode> {
-    let request = RequestBuilder::<GetYourEventsSuggestedEventsRequest>::build();
+    let request = GetYourEventsSuggestedEventsBuilder::new()
+        .event_type(EventType::physical)
+        .first(40)
+        .build();
 
-    let response = match request.search().await {
+    let mut response = match request.search().await {
         Ok(r) => r,
         Err(e) => {
             dbg!(&e);
             return Err(StatusCode::INTERNAL_SERVER_ERROR);
         }
     };
+    response
+        .data
+        .ranked_events
+        .edges
+        .sort_by(|a, b| a.node.date_time.cmp(&b.node.date_time));
 
     return Ok(Json(response));
 }

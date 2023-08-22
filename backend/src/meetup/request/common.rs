@@ -13,8 +13,8 @@ pub enum EventType {
 impl Display for EventType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            EventType::physical => write!(f, "PHYSICAL"),
-            EventType::online => write!(f, "ONLINE"),
+            EventType::physical => write!(f, "physical"),
+            EventType::online => write!(f, "online"),
         }
     }
 }

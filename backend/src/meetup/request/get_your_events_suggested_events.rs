@@ -1,5 +1,5 @@
 use super::{
-    common::{Extensions, OperationName},
+    common::{EventType, Extensions, OperationName},
     post,
 };
 use anyhow::Result;
@@ -34,17 +34,19 @@ impl GetYourEventsSuggestedEventsRequest {
 #[allow(non_camel_case_types, non_snake_case)]
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Variables {
-    first: u32,
-    lat: f32,
-    lon: f32,
+    pub first: u32,
+    pub lat: f32,
+    pub lon: f32,
+    pub eventType: String,
 }
 
 impl Default for Variables {
     fn default() -> Self {
         Self {
-            first: 20,
+            first: 30,
             lat: 43.74,
             lon: -74.42,
+            eventType: EventType::physical.to_string(),
         }
     }
 }
