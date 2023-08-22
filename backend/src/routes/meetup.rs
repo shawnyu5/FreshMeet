@@ -1,9 +1,11 @@
 use axum::Json;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+use tracing::info;
 
 use crate::meetup::{
     request::{
+        common::EventType,
         event_keyword_search::EventKeywordSearchRequest,
         get_your_events_suggested_events::{
             GetYourEventsSuggestedEventsRequest, GetYourEventsSuggestedEventsResponse,
@@ -61,15 +63,22 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
 
 /// Handles `meetup/suggested` route. Fetches suggested events from Meetup API
 pub async fn suggested_events() -> Result<Json<GetYourEventsSuggestedEventsResponse>, StatusCode> {
-    let request = RequestBuilder::<GetYourEventsSuggestedEventsRequest>::build();
+    let request = RequestBuilder::<GetYourEventsSuggestedEventsRequest>::new()
+        .event_type(EventType::physical)
+        .build();
 
-    let response = match request.search().await {
+    let mut response = match request.search().await {
         Ok(r) => r,
         Err(e) => {
             dbg!(&e);
             return Err(StatusCode::INTERNAL_SERVER_ERROR);
         }
     };
+    response
+        .data
+        .ranked_events
+        .edges
+        .sort_by(|a, b| a.node.date_time.cmp(&b.node.date_time));
 
     return Ok(Json(response));
 }

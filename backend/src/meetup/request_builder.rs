@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
 use super::request::{
+    common::EventType,
     event_keyword_search::{EventKeywordSearchRequest, Variables},
     get_your_events_suggested_events::GetYourEventsSuggestedEventsRequest,
 };
@@ -14,6 +15,7 @@ pub struct RequestBuilder<T> {
     query: Option<String>,
     first: i32,
     after: Option<String>,
+    event_type: Option<EventType>,
 }
 
 impl<T> RequestBuilder<T>
@@ -69,8 +71,18 @@ impl RequestBuilder<EventKeywordSearchRequest> {
 }
 
 impl RequestBuilder<GetYourEventsSuggestedEventsRequest> {
-    pub fn build() -> GetYourEventsSuggestedEventsRequest {
-        return GetYourEventsSuggestedEventsRequest::default();
+    /// Set the event type
+    ///
+    /// * `event_type`: type of event
+    pub fn event_type(&mut self, event_type: EventType) -> &mut Self {
+        self.event_type = Some(event_type);
+        return self;
+    }
+
+    pub fn build(&mut self) -> GetYourEventsSuggestedEventsRequest {
+        return GetYourEventsSuggestedEventsRequest {
+            ..Default::default()
+        };
     }
 }
 
@@ -79,7 +91,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn cet_construct() {
+    fn can_construct() {
         let mut builder = RequestBuilder::<EventKeywordSearchRequest>::new();
         builder.query("tech");
         builder.per_page(10);
