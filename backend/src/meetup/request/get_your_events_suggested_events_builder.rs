@@ -1,3 +1,5 @@
+use crate::meetup::request_builder::Builder;
+
 use super::{
     common::{EventType, OperationName},
     get_your_events_suggested_events::{GetYourEventsSuggestedEventsRequest, Variables},
@@ -10,21 +12,12 @@ pub struct GetYourEventsSuggestedEventsBuilder {
     event_type: Option<EventType>,
 }
 
-impl GetYourEventsSuggestedEventsBuilder {
-    pub fn new() -> Self {
+impl Builder<GetYourEventsSuggestedEventsRequest> for GetYourEventsSuggestedEventsBuilder {
+    fn new() -> Self {
         GetYourEventsSuggestedEventsBuilder::default()
     }
-    pub fn event_type(&mut self, event_type: EventType) -> &mut Self {
-        self.event_type = Some(event_type);
-        return self;
-    }
 
-    pub fn first(&mut self, first: u32) -> &mut Self {
-        self.first = Some(first);
-        return self;
-    }
-
-    pub fn build(&mut self) -> GetYourEventsSuggestedEventsRequest {
+    fn build(&mut self) -> GetYourEventsSuggestedEventsRequest {
         let variables = Variables {
             first: self.first.unwrap_or(30),
             eventType: self
@@ -39,6 +32,17 @@ impl GetYourEventsSuggestedEventsBuilder {
             variables,
             ..Default::default()
         };
+    }
+}
+impl GetYourEventsSuggestedEventsBuilder {
+    pub fn event_type(&mut self, event_type: EventType) -> &mut Self {
+        self.event_type = Some(event_type);
+        return self;
+    }
+
+    pub fn first(&mut self, first: u32) -> &mut Self {
+        self.first = Some(first);
+        return self;
     }
 }
 

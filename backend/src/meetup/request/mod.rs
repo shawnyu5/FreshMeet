@@ -1,5 +1,6 @@
 pub mod common;
 pub mod event_keyword_search;
+pub mod event_keyword_search_builder;
 pub mod get_your_events_suggested_events;
 pub mod get_your_events_suggested_events_builder;
 use anyhow::{anyhow, Result};
