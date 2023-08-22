@@ -10,6 +10,7 @@ use crate::meetup::{
         get_your_events_suggested_events::{
             GetYourEventsSuggestedEventsRequest, GetYourEventsSuggestedEventsResponse,
         },
+        get_your_events_suggested_events_builder::GetYourEventsSuggestedEventsBuilder,
     },
     request_builder::RequestBuilder,
     response::{Event, PageInfo, RsvpState},
@@ -63,8 +64,9 @@ pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, Sta
 
 /// Handles `meetup/suggested` route. Fetches suggested events from Meetup API
 pub async fn suggested_events() -> Result<Json<GetYourEventsSuggestedEventsResponse>, StatusCode> {
-    let request = RequestBuilder::<GetYourEventsSuggestedEventsRequest>::new()
+    let request = GetYourEventsSuggestedEventsBuilder::new()
         .event_type(EventType::physical)
+        .first(40)
         .build();
 
     let mut response = match request.search().await {
