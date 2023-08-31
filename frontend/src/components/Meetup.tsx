@@ -1,7 +1,14 @@
 import axios, { AxiosResponse } from "axios";
 import { marked } from "marked";
 import { load } from "~/environment";
-import { For, createSignal, Suspense, createResource, onMount } from "solid-js";
+import {
+  For,
+  createSignal,
+  Suspense,
+  createResource,
+  onMount,
+  onCleanup,
+} from "solid-js";
 import Pagination from "./Pagination";
 import logger from "~/logger";
 
@@ -22,8 +29,12 @@ export default function (props: { query: Array<string>; per_page: number }) {
   });
 
   onMount(async () => {
-    logger.info("Cleared cursor in local storage");
+    logger.info("OnMount clear cursor in local storage");
     // clear the after list in local storage on mount
+    setCursors([]);
+  });
+  onCleanup(async () => {
+    logger.info("OnCleanup clear cursor in local storage");
     setCursors([]);
   });
 
