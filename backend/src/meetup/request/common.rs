@@ -1,4 +1,4 @@
-/// common types for request bodies to Meetup api
+//! Common types for request bodies to Meetup api
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
@@ -55,20 +55,20 @@ impl Display for OperationName {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Extensions {
-    persisted_query: PersistedQuery,
+    pub persisted_query: PersistedQuery,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PersistedQuery {
-    sha256_hash: String,
-    version: i32,
+    pub sha256_hash: String,
+    pub version: i32,
 }
 
 impl Default for PersistedQuery {
     fn default() -> Self {
         Self {
-            sha256_hash: "4e6f93789cdacfe8809c93b09549c7e5cd019375e653a8ee439a963b1fd91c5e"
+            sha256_hash: "0aceed81313ebba814c0feadeda32f404147996091b6b77209353e2183b2dabb"
                 .to_string(),
             version: 1,
         }

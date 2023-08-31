@@ -1,10 +1,13 @@
 use axum::Json;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+use tracing::error;
 
 use crate::meetup::{
     request::{
-        common::EventType, event_keyword_search_builder::EventKeyWrodSearchBuilder,
+        category_search::CategorySearchResponse,
+        category_search_builder::CategorySearchRequestBuilder, common::EventType,
+        event_keyword_search_builder::EventKeyWrodSearchBuilder,
         get_your_events_suggested_events::GetYourEventsSuggestedEventsResponse,
         get_your_events_suggested_events_builder::GetYourEventsSuggestedEventsBuilder,
     },
@@ -79,6 +82,16 @@ pub async fn suggested_events() -> Result<Json<GetYourEventsSuggestedEventsRespo
         .sort_by(|a, b| a.node.date_time.cmp(&b.node.date_time));
 
     return Ok(Json(response));
+}
+/// Fetch meetups for today
+pub async fn meetups_today() -> Result<Json<CategorySearchResponse>, StatusCode> {
+    match CategorySearchRequestBuilder::new().build().fetch().await {
+        Ok(r) => Ok(Json(r)),
+        Err(e) => {
+            error!("Error: {}", e);
+            Err(StatusCode::INTERNAL_SERVER_ERROR)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -159,7 +172,7 @@ mod tests {
 
     /// Make sure suggested events route returns events
     #[tokio::test]
-    async fn able_to_get_suggested_events() {
+    async fn can_get_suggested_events() {
         let app = app();
 
         let response = app
@@ -179,5 +192,22 @@ mod tests {
 
         assert_ne!(body.data.ranked_events.count, 0);
         assert_ne!(body.data.ranked_events.edges.len(), 0);
+    }
+
+    /// test `/meetup/today` route returns successful status code
+    #[tokio::test]
+    async fn can_get_meetups_today() {
+        let app = app();
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .method(http::Method::GET)
+                    .uri("/meetup/today")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), http::StatusCode::OK);
     }
 }
