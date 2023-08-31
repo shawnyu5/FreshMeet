@@ -34,6 +34,8 @@ pub enum OperationName {
     eventKeywordSearch,
     /// get suggested events
     getYourEventsSuggestedEvents,
+    /// search by category
+    categorySearch,
 }
 
 impl Display for OperationName {
@@ -42,6 +44,9 @@ impl Display for OperationName {
             OperationName::eventKeywordSearch => write!(f, "eventKeywordSearch"),
             OperationName::getYourEventsSuggestedEvents => {
                 write!(f, "getYourEventsSuggestedEvents")
+            }
+            OperationName::categorySearch => {
+                write!(f, "categorySearch")
             }
         }
     }
