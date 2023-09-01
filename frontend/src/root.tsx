@@ -45,6 +45,10 @@ export default function Root() {
                 { label: "Bars", path: "/meetup/bars" },
                 { label: "Board games + hangout", path: "/meetup/board-games" },
                 { label: "Suggested", path: "/meetup/suggested" },
+                {
+                  label: "Hackathons",
+                  path: "/meetup/hackathons",
+                },
               ]}
             />
             <Routes>
