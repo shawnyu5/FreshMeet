@@ -1,20 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-import {
-  createResource,
-  createSignal,
-  For,
-  onCleanup,
-  onMount,
-  Suspense,
-} from "solid-js";
-import {
-  appendCursors,
-  Desciption,
-  getCursors,
-  lastCursor,
-  scrollToTop,
-  setCursors,
-} from "~/components/Meetup";
+import { createResource, createSignal, For, Suspense } from "solid-js";
+import { Desciption, scrollToTop } from "~/components/Meetup";
 import Pagination from "~/components/Pagination";
 import { load } from "~/environment";
 import logger from "~/logger";
@@ -26,28 +12,51 @@ export default function () {
   //   setCursors([]);
   // });
 
-  onCleanup(() => {
-    logger.info("OnCleanup clear cursor in local storage");
-    setCursors([]);
-  });
+  // onCleanup(() => {
+  //   logger.info("OnCleanup clear cursor in local storage");
+  //   // setCursors([]);
+  // });
 
   const [pageNumber, setPageNumber] = createSignal(1);
-  const [eventResource] = createResource(pageNumber, async () => {
-    const events = await getMeetupsToday(lastCursor());
-    if (events.data.rankedEvents.pageInfo.endCursor != "") {
-      logger.info("Appending cursor to local storage");
-      // __AUTO_GENERATED_PRINT_VAR_START__
-      console.log(
-        "(anon)#if events: %s",
-        events.data.rankedEvents.pageInfo.endCursor
-      ); // __AUTO_GENERATED_PRINT_VAR_END__
+  const [afterCursor, setAfterCursor] = createSignal("");
+  const [getHasNextPage, setHasNextPage] = createSignal(true);
 
-      appendCursors(events.data.rankedEvents.pageInfo.endCursor);
-      setHasNextPage(events.data.rankedEvents.pageInfo.hasNextPage);
-    }
+  const [eventResource, { mutate: mutateEvents, refetch: refetchEvents }] =
+    createResource(pageNumber, async () => {
+      const events = await getMeetupsToday(afterCursor());
+      if (events.data.rankedEvents.pageInfo.hasNextPage) {
+        setHasNextPage(true);
+        setAfterCursor(events.data.rankedEvents.pageInfo.endCursor);
+      } else {
+        setHasNextPage(false);
+      }
 
-    return events;
-  });
+      return events;
+    });
+
+  // const scrollNext = async () => {
+  //   logger.info("Loading more events");
+  //   await refetchEvents();
+
+  // TODO: this does not work due to a framework issue
+  // https://github.com/solidjs/solid/issues/1864
+  // const new_events = await getMeetupsToday(afterCursor());
+  // mutateEvents((prev) => {
+  //   if (prev) {
+  //     logger.info("prev is not null");
+  //     console.log(prev.data.rankedEvents.edges);
+  //     const updated_edge = prev.data.rankedEvents.edges.concat(
+  //       new_events?.data.rankedEvents.edges as Array<Edge>
+  //     );
+
+  //     prev.data.rankedEvents.edges = updated_edge;
+  //     console.log(prev.data.rankedEvents.edges);
+  //     return prev;
+  //   } else {
+  //     return new_events as MeetupsToday;
+  //   }
+  // });
+  // };
 
   return (
     <Suspense fallback={<p>loading....</p>}>
@@ -62,41 +71,44 @@ export default function () {
             </tr>
           </thead>
           <tbody>
+            {/*
+            <InfiniteScroll
+              each={eventResource()?.data.rankedEvents.edges}
+              hasMore={true}
+              next={scrollNext}
+              loadingMessage={<div>Loading...</div>}
+            >
+            {(edge, _index) => (
+            */}
             <For each={eventResource()?.data.rankedEvents.edges}>
-              {(event, _idx) => (
+              {(node, _idx) => (
                 <tr>
                   <td>
-                    <a target="_blank" href={event.node.eventUrl}>
-                      {event.node.title}
+                    <a target="_blank" href={node.node.eventUrl}>
+                      {node.node.title}
                     </a>
                   </td>
-                  <td>{event.node.dateTime}</td>
-                  <td>{event.node.going}</td>
-                  <Desciption description={event.node.description} />
+                  <td>{node.node.dateTime}</td>
+                  <td>{node.node.going}</td>
+                  <Desciption description={node.node.description} />
                 </tr>
               )}
             </For>
+            {/*  )}
+                   </InfiniteScroll>*/}
           </tbody>
         </table>
+        <Pagination
+          nextPageCallback={async () => {
+            scrollToTop();
+            setPageNumber((e) => e + 1);
+          }}
+          previousPageCallback={async () => {}}
+          // TODO: fix this
+          disableNextBtn={!getHasNextPage()}
+          disablePrevBtn={true}
+        />
       </div>
-      <Pagination
-        nextPageCallback={async () => {
-          scrollToTop();
-          setPageNumber((e) => e + 1);
-        }}
-        previousPageCallback={async () => {
-          scrollToTop();
-          // remove the last 2 cursor from the cursor list
-          let cursorArr = getCursors();
-          cursorArr.pop();
-          cursorArr.pop();
-          setCursors(cursorArr);
-
-          setPageNumber((e) => e - 1);
-        }}
-        disableNextBtn={!getHasNextPage()}
-        disablePrevBtn={pageNumber() == 1}
-      />
     </Suspense>
   );
 }
@@ -105,8 +117,8 @@ export default function () {
  * Fetch list of meetups today
  * @param after - after cursor
  */
-async function getMeetupsToday(after: string | null) {
-  logger.info(`after cursor: ${after}`);
+async function getMeetupsToday(after: string) {
+  logger.info(`after cursor in request: ${after}`);
   let response: AxiosResponse<MeetupsToday> = await axios.get(
     `${load().api_url}/meetup/today`,
     {
@@ -117,24 +129,9 @@ async function getMeetupsToday(after: string | null) {
   );
   logger.info(response.data);
   logger.info(
-    `request cursor: ${response.data.data.rankedEvents.pageInfo.endCursor}`
+    `cursor in incoming request: ${response.data.data.rankedEvents.pageInfo.endCursor}`
   );
   return response.data;
-}
-
-/**
- * Sets `hasNextPage` in local storage
- * @param hasNextPage the value to store in local storage
- */
-function setHasNextPage(hasNextPage: boolean) {
-  localStorage.setItem("hasNextPage", String(hasNextPage));
-}
-
-/**
- * Get the `hasNextPage` from local storage
- */
-function getHasNextPage(): boolean {
-  return Boolean(localStorage.getItem("hasNextPage"));
 }
 
 export interface MeetupsToday {

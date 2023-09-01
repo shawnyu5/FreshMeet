@@ -21,7 +21,9 @@ export default function (props: { query: Array<string>; per_page: number }) {
 
     logger.info(`End cursor: ${events.page_info.endCursor}`);
     if (events.page_info.endCursor != "") {
-      logger.info("Appending cursor to local storage");
+      logger.info(
+        `Appending cursor to local storage: ${events.page_info.endCursor}`
+      );
       appendCursors(events.page_info.endCursor);
     }
 
@@ -36,7 +38,7 @@ export default function (props: { query: Array<string>; per_page: number }) {
 
   onCleanup(() => {
     logger.info("OnCleanup clear cursor in local storage");
-    setCursors([]);
+    localStorage.clear();
   });
 
   return (
