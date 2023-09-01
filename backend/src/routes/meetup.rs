@@ -1,4 +1,4 @@
-use axum::Json;
+use axum::{extract::Query, Json};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use tracing::error;
@@ -84,8 +84,16 @@ pub async fn suggested_events() -> Result<Json<GetYourEventsSuggestedEventsRespo
     return Ok(Json(response));
 }
 /// Fetch meetups for today
-pub async fn meetups_today() -> Result<Json<CategorySearchResponse>, StatusCode> {
-    match CategorySearchRequestBuilder::new().build().fetch().await {
+pub async fn meetups_today(
+    after: Option<Query<String>>,
+) -> Result<Json<CategorySearchResponse>, StatusCode> {
+    match CategorySearchRequestBuilder::new()
+        .per_page(30)
+        .after(after.map(|a| a.0))
+        .build()
+        .fetch()
+        .await
+    {
         Ok(r) => Ok(Json(r)),
         Err(e) => {
             error!("Error: {}", e);

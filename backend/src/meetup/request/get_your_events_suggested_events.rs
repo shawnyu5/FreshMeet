@@ -1,5 +1,5 @@
 use super::{
-    common::{EventType, Extensions, OperationName},
+    common::{EventType, Extensions, OperationName, PersistedQuery},
     post,
 };
 use anyhow::Result;
@@ -18,7 +18,13 @@ pub struct GetYourEventsSuggestedEventsRequest {
 impl Default for GetYourEventsSuggestedEventsRequest {
     fn default() -> Self {
         Self {
-            extensions: Extensions::default(),
+            extensions: Extensions {
+                persisted_query: PersistedQuery {
+                    sha256_hash: "0aceed81313ebba814c0feadeda32f404147996091b6b77209353e2183b2dabb"
+                        .to_string(),
+                    version: 1,
+                },
+            },
             operationName: OperationName::getYourEventsSuggestedEvents.to_string(),
             variables: Default::default(),
         }

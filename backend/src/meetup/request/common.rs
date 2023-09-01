@@ -52,7 +52,7 @@ impl Display for OperationName {
     }
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Extensions {
     pub persisted_query: PersistedQuery,
@@ -65,12 +65,12 @@ pub struct PersistedQuery {
     pub version: i32,
 }
 
-impl Default for PersistedQuery {
-    fn default() -> Self {
-        Self {
-            sha256_hash: "0aceed81313ebba814c0feadeda32f404147996091b6b77209353e2183b2dabb"
-                .to_string(),
-            version: 1,
-        }
-    }
-}
+// impl Default for PersistedQuery {
+//     fn default() -> Self {
+//         Self {
+//             sha256_hash: "0aceed81313ebba814c0feadeda32f404147996091b6b77209353e2183b2dabb"
+//                 .to_string(),
+//             version: 1,
+//         }
+//     }
+// }

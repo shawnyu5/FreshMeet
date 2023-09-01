@@ -32,7 +32,7 @@ impl Builder<GetYourEventsSuggestedEventsRequest> for GetYourEventsSuggestedEven
                 // NOTE: Need to use custom hash here for some reason. Other wise this request will fail
                 sha256_hash: "4e6f93789cdacfe8809c93b09549c7e5cd019375e653a8ee439a963b1fd91c5e"
                     .to_string(),
-                ..Default::default()
+                version: 1,
             },
         };
         return GetYourEventsSuggestedEventsRequest {

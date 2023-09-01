@@ -5,7 +5,10 @@ use chrono::{DateTime, FixedOffset, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use super::{common::Extensions, post};
+use super::{
+    common::{Extensions, PersistedQuery},
+    post,
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -13,18 +16,45 @@ pub struct CategorySearchRequest {
     pub operation_name: String,
     pub extensions: Extensions,
     pub variables: Variables,
+    pub after: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Variables {
+    /// Number of results to return
     pub first: i32,
     pub lat: f64,
     pub lon: f64,
     pub sort_field: String,
     pub start_date_range: String,
     pub end_date_range: String,
+    /// The after cursor
     pub after: Option<String>,
+}
+
+impl Default for Variables {
+    fn default() -> Self {
+        // Get the current UTC date and time
+        let utc: DateTime<Utc> = Utc::now();
+        // Create a fixed offset representing -04:00 (Eastern Daylight Time)
+        let offset = FixedOffset::east_opt(-4 * 3600).unwrap();
+        // Convert the UTC time to the specified offset
+        let local_time: DateTime<FixedOffset> = utc.with_timezone(&offset);
+        // Format the local time in the desired format
+        let start_time = local_time.format("%Y-%m-%dT%H:%M:%S-04:00").to_string();
+        let end_time = local_time.format("%Y-%m-%dT23:59:59-04:00").to_string();
+
+        Self {
+            first: 40,
+            lat: 43.7400016784668,
+            lon: -79.36000061035156,
+            sort_field: "RELEVANCE".to_string(),
+            start_date_range: start_time,
+            end_date_range: end_time,
+            after: None,
+        }
+    }
 }
 
 impl CategorySearchRequest {
@@ -37,30 +67,17 @@ impl CategorySearchRequest {
 
 impl Default for CategorySearchRequest {
     fn default() -> Self {
-        // Get the current UTC date and time
-        let utc: DateTime<Utc> = Utc::now();
-        // Create a fixed offset representing -04:00 (Eastern Daylight Time)
-        let offset = FixedOffset::east_opt(-4 * 3600).unwrap();
-        // Convert the UTC time to the specified offset
-        let local_time: DateTime<FixedOffset> = utc.with_timezone(&offset);
-        // Format the local time in the desired format
-        let start_time = local_time.format("%Y-%m-%dT%H:%M:%S-04:00").to_string();
-        let end_time = local_time.format("%Y-%m-%dT23:59:59-04:00").to_string();
-
-        let variables = Variables {
-            first: 40,
-            lat: 43.7400016784668,
-            lon: -79.36000061035156,
-            sort_field: "RELEVANCE".to_string(),
-            start_date_range: start_time,
-            end_date_range: end_time,
-            after: None,
-        };
-
         return Self {
-            extensions: Extensions::default(),
+            extensions: Extensions {
+                persisted_query: PersistedQuery {
+                    sha256_hash: "0aceed81313ebba814c0feadeda32f404147996091b6b77209353e2183b2dabb"
+                        .to_string(),
+                    version: 1,
+                },
+            },
             operation_name: OperationName::categorySearch.to_string(),
-            variables,
+            variables: Variables::default(),
+            after: None,
         };
     }
 }
