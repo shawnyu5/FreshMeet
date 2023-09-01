@@ -16,11 +16,20 @@ export default function Pagination(props: {
       target: Element;
     }
   ) => void;
+  disableNextBtn: boolean;
+  disablePrevBtn: boolean;
 }) {
   return (
     <div>
-      <button onClick={props.previousPageCallback}>Previous</button>
-      <button onClick={props.nextPageCallback}>Next</button>
+      <button
+        onClick={props.previousPageCallback}
+        disabled={props.disablePrevBtn}
+      >
+        Previous
+      </button>
+      <button onClick={props.nextPageCallback} disabled={props.disableNextBtn}>
+        Next
+      </button>
     </div>
   );
 }

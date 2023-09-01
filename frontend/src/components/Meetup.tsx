@@ -91,7 +91,7 @@ export default function (props: { query: Array<string>; per_page: number }) {
 }
 
 /** scroll the window to the top */
-function scrollToTop() {
+export function scrollToTop() {
   // Scroll to the top of the page smoothly
   window.scrollTo({
     top: 0,
@@ -103,7 +103,7 @@ function scrollToTop() {
  * appends the current cursor to the after list in local storage
  * @param cursor - the current cursor
  */
-function appendCursors(cursor: string) {
+export function appendCursors(cursor: string) {
   let currentCursors = localStorage.getItem("after") || "";
   if (currentCursors == "") {
     localStorage.setItem("after", cursor);
@@ -117,7 +117,7 @@ function appendCursors(cursor: string) {
 /**
  * @returns array of cursors in local storage
  */
-function getCursors(): Array<string> {
+export function getCursors(): Array<string> {
   let cursors = localStorage.getItem("after");
   return stringToArray(cursors || "");
 }
@@ -126,7 +126,7 @@ function getCursors(): Array<string> {
  * sets the after list in local storage
  * @param cursors - array of cursors to set in local storage
  */
-function setCursors(cursors: Array<string>) {
+export function setCursors(cursors: Array<string>) {
   // @ts-ignore
   localStorage.setItem("after", cursors);
 }
@@ -134,7 +134,7 @@ function setCursors(cursors: Array<string>) {
 /**
  * @returns the last cursor in the after list in local storage
  */
-function lastCursor(): string {
+export function lastCursor(): string {
   let afterString = localStorage.getItem("after");
   if (!afterString) {
     return "";
@@ -148,7 +148,7 @@ function lastCursor(): string {
  *
  * @returns a `td` element containing the description
  */
-function Desciption(props: { description: string }) {
+export function Desciption(props: { description: string }) {
   marked.use({
     mangle: false,
     headerIds: false,
