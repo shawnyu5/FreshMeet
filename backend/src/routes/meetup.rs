@@ -83,13 +83,19 @@ pub async fn suggested_events() -> Result<Json<GetYourEventsSuggestedEventsRespo
 
     return Ok(Json(response));
 }
+
+/// Query parameters for `/meetup/today` route
+#[derive(Debug, Deserialize)]
+pub struct MeetupsTodayQueryParams {
+    pub after: Option<String>,
+}
 /// Fetch meetups for today
 pub async fn meetups_today(
-    after: Option<Query<String>>,
+    query: Query<MeetupsTodayQueryParams>,
 ) -> Result<Json<CategorySearchResponse>, StatusCode> {
     match CategorySearchRequestBuilder::new()
         .per_page(30)
-        .after(after.map(|a| a.0))
+        .after(query.after.clone())
         .build()
         .fetch()
         .await
@@ -105,7 +111,10 @@ pub async fn meetups_today(
 #[cfg(test)]
 mod tests {
     use crate::{
-        meetup::request::get_your_events_suggested_events::GetYourEventsSuggestedEventsResponse,
+        meetup::request::{
+            category_search::CategorySearchResponse,
+            get_your_events_suggested_events::GetYourEventsSuggestedEventsResponse,
+        },
         routes::{
             app,
             meetup::{RequestBody, Response},
@@ -115,7 +124,7 @@ mod tests {
         body::Body,
         http::{self, Request},
     };
-    use tower::ServiceExt; // for `oneshot` and `ready`
+    use tower::{Service, ServiceExt}; // for `oneshot` and `ready`
 
     #[tokio::test]
     async fn meetup_search_status_code() {
@@ -217,5 +226,53 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(response.status(), http::StatusCode::OK);
+        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let body: CategorySearchResponse = serde_json::from_slice(&body).unwrap();
+        assert_ne!(body.data.ranked_events.count, 0);
+    }
+
+    /// test `/meetup/today` route with an after cursor returns different results
+    #[tokio::test]
+    async fn today_events_with_after_query_param() {
+        let mut app = app();
+
+        let request = Request::builder()
+            .uri("/meetup/today")
+            .body(Body::empty())
+            .unwrap();
+        let response = ServiceExt::<Request<Body>>::ready(&mut app)
+            .await
+            .unwrap()
+            .call(request)
+            .await
+            .unwrap();
+
+        assert_eq!(response.status(), http::StatusCode::OK);
+        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let first_request_body: CategorySearchResponse = serde_json::from_slice(&body).unwrap();
+        assert_ne!(first_request_body.data.ranked_events.count, 0);
+
+        let request = Request::builder()
+            .uri(format!(
+                "/meetup/today?after={}",
+                &first_request_body.data.ranked_events.page_info.end_cursor
+            ))
+            .body(Body::empty())
+            .unwrap();
+
+        let response = ServiceExt::<Request<Body>>::ready(&mut app)
+            .await
+            .unwrap()
+            .call(request)
+            .await
+            .unwrap();
+
+        let body = hyper::body::to_bytes(response.into_body()).await.unwrap();
+        let second_request_body: CategorySearchResponse = serde_json::from_slice(&body).unwrap();
+
+        assert_ne!(
+            first_request_body.data.ranked_events.edges,
+            second_request_body.data.ranked_events.edges
+        );
     }
 }

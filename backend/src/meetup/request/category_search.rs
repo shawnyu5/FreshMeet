@@ -16,7 +16,6 @@ pub struct CategorySearchRequest {
     pub operation_name: String,
     pub extensions: Extensions,
     pub variables: Variables,
-    pub after: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -77,7 +76,6 @@ impl Default for CategorySearchRequest {
             },
             operation_name: OperationName::categorySearch.to_string(),
             variables: Variables::default(),
-            after: None,
         };
     }
 }
