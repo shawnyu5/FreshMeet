@@ -76,16 +76,7 @@ export default function (props: { query: Array<string>; per_page: number }) {
             scrollToTop();
             setPageNumber((e) => e + 1);
           }}
-          previousPageCallback={async () => {
-            scrollToTop();
-            // remove the last 2 cursor from the cursor list
-            let cursorArr = getCursors();
-            cursorArr.pop();
-            cursorArr.pop();
-            setCursors(cursorArr);
-
-            setPageNumber((e) => e - 1);
-          }}
+          disableNextBtn={false}
         />
       </div>
     </Suspense>

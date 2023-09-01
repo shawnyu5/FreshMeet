@@ -103,10 +103,7 @@ export default function () {
             scrollToTop();
             setPageNumber((e) => e + 1);
           }}
-          previousPageCallback={async () => {}}
-          // TODO: fix this
           disableNextBtn={!getHasNextPage()}
-          disablePrevBtn={true}
         />
       </div>
     </Suspense>
