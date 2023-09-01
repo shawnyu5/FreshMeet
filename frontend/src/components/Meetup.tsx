@@ -13,32 +13,21 @@ import Pagination from "./Pagination";
 import logger from "~/logger";
 
 export default function (props: { query: Array<string>; per_page: number }) {
-  const { query, per_page } = props;
   const [pageNumber, setPageNumber] = createSignal(1);
+  const [afterCursor, setAfterCursor] = createSignal("");
+
   const [eventResource] = createResource(pageNumber, async () => {
     logger.info("Fetching events");
-    const events = await searchAllQueries(query, per_page, lastCursor());
+    const events = await searchAllQueries(
+      props.query,
+      props.per_page,
+      afterCursor()
+    );
 
-    logger.info(`End cursor: ${events.page_info.endCursor}`);
-    if (events.page_info.endCursor != "") {
-      logger.info(
-        `Appending cursor to local storage: ${events.page_info.endCursor}`
-      );
-      appendCursors(events.page_info.endCursor);
+    if (events.page_info.hasNextPage) {
+      setAfterCursor(events.page_info.endCursor);
     }
-
     return events;
-  });
-
-  onMount(() => {
-    logger.info("OnMount clear cursor in local storage");
-    // clear the after list in local storage on mount
-    setCursors([]);
-  });
-
-  onCleanup(() => {
-    logger.info("OnCleanup clear cursor in local storage");
-    localStorage.clear();
   });
 
   return (
@@ -93,51 +82,7 @@ export function scrollToTop() {
 }
 
 /**
- * appends the current cursor to the after list in local storage
- * @param cursor - the current cursor
- */
-export function appendCursors(cursor: string) {
-  let currentCursors = localStorage.getItem("after") || "";
-  if (currentCursors == "") {
-    localStorage.setItem("after", cursor);
-  } else {
-    let currentCursorArray = stringToArray(currentCursors);
-    currentCursorArray.push(cursor);
-    setCursors(currentCursorArray);
-  }
-}
-
-/**
- * @returns array of cursors in local storage
- */
-export function getCursors(): Array<string> {
-  let cursors = localStorage.getItem("after");
-  return stringToArray(cursors || "");
-}
-
-/**
- * sets the after list in local storage
- * @param cursors - array of cursors to set in local storage
- */
-export function setCursors(cursors: Array<string>) {
-  // @ts-ignore
-  localStorage.setItem("after", cursors);
-}
-
-/**
- * @returns the last cursor in the after list in local storage
- */
-export function lastCursor(): string {
-  let afterString = localStorage.getItem("after");
-  if (!afterString) {
-    return "";
-  }
-  let afterArr = stringToArray(afterString);
-  return afterArr[afterArr.length - 1];
-}
-
-/**
- * render the markdown in the description
+ * Render the markdown in the description
  *
  * @returns a `td` element containing the description
  */
@@ -150,6 +95,13 @@ export function Desciption(props: { description: string }) {
   return <td innerHTML={rendered}></td>;
 }
 
+/**
+ * Perform a search for all queries, and accumulate into a single Meetup event
+ * @param queries - list of queries to search for
+ * @param per_page - number of results to return per page
+ * @param after - after cursor
+ * @returns a event object containing all of the search query results
+ */
 async function searchAllQueries(
   queries: Array<string>,
   per_page: number,
@@ -169,14 +121,7 @@ async function searchAllQueries(
   }
   return events;
 }
-/**
- * converts a comma separated string to an array of strings
- * @param str - comma separated string
- * @returns an array of strings
- */
-function stringToArray(str: string): Array<string> {
-  return str.split(",");
-}
+
 export async function searchEvents(
   query: string,
   per_page: number,
