@@ -184,7 +184,7 @@ async function searchAllQueries(
 function stringToArray(str: string): Array<string> {
   return str.split(",");
 }
-async function searchEvents(
+export async function searchEvents(
   query: string,
   per_page: number,
   after: string
