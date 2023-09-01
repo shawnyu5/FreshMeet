@@ -1,5 +1,5 @@
 // @refresh reload
-import { Suspense } from "solid-js";
+import { createResource, Suspense } from "solid-js";
 import {
   Body,
   ErrorBoundary,
@@ -13,6 +13,7 @@ import {
 } from "solid-start";
 import { Navbar } from "./components/Navbar";
 import "./root.css";
+import { count } from "./routes/meetup/hackathons";
 
 export default function Root() {
   // <link
@@ -25,6 +26,8 @@ export default function Root() {
   //   src="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.5/dist/js/foundation.min.js"
   //   crossorigin="anonymous"
   // ></script>
+  const [hackathonCount] = createResource(count);
+
   return (
     <Html lang="en">
       <Head>
@@ -45,6 +48,10 @@ export default function Root() {
                 { label: "Bars", path: "/meetup/bars" },
                 { label: "Board games + hangout", path: "/meetup/board-games" },
                 { label: "Suggested", path: "/meetup/suggested" },
+                {
+                  label: `Hackathons (${hackathonCount()})`,
+                  path: "/meetup/hackathons",
+                },
               ]}
             />
             <Routes>

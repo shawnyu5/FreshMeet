@@ -28,12 +28,13 @@ export default function (props: { query: Array<string>; per_page: number }) {
     return events;
   });
 
-  onMount(async () => {
+  onMount(() => {
     logger.info("OnMount clear cursor in local storage");
     // clear the after list in local storage on mount
     setCursors([]);
   });
-  onCleanup(async () => {
+
+  onCleanup(() => {
     logger.info("OnCleanup clear cursor in local storage");
     setCursors([]);
   });
@@ -183,7 +184,7 @@ async function searchAllQueries(
 function stringToArray(str: string): Array<string> {
   return str.split(",");
 }
-async function searchEvents(
+export async function searchEvents(
   query: string,
   per_page: number,
   after: string
