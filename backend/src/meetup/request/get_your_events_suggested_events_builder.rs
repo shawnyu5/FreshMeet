@@ -1,7 +1,7 @@
 use crate::meetup::request_builder::Builder;
 
 use super::{
-    common::{EventType, OperationName},
+    common::{EventType, Extensions, OperationName, PersistedQuery},
     get_your_events_suggested_events::{GetYourEventsSuggestedEventsRequest, Variables},
 };
 
@@ -27,10 +27,18 @@ impl Builder<GetYourEventsSuggestedEventsRequest> for GetYourEventsSuggestedEven
                 .to_string(),
             ..Default::default()
         };
+        let extensions = Extensions {
+            persisted_query: PersistedQuery {
+                // NOTE: Need to use custom hash here for some reason. Other wise this request will fail
+                sha256_hash: "4e6f93789cdacfe8809c93b09549c7e5cd019375e653a8ee439a963b1fd91c5e"
+                    .to_string(),
+                version: 1,
+            },
+        };
         return GetYourEventsSuggestedEventsRequest {
             operationName: OperationName::getYourEventsSuggestedEvents.to_string(),
             variables,
-            ..Default::default()
+            extensions,
         };
     }
 }

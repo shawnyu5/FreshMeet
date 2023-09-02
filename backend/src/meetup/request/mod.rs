@@ -1,3 +1,5 @@
+pub mod category_search;
+pub mod category_search_builder;
 pub mod common;
 pub mod event_keyword_search;
 pub mod event_keyword_search_builder;
@@ -37,8 +39,18 @@ where
         Ok(search) => {
             return Ok(search);
         }
-        Err(e) => {
-            return Err(anyhow!(e));
+        Err(_e) => {
+            let mut headers = HeaderMap::new();
+            headers.insert("content-type", HeaderValue::from_static("application/json"));
+            let response = client
+                .post(url)
+                .json(&request_body)
+                .headers(headers)
+                .send()
+                .await
+                .unwrap();
+
+            return Err(anyhow!("{}", &response.text().await?));
         }
     }
 }
