@@ -47,6 +47,7 @@ export default function Root() {
                 { label: "Tech", path: "/meetup/tech" },
                 { label: "Bars", path: "/meetup/bars" },
                 { label: "Board games + hangout", path: "/meetup/board-games" },
+                { label: "Today", path: "/meetup/today" },
                 { label: "Suggested", path: "/meetup/suggested" },
                 {
                   label: `Hackathons (${hackathonCount()})`,

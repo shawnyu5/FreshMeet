@@ -7,6 +7,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.72"
 axum = "0.6.20"
+axum-macros = "0.3.8"
 chrono = "0.4.26"
 hyper = "0.14.27"
 reqwest = { version = "0.11.18", features = ["blocking", "json"] }

@@ -1,7 +1,7 @@
 /**
- * pagination buttons
+ * Next page pagination button
  * @param nextPageCallback - callback for next page
- * @param previousPageCallback - callback for previous page
+ * @param disableNextBtn - if next page button should be disabled
  */
 export default function Pagination(props: {
   nextPageCallback: (
@@ -10,17 +10,13 @@ export default function Pagination(props: {
       target: Element;
     }
   ) => void;
-  previousPageCallback: (
-    e: MouseEvent & {
-      currentTarget: HTMLButtonElement;
-      target: Element;
-    }
-  ) => void;
+  disableNextBtn: boolean;
 }) {
   return (
     <div>
-      <button onClick={props.previousPageCallback}>Previous</button>
-      <button onClick={props.nextPageCallback}>Next</button>
+      <button onClick={props.nextPageCallback} disabled={props.disableNextBtn}>
+        Next
+      </button>
     </div>
   );
 }
