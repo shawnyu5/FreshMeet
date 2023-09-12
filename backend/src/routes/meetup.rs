@@ -17,7 +17,7 @@ use crate::meetup::{
 
 /// request body for meetup search
 #[derive(Serialize, Deserialize, Debug, Default)]
-pub struct RequestBody {
+pub struct SearchRequestBody {
     /// the query to search for
     query: String,
     /// number of results to return per page
@@ -33,7 +33,7 @@ pub struct Response {
     pub nodes: Vec<Event>,
 }
 /// handles /meetup/search post route
-pub async fn search(Json(body): Json<RequestBody>) -> Result<Json<Response>, StatusCode> {
+pub async fn search(Json(body): Json<SearchRequestBody>) -> Result<Json<Response>, StatusCode> {
     let request = EventKeyWrodSearchBuilder::new()
         .query(body.query.as_str())
         .per_page(body.per_page)
@@ -117,7 +117,7 @@ mod tests {
         },
         routes::{
             app,
-            meetup::{RequestBody, Response},
+            meetup::{Response, SearchRequestBody},
         },
     };
     use axum::{
@@ -130,7 +130,7 @@ mod tests {
     async fn meetup_search_status_code() {
         let app = app();
 
-        let body = RequestBody {
+        let body = SearchRequestBody {
             query: "programming".to_string(),
             per_page: 10,
             after: None,
@@ -160,7 +160,7 @@ mod tests {
     async fn no_online_in_search_result_title() {
         let app = app();
 
-        let body = RequestBody {
+        let body = SearchRequestBody {
             query: "dating".to_string(),
             per_page: 20,
             after: None,
