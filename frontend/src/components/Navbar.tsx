@@ -10,26 +10,25 @@ export function Navbar(props: {
     path: string;
   }>;
 }) {
-  /* TODO: idk why this hamburger menu doesnt work
-   <a
-     role="button"
-     class="navbar-burger"
-     aria-label="menu"
-     aria-expanded="false"
-     data-target="top-navbar"
-   >
-     <span aria-hidden="true"></span>
-     <span aria-hidden="true"></span>
-     <span aria-hidden="true"></span>
-   </a>
-   */
   return (
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="/">
           <img src="../icon.png" />
         </a>
+        <a
+          role="button"
+          class="navbar-burger"
+          aria-label="menu"
+          aria-expanded="false"
+          data-target="top-navbar"
+        >
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
       </div>
+
       <div id="top-navbar" class="navbar-menu">
         <div class="navbar-start">
           <For each={props.sections}>
