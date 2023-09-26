@@ -1,5 +1,5 @@
 import { Navigate } from "solid-start";
 
 export default function Home() {
-  return <Navigate href="/meetup/tech" />;
+  return <Navigate href="/meetup/today" />;
 }
