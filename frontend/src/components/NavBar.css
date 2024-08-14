@@ -1,0 +1,15 @@
+/* TODO: I still dk how to import this CSS file... */
+a {
+   color: inherit;
+   /* Inherit color from parent */
+   text-decoration: none;
+   /* Remove underline if you want */
+}
+
+a:hover,
+a:focus {
+   color: inherit;
+   /* Keep the original color */
+   text-decoration: none;
+   /* Maintain no underline */
+}

@@ -1,33 +1,27 @@
 {
-  "name": "solid-start",
-  "scripts": {
-    "dev": "solid-start dev",
-    "build": "solid-start build",
-    "start": "solid-start start"
-  },
-  "type": "module",
-  "devDependencies": {
-    "@types/node": "^18.11.18",
-    "esbuild": "^0.14.54",
-    "postcss": "^8.4.21",
-    "solid-start-node": "^0.2.19",
-    "typescript": "^4.9.4",
-    "vite": "^4.4.6"
-  },
-  "dependencies": {
-    "@solidjs/meta": "^0.28.2",
-    "@solidjs/router": "^0.8.2",
-    "axios": "^1.4.0",
-    "marked": "^6.0.0",
-    "pino": "^8.15.0",
-    "pino-pretty": "^10.2.0",
-    "solid-infinite-scroll": "^1.0.1",
-    "solid-js": "^1.7.8",
-    "solid-start": "^0.2.30",
-    "solid-start-vercel": "^0.2.30",
-    "undici": "^5.15.1"
-  },
-  "engines": {
-    "node": ">=16.8"
-  }
+   "name": "example-basic",
+   "type": "module",
+   "scripts": {
+      "dev": "vinxi dev",
+      "build": "vinxi build",
+      "start": "vinxi start",
+      "version": "vinxi version"
+   },
+   "dependencies": {
+      "@solidjs/meta": "^0.29.4",
+      "@solidjs/router": "^0.14.1",
+      "@solidjs/start": "^1.0.6",
+      "axios": "^1.7.3",
+      "logger": "^0.0.1",
+      "marked": "^13.0.3",
+      "pino": "^9.3.2",
+      "pino-pretty": "^11.2.2",
+      "solid-js": "^1.8.18",
+      "typescript": "^5.5.4",
+      "vinxi": "^0.4.1",
+      "vite": "^5.3.5"
+   },
+   "engines": {
+      "node": ">=18"
+   }
 }

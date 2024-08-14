@@ -4,8 +4,9 @@ use std::fmt::Display;
 
 /// types of events a meetup can be
 #[allow(non_camel_case_types)]
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub enum EventType {
+    #[default]
     physical,
     online,
 }
@@ -13,16 +14,9 @@ pub enum EventType {
 impl Display for EventType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            EventType::physical => write!(f, "physical"),
-            EventType::online => write!(f, "online"),
+            EventType::physical => write!(f, "PHYSICAL"),
+            EventType::online => write!(f, "ONLINE"),
         }
-    }
-}
-
-impl Default for EventType {
-    /// physical/in person is the default event type
-    fn default() -> Self {
-        EventType::physical
     }
 }
 
@@ -48,6 +42,22 @@ impl Display for OperationName {
             OperationName::categorySearch => {
                 write!(f, "categorySearch")
             }
+        }
+    }
+}
+
+/// Types of oepration names for requests to the Meetup api gql2
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[allow(non_camel_case_types)]
+pub enum OperationName2 {
+    /// Get recommended events
+    recommendedEventsWithSeries,
+}
+
+impl Display for OperationName2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            OperationName2::recommendedEventsWithSeries => write!(f, "recommendedEventsWithSeries"),
         }
     }
 }

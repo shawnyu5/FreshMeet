@@ -1,6 +1,9 @@
+#![allow(clippy::needless_return)]
 mod meetup;
 mod routes;
+mod utils;
 use tokio::signal;
+use tracing::{info, Level};
 
 use crate::routes::app;
 use std::net::SocketAddr;
@@ -9,11 +12,12 @@ use std::net::SocketAddr;
 async fn main() {
     tracing_subscriber::fmt()
         .with_target(false)
+        .with_max_level(Level::INFO)
         .compact()
         .init();
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
-    tracing::info!("Listening on {}", addr);
+    info!("Listening on {}", addr);
 
     axum::Server::bind(&addr)
         .serve(app().into_make_service())
