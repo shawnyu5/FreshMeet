@@ -6,13 +6,13 @@ use axum::{
     routing::get,
     Json, Router,
 };
+
 use hyper::StatusCode;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tokio::{fs::File, io::AsyncReadExt};
-use tower_http::{
-    cors::{Any, CorsLayer},
-    trace::{self, TraceLayer},
-};
+use tower_http::cors::{Any, CorsLayer};
+use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
 
 use self::meetup::meetups_today;
@@ -60,7 +60,7 @@ where
     }
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, JsonSchema)]
 pub struct HomeResponse {
     pub version: String,
 }

@@ -1,7 +1,6 @@
 use anyhow::{anyhow, Result};
-use axum::http::HeaderValue;
 use chrono::Utc;
-use hyper::HeaderMap;
+use reqwest::header::{HeaderMap, HeaderValue};
 use serde::{de::DeserializeOwned, Serialize};
 use tracing::{debug, error};
 

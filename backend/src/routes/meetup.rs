@@ -7,6 +7,7 @@ use crate::meetup::query::request::gql2::GQLResponse;
 use axum::{extract::Query, Json};
 use chrono::DateTime;
 use reqwest::StatusCode;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tracing::error;
 
@@ -42,7 +43,7 @@ pub async fn search(Json(body): Json<SearchRequestBody>) -> Result<Json<Response
 }
 
 /// Query parameters for `/today` route
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, JsonSchema)]
 pub struct MeetupsTodayQueryParams {
     pub after: Option<String>,
 }

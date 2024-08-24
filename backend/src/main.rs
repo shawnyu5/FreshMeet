@@ -2,11 +2,17 @@
 mod meetup;
 mod routes;
 mod utils;
-use tokio::signal;
+// use aide::{
+//     axum::{
+//         routing::{get, post},
+//         ApiRouter, IntoApiResponse,
+//     },
+//     openapi::{Info, OpenApi},
+// };
+use tokio::{net::TcpListener, signal};
 use tracing::{info, Level};
 
 use crate::routes::app;
-use std::net::SocketAddr;
 
 #[tokio::main]
 async fn main() {
@@ -16,11 +22,10 @@ async fn main() {
         .compact()
         .init();
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
+    let addr = "0.0.0.0:8000";
+    let listener = TcpListener::bind(addr).await.unwrap();
     info!("Listening on {}", addr);
-
-    axum::Server::bind(&addr)
-        .serve(app().into_make_service())
+    axum::serve(listener, app())
         .with_graceful_shutdown(shutdown_signal())
         .await
         .unwrap();
