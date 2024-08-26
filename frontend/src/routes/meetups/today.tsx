@@ -124,9 +124,8 @@ async function getMeetupsToday(after: string): Promise<MeetupsToday> {
         },
       },
     );
-    logger.info(response.data);
+    logger.debug(`Response data: ${response.data}`);
     response.data.data.result.edges.map((edge) => {
-      logger.info(edge.node.isAttending);
       if (edge.node.isAttending == true) {
         // Doing some weird things here... ignore this
         // @ts-ignore

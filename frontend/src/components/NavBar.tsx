@@ -1,7 +1,8 @@
 import "./NavBar.css";
 import "@rnwonder/solid-date-picker/dist/style.css";
-import DatePicker, { PickerValue } from "@rnwonder/solid-date-picker";
-import { Accessor, createSignal, Setter } from "solid-js";
+import { PickerValue } from "@rnwonder/solid-date-picker";
+import { createSignal } from "solid-js";
+import { DatePickerComponent } from "./DatePicker";
 
 export default function () {
   let datetime = new Date();
@@ -38,38 +39,23 @@ export default function () {
       </div>
 
       <div class="top-bar-right">
-        <ul class="menu">
-          <li>
-            <input type="search" placeholder="Search"></input>
-          </li>
-          <li>
-            <button type="button" class="button">
-              Search
-            </button>
-          </li>
-        </ul>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <ul class="menu">
+            <li>
+              <input type="search" placeholder="Search"></input>
+            </li>
+            <li>
+              <button type="submit" class="button">
+                Search
+              </button>
+            </li>
+          </ul>
+        </form>
       </div>
     </div>
-  );
-}
-
-/**
- * A date picker component
- */
-function DatePickerComponent(props: {
-  value: Accessor<PickerValue>;
-  setValue: Setter<PickerValue>;
-}) {
-  return (
-    <DatePicker
-      // onChange={(data) => {
-      //    if (data.type === "range") {
-      //       console.log(data.startDate, data.endDate);
-      //    }
-      // }}
-      type="range"
-      value={props.value}
-      setValue={props.setValue}
-    />
   );
 }
