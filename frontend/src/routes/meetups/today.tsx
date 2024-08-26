@@ -4,6 +4,7 @@ import {
   createSignal,
   ErrorBoundary,
   For,
+  Show,
   Suspense,
 } from "solid-js";
 import { loadConfig } from "~/config";
@@ -55,17 +56,18 @@ export default function () {
     <Suspense fallback={<p>loading....</p>}>
       <ErrorBoundary fallback={(err) => err}>
         <div id="meetup-today">
-          <table class="hover">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Start date</th>
-                <th>Attending</th>
-                <th>description</th>
-              </tr>
-            </thead>
-            <tbody>
-              {/*
+          <Show when={eventResource()?.data.result.edges.length != 0} fallback={<p>No Meetups for selected date... 🥲</p>}>
+            <table class="hover">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Start date</th>
+                  <th>Attending</th>
+                  <th>description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/*
             <InfiniteScroll
               each={eventResource()?.data.rankedEvents.edges}
               hasMore={true}
@@ -74,33 +76,34 @@ export default function () {
             >
             {(edge, _index) => (
             */}
-              <For each={eventResource()?.data.result.edges}>
-                {(node, _idx) => (
-                  <tr>
-                    <td>
-                      <a target="_blank" href={node.node.eventUrl}>
-                        {node.node.title}
-                      </a>
-                    </td>
-                    <td>{node.node.dateTime}</td>
-                    <td>{node.node.isAttending.toString()}</td>
-                    <td innerHTML={node.node.description}></td>
-                  </tr>
-                )}
-              </For>
-              {/*  )}
+                <For each={eventResource()?.data.result.edges}>
+                  {(node, _idx) => (
+                    <tr>
+                      <td>
+                        <a target="_blank" href={node.node.eventUrl}>
+                          {node.node.title}
+                        </a>
+                      </td>
+                      <td>{node.node.dateTime}</td>
+                      <td>{node.node.isAttending.toString()}</td>
+                      <td innerHTML={node.node.description}></td>
+                    </tr>
+                  )}
+                </For>
+                {/*  )}
                    </InfiniteScroll>*/}
-            </tbody>
-            {
-              // <Pagination
-              //   nextPageCallback={async () => {
-              //     scrollToTop();
-              //     setPageNumber((e) => e + 1);
-              //   }}
-              //   disableNextBtn={!getHasNextPage()}
-              // />
-            }
-          </table>
+              </tbody>
+              {
+                // <Pagination
+                //   nextPageCallback={async () => {
+                //     scrollToTop();
+                //     setPageNumber((e) => e + 1);
+                //   }}
+                //   disableNextBtn={!getHasNextPage()}
+                // />
+              }
+            </table>
+          </Show>
         </div>
       </ErrorBoundary>
     </Suspense>

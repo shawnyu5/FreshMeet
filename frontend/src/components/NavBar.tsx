@@ -41,10 +41,10 @@ export default function() {
                   <a href="/">Today</a>
                </li>
                <li>
-                  <DatePickerComponent value={dateRange} setValue={setDateRange} />
                   {
                      // TODO: date picker goes here
                   }
+                  <DatePickerComponent value={dateRange} setValue={setDateRange} />
                </li>
             </ul>
          </div>
