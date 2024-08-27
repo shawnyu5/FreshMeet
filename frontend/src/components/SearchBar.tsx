@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { createSignal } from "solid-js";
 import { loadConfig } from "~/config";
-import { MeetupEvents } from "~/routes/meetups/today";
+import { MeetupEvents } from "~/routes/meetups/types";
 
 export function SearchForum() {
   const [searchQuery, setSearchQuery] = createSignal("");
