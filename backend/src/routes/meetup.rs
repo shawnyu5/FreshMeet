@@ -2,14 +2,18 @@
 
 use std::cmp::Ordering;
 
-use crate::meetup::query::common::EventType;
-use crate::meetup::query::request::gql2::GQLResponse;
+use crate::meetup::query::common::{Extensions, OperationName, PersistedQuery};
+use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
+use crate::meetup::query::{common::EventType, request::gql2::Variables};
+use crate::utils::{eod, now};
+use anyhow::Context;
 use axum::{extract::Query, Json};
+use axum_macros::debug_handler;
 use chrono::DateTime;
 use reqwest::StatusCode;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use tracing::error;
+use tracing::{error, info};
 
 use crate::meetup::{
     query::recommended_events_with_series::RecommendedEventsWithSeries,
@@ -50,7 +54,7 @@ pub struct MeetupsTodayQueryParams {
 
 /// Handles `/today` route
 /// Get meetups for today
-pub async fn meetups_today(
+pub async fn meetups_today_handler(
     query: Query<MeetupsTodayQueryParams>,
 ) -> Result<Json<GQLResponse>, AppError> {
     match RecommendedEventsWithSeries::new()
@@ -85,6 +89,55 @@ pub async fn meetups_today(
             Err(AppError(e))
         }
     }
+}
+
+/// Body for `/recommended` route
+///
+/// * `query`:
+#[derive(Serialize, Deserialize)]
+pub struct RecommendedEventsRequestBody {
+    /// Search query
+    query: String,
+    /// Start date of event
+    start_date: Option<String>,
+    /// End date of event
+    end_date: Option<String>,
+    /// Events to return per page
+    per_page: Option<u32>,
+}
+
+/// Handler for `/recommended` route.
+pub async fn recommended_events_handler(
+    Json(body): Json<RecommendedEventsRequestBody>,
+) -> Result<Json<GQLResponse>, AppError> {
+    let search_request = SearchRequest {
+        operation_name: OperationName::eventSearchWithSeries.to_string(),
+        variables: Variables {
+            query: Some(body.query),
+            start_date_range: body.start_date.unwrap_or(eod()),
+            end_date_range: Some(body.end_date.unwrap_or(now())),
+            first: body.per_page.unwrap_or(40) as i32,
+            ..Default::default()
+        },
+        extensions: Extensions {
+            persisted_query: PersistedQuery {
+                sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
+                    .into(),
+                version: 1,
+            },
+        },
+    };
+
+    info!("Fetching events");
+    let response = match search_request.fetch().await {
+        Ok(res) => res,
+        Err(err) => {
+            error!("Error: {}", err);
+            return Err(AppError(err));
+        }
+    };
+    info!("Events fetched:");
+    return Ok(Json(response));
 }
 
 // #[cfg(test)]

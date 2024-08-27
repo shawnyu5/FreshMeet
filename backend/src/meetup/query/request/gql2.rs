@@ -38,9 +38,7 @@ pub struct Variables {
     pub do_promote_paypal_events: bool,
     pub city: String,
     pub number_of_events_for_series: i32,
-    /// Search query
-    ///
-    /// Only applicable with operation `eventSearchWithSeries`
+    /// Search query. Only applicable with SearchRequest operation `eventSearchWithSeries`
     pub query: Option<String>,
 }
 
@@ -137,6 +135,7 @@ pub struct GQLResponse {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Data {
+    #[serde(alias = "results")]
     pub result: MeetupResult,
 }
 

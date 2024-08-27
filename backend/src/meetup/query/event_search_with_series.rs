@@ -3,7 +3,7 @@
 use crate::meetup::request_builder::Builder;
 
 use super::{
-    common::EventType,
+    common::{EventType, OperationName},
     request::gql2::{SearchRequest, Variables},
 };
 
@@ -47,6 +47,7 @@ impl Builder<SearchRequest> for SearchEventsWithSeries {
                 event_type: self.event_type.to_string(),
                 ..Default::default()
             },
+            operation_name: OperationName::eventSearchWithSeries.to_string(),
             ..Default::default()
         };
     }

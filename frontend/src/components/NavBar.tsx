@@ -2,7 +2,8 @@ import "./NavBar.css";
 import "@rnwonder/solid-date-picker/dist/style.css";
 import { PickerValue } from "@rnwonder/solid-date-picker";
 import { createSignal } from "solid-js";
-import { DatePickerComponent } from "./DatePicker";
+import { DatePickerComponent as DatePicker } from "./DatePicker";
+import { SearchForum as SearchBar } from "./SearchBar";
 
 export default function () {
   let datetime = new Date();
@@ -33,28 +34,13 @@ export default function () {
             <a href="/">Today</a>
           </li>
           <li>
-            <DatePickerComponent value={dateRange} setValue={setDateRange} />
+            <DatePicker value={dateRange} setValue={setDateRange} />
           </li>
         </ul>
       </div>
 
       <div class="top-bar-right">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
-        >
-          <ul class="menu">
-            <li>
-              <input type="search" placeholder="Search"></input>
-            </li>
-            <li>
-              <button type="submit" class="button">
-                Search
-              </button>
-            </li>
-          </ul>
-        </form>
+        <SearchBar />
       </div>
     </div>
   );

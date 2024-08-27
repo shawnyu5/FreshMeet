@@ -114,9 +114,9 @@ export default function () {
  * Fetch list of meetups today
  * @param after - after cursor
  */
-async function getMeetupsToday(after: string): Promise<MeetupsToday> {
+async function getMeetupsToday(after: string): Promise<MeetupEvents> {
   try {
-    let response: AxiosResponse<MeetupsToday> = await axios.get(
+    let response: AxiosResponse<MeetupEvents> = await axios.get(
       `${loadConfig().apiUrl}/today`,
       {
         params: {
@@ -143,7 +143,7 @@ async function getMeetupsToday(after: string): Promise<MeetupsToday> {
   }
 }
 
-export interface MeetupsToday {
+export interface MeetupEvents {
   data: Data;
 }
 
