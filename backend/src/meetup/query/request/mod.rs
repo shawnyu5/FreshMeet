@@ -20,7 +20,7 @@ where
     let url = "https://www.meetup.com/gql2";
     let mut headers = HeaderMap::new();
     headers.insert("content-type", HeaderValue::from_static("application/json"));
-    let timestamp = Utc::now().timestamp();
+    let _timestamp = Utc::now().timestamp();
     headers.insert(
         "cookie",
         HeaderValue::from_static("MEETUP_MEMBER=id=284126435&status=1&timestamp=1722905619&bs=0&ql=false&s=fbf4f42e2d618fd7fdc9054dadd7514a82024b03&scope=ALL; MEETUP_LANGUAGE=language=en&country=US; memberId=284126435;"),

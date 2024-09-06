@@ -4,11 +4,11 @@ use std::cmp::Ordering;
 
 use crate::meetup::query::common::{Extensions, OperationName, OperationName2, PersistedQuery};
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
-use crate::meetup::query::{common::EventType, request::gql2::Variables};
+use crate::meetup::query::{request::gql2::Variables};
 use crate::utils::{eod, now};
-use anyhow::Context;
+
 use axum::{extract::Query, Json};
-use axum_macros::debug_handler;
+
 use chrono::DateTime;
 use reqwest::StatusCode;
 use schemars::JsonSchema;
@@ -17,7 +17,7 @@ use tracing::{error, info};
 
 use crate::meetup::{
     request_builder::Builder,
-    response::{Event, PageInfo, RsvpState},
+    response::{Event, PageInfo},
 };
 
 use super::AppError;
@@ -41,7 +41,7 @@ pub struct Response {
 }
 /// handles /meetup/search post route
 // TODO: implement this
-pub async fn search(Json(body): Json<SearchRequestBody>) -> Result<Json<Response>, StatusCode> {
+pub async fn search(Json(_body): Json<SearchRequestBody>) -> Result<Json<Response>, StatusCode> {
     todo!()
 }
 
