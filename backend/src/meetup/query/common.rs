@@ -55,12 +55,15 @@ impl Display for OperationName {
 pub enum OperationName2 {
     /// Get recommended events
     recommendedEventsWithSeries,
+    /// Search for events with a query
+    eventSearchWithSeries,
 }
 
 impl Display for OperationName2 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             OperationName2::recommendedEventsWithSeries => write!(f, "recommendedEventsWithSeries"),
+            OperationName2::eventSearchWithSeries => write!(f, "eventSearchWithSeries"),
         }
     }
 }

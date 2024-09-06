@@ -2,14 +2,15 @@
 use crate::meetup::query::common::EventType;
 use crate::meetup::query::common::{Extensions, OperationName2, PersistedQuery};
 use crate::utils::now;
-use anyhow::Result as anyhow_result;
+use anyhow::anyhow;
+use anyhow::Result;
 use bon::bon;
 use chrono::DateTime;
 use markdown::to_html;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
-use tracing::{debug, info};
+use tracing::error;
 
 use super::post;
 
@@ -87,7 +88,16 @@ impl Default for Variables {
 
 impl SearchRequest {
     /// Send the API request
-    pub async fn fetch(&self) -> anyhow_result<GQLResponse> {
+    pub async fn fetch(&self) -> Result<GQLResponse> {
+        if self.operation_name == OperationName2::eventSearchWithSeries.to_string()
+            && self.variables.query.is_none()
+        {
+            error!(
+                "When operation name is {operation_name}, a query must be included.",
+                operation_name = self.operation_name
+            );
+            return Err(anyhow!("Missing query"));
+        }
         let response = post::<SearchRequest, GQLResponse>(self).await;
         return response;
     }
