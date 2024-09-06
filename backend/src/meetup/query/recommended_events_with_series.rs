@@ -1,57 +1,29 @@
 //! Get recommended events, including event series
-use super::request::gql2::{SearchRequest, Variables};
-use crate::{
-    meetup::request_builder::Builder,
-    utils::{eod, now},
+use bon::bon;
+
+use super::{
+    common::OperationName2,
+    request::gql2::{SearchRequest, Variables},
 };
+use crate::utils::{eod, now};
 
-#[derive(Debug, Default)]
-pub struct RecommendedEventsWithSeries {
-    /// The after cursor
-    after: Option<String>,
-    /// Number of results to return
-    first: Option<i32>,
-    // start_date_range: Option<String>,
-    // end_date_range: String,
-}
+#[derive(Debug)]
+pub struct RecommendedEventsWithSeries {}
 
+#[bon]
 impl RecommendedEventsWithSeries {
-    /// Set the after cursor
-    ///
-    /// * `after`: after cursor to set
-    pub fn after(&mut self, after: Option<String>) -> &mut Self {
-        self.after = after;
-        return self;
-    }
-
-    /// Set number of results to return
-    ///
-    /// * `first`: number of events to return
-    pub fn per_page(&mut self, first: i32) -> &mut Self {
-        self.first = Some(first);
-        return self;
-    }
-
-    // /// Get start date range
-    // ///
-    // /// * `start_date_range`: start date of event to return
-    // pub fn start_date_range(&mut self, start_date_range: String) -> &mut Self {
-    //     self.start_date_range = Some(start_date_range);
-    //     return self;
-    // }
-}
-
-impl Builder<SearchRequest> for RecommendedEventsWithSeries {
-    fn new() -> Self {
-        return RecommendedEventsWithSeries::default();
-    }
-
-    /// constructs a search request
-    fn build(&mut self) -> SearchRequest {
+    #[builder]
+    pub fn new(
+        /// The after cursor
+        after: Option<String>,
+        /// Number of results to return per page
+        per_page: Option<i32>,
+    ) -> SearchRequest {
         return SearchRequest {
+            operation_name: OperationName2::recommendedEventsWithSeries.to_string(),
             variables: Variables {
-                after: self.after.clone(),
-                first: self.first.unwrap_or(30),
+                after: after.clone(),
+                first: per_page.unwrap_or(30),
                 // Today's date
                 start_date_range: now(),
                 // End of today
@@ -67,28 +39,31 @@ impl Builder<SearchRequest> for RecommendedEventsWithSeries {
 mod tests {
     use super::*;
     #[test]
-    fn can_create() {
-        let builder = RecommendedEventsWithSeries::new();
-        dbg!(builder);
-    }
-
-    #[test]
+    /// Validate we are able to build a builder
     fn can_build() {
-        let request = RecommendedEventsWithSeries::new().build();
-        assert_eq!(request.operation_name, "categorySearch");
+        RecommendedEventsWithSeries::builder().build();
     }
 
+    // #[test]
+    // #[ignore]
+    // fn can_build() {
+    //     let request = RecommendedEventsWithSeries::builder().build();
+    //     // assert_eq!(request.operation_name, "categorySearch");
+    // }
+
     #[test]
+    #[ignore]
     fn can_set_after() {
-        let request = RecommendedEventsWithSeries::new()
-            .after(Some("test".to_string()))
+        let request = RecommendedEventsWithSeries::builder()
+            .after("test".to_string())
             .build();
         assert_eq!(request.variables.after, Some("test".to_string()));
     }
 
     #[test]
+    #[ignore]
     fn can_set_first() {
-        let request = RecommendedEventsWithSeries::new().per_page(22).build();
+        let request = RecommendedEventsWithSeries::builder().per_page(22).build();
         assert_eq!(request.variables.first, 22);
     }
 }

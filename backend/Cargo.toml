@@ -9,6 +9,7 @@ aide = { version = "0.13.4", features = ["axum"] }
 anyhow = "1.0.72"
 axum = "0.7.5"
 axum-macros = "0.3.8"
+bon = "2.1.1"
 chrono = "0.4.26"
 http-body = "1.0.1"
 hyper = "1.4.1"
