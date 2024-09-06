@@ -1,12 +1,15 @@
 //! Types for meetup GQL2 API
 use crate::meetup::query::common::EventType;
 use crate::meetup::query::common::{Extensions, OperationName2, PersistedQuery};
+use crate::utils::now;
 use anyhow::Result as anyhow_result;
-use chrono::{DateTime, FixedOffset, Utc};
+use bon::bon;
+use chrono::DateTime;
 use markdown::to_html;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
+use tracing::{debug, info};
 
 use super::post;
 
@@ -17,6 +20,25 @@ pub struct SearchRequest {
     pub operation_name: String,
     pub extensions: Extensions,
     pub variables: Variables,
+}
+
+#[bon]
+impl SearchRequest {
+    #[builder]
+    pub fn new(
+        /// The operation name of this request
+        operation_name: OperationName2,
+        /// Variables of this request
+        ///
+        /// They configure values such as the search query, event start, end date, etc...
+        variables: Option<Variables>,
+    ) -> Self {
+        return Self {
+            operation_name: operation_name.to_string(),
+            variables: variables.unwrap_or_default(),
+            ..Default::default()
+        };
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -44,23 +66,13 @@ pub struct Variables {
 
 impl Default for Variables {
     fn default() -> Self {
-        // Get the current UTC date and time
-        let utc: DateTime<Utc> = Utc::now();
-        // Create a fixed offset representing -04:00 (Eastern Daylight Time)
-        let offset = FixedOffset::east_opt(-4 * 3600).unwrap();
-        // Convert the UTC time to the specified offset
-        let local_time: DateTime<FixedOffset> = utc.with_timezone(&offset);
-        // Format the local time in the desired format
-        let start_time = local_time.format("%Y-%m-%dT%H:%M:%S-04:00").to_string();
-        // let end_time = local_time.format("%Y-%m-%dT23:59:59-04:00").to_string();
-
         Self {
             first: 40,
             lat: 43.7400016784668,
             lon: -79.36000061035156,
             city: "Toronto".into(),
             sort_field: "RELEVANCE".into(),
-            start_date_range: start_time,
+            start_date_range: now(),
             end_date_range: None,
             after: None,
             event_type: EventType::default().to_string(),
@@ -84,16 +96,22 @@ impl SearchRequest {
 impl Default for SearchRequest {
     fn default() -> Self {
         return Self {
-            extensions: Extensions {
-                persisted_query: PersistedQuery {
-                    sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
-                        .to_string(),
-                    version: 1,
-                },
-            },
+            extensions: Default::default(),
             operation_name: OperationName2::recommendedEventsWithSeries.to_string(),
             variables: Variables::default(),
         };
+    }
+}
+
+impl Default for Extensions {
+    fn default() -> Self {
+        Self {
+            persisted_query: PersistedQuery {
+                sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+                    .to_string(),
+                version: 1,
+            },
+        }
     }
 }
 
@@ -325,4 +343,16 @@ pub struct Metadata {
     pub rec_source: String,
     #[serde(rename = "__typename")]
     pub typename: String,
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    /// Validate we can build a simple request
+    fn can_build_request() {
+        let _ = SearchRequest::builder()
+            .operation_name(OperationName2::recommendedEventsWithSeries)
+            .build();
+    }
 }
