@@ -38,21 +38,14 @@ impl RecommendedEventsWithSeries {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     /// Validate we are able to build a builder
     fn can_build() {
         RecommendedEventsWithSeries::builder().build();
     }
 
-    // #[test]
-    // #[ignore]
-    // fn can_build() {
-    //     let request = RecommendedEventsWithSeries::builder().build();
-    //     // assert_eq!(request.operation_name, "categorySearch");
-    // }
-
     #[test]
-    #[ignore]
     fn can_set_after() {
         let request = RecommendedEventsWithSeries::builder()
             .after("test".to_string())
@@ -61,8 +54,7 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
-    fn can_set_first() {
+    fn can_set_per_page() {
         let request = RecommendedEventsWithSeries::builder().per_page(22).build();
         assert_eq!(request.variables.first, 22);
     }
