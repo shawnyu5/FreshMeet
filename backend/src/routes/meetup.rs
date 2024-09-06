@@ -2,7 +2,7 @@
 
 use std::cmp::Ordering;
 
-use crate::meetup::query::common::{Extensions, OperationName, PersistedQuery};
+use crate::meetup::query::common::{Extensions, OperationName, OperationName2, PersistedQuery};
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
 use crate::meetup::query::{common::EventType, request::gql2::Variables};
 use crate::utils::{eod, now};
@@ -16,7 +16,6 @@ use serde::{Deserialize, Serialize};
 use tracing::{error, info};
 
 use crate::meetup::{
-    query::recommended_events_with_series::RecommendedEventsWithSeries,
     request_builder::Builder,
     response::{Event, PageInfo, RsvpState},
 };
@@ -57,9 +56,15 @@ pub struct MeetupsTodayQueryParams {
 pub async fn meetups_today_handler(
     query: Query<MeetupsTodayQueryParams>,
 ) -> Result<Json<GQLResponse>, AppError> {
-    match RecommendedEventsWithSeries::new()
-        .per_page(100)
-        .after(query.after.clone())
+    match SearchRequest::builder()
+        .operation_name(OperationName2::recommendedEventsWithSeries)
+        .variables(Variables {
+            first: 100,
+            after: query.after.clone(),
+            start_date_range: now(),
+            end_date_range: Some(eod()),
+            ..Default::default()
+        })
         .build()
         .fetch()
         .await
