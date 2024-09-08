@@ -1,13 +1,15 @@
 import { PickerValue } from "@rnwonder/solid-date-picker";
 import { createStore } from "solid-js/store";
 import { MeetupEvents } from "./routes/meetups/types";
-import { Resource } from "solid-js";
 
 let datetime = new Date();
 let month = datetime.getMonth() + 1;
 
 export type State = {
   dateRange: PickerValue;
+  /**
+   * @deprecated - get this from the query param, instead of the app state
+   */
   query: string | null;
   events: MeetupEvents | null;
 };

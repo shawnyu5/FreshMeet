@@ -11,6 +11,7 @@ import { loadConfig } from "~/config";
 import logger from "~/logger";
 import { MeetupEvents } from "./types";
 import { useAppState } from "~/state";
+import { useSearchParams } from "@solidjs/router";
 
 /**
  * Render the markdown in the description
@@ -22,6 +23,7 @@ export default function () {
   // const [pageNumber, setPageNumber] = createSignal(1);
   // const [afterCursor, setAfterCursor] = createSignal("");
   // const [getHasNextPage, setHasNextPage] = createSignal(true);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [appState, setAppState] = useAppState();
 
   const [eventResource] = createResource(async () => {
@@ -29,10 +31,10 @@ export default function () {
     const startDate = `${dateRange.value.startDateObject?.year}-${dateRange.value.startDateObject?.month ?? 0 + 1}-${dateRange.value.startDateObject?.day}[US/Estern]`;
     const endDate = `${dateRange.value.endDateObject?.year}-${dateRange.value.endDateObject?.month ?? 0 + 1}-${dateRange.value.endDateObject?.day}[US/Estern]`;
 
-    if (appState.query) {
-      logger.info("Search query found. Using search query");
+    if (searchParams.query) {
+      logger.info(`Search query found: '${searchParams.query}'. Using search query`);
       const events = await searchMeetups(
-        appState.query || null,
+        searchParams.query || null,
         startDate,
         endDate,
         100,
