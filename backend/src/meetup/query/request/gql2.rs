@@ -34,10 +34,24 @@ impl SearchRequest {
         /// They configure values such as the search query, event start, end date, etc...
         variables: Option<Variables>,
     ) -> Self {
+        let hash = match operation_name {
+            OperationName2::recommendedEventsWithSeries => {
+                "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+            }
+            OperationName2::eventSearchWithSeries => {
+                "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
+            }
+        };
+
         return Self {
             operation_name: operation_name.to_string(),
+            extensions: Extensions {
+                persisted_query: PersistedQuery {
+                    sha256_hash: hash.into(),
+                    version: 1,
+                },
+            },
             variables: variables.unwrap_or_default(),
-            ..Default::default()
         };
     }
 }
@@ -117,6 +131,7 @@ impl Default for Extensions {
     fn default() -> Self {
         Self {
             persisted_query: PersistedQuery {
+                // sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
                 sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
                     .to_string(),
                 version: 1,

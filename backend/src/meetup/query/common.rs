@@ -62,7 +62,9 @@ pub enum OperationName2 {
 impl Display for OperationName2 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            OperationName2::recommendedEventsWithSeries => write!(f, "recommendedEventsWithSeries"),
+            OperationName2::recommendedEventsWithSeries => {
+                write!(f, "recommendedEventsWithSeries")
+            }
             OperationName2::eventSearchWithSeries => write!(f, "eventSearchWithSeries"),
         }
     }

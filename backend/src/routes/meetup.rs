@@ -3,8 +3,8 @@
 use std::cmp::Ordering;
 
 use crate::meetup::query::common::{Extensions, OperationName, OperationName2, PersistedQuery};
+use crate::meetup::query::request::gql2::Variables;
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
-use crate::meetup::query::{request::gql2::Variables};
 use crate::utils::{eod, now};
 
 use axum::{extract::Query, Json};
@@ -13,7 +13,7 @@ use chrono::DateTime;
 use reqwest::StatusCode;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use tracing::{error, info};
+use tracing::{debug, error, info};
 
 use crate::meetup::{
     request_builder::Builder,
@@ -22,27 +22,11 @@ use crate::meetup::{
 
 use super::AppError;
 
-/// request body for meetup search
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct SearchRequestBody {
-    /// the query to search for
-    query: String,
-    /// number of results to return per page
-    per_page: i32,
-    /// the after cursor
-    after: Option<String>,
-}
-
 /// response body for meetup search
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Response {
     pub page_info: PageInfo,
     pub nodes: Vec<Event>,
-}
-/// handles /meetup/search post route
-// TODO: implement this
-pub async fn search(Json(_body): Json<SearchRequestBody>) -> Result<Json<Response>, StatusCode> {
-    todo!()
 }
 
 /// Query parameters for `/today` route
@@ -96,13 +80,13 @@ pub async fn meetups_today_handler(
     }
 }
 
-/// Body for `/recommended` route
+/// Body for `/search` route
 ///
 /// * `query`:
 #[derive(Serialize, Deserialize)]
-pub struct RecommendedEventsRequestBody {
+pub struct SearchRequestBody {
     /// Search query
-    query: String,
+    query: Option<String>,
     /// Start date of event
     start_date: Option<String>,
     /// End date of event
@@ -111,27 +95,29 @@ pub struct RecommendedEventsRequestBody {
     per_page: Option<u32>,
 }
 
-/// Handler for `/recommended` route.
-pub async fn recommended_events_handler(
-    Json(body): Json<RecommendedEventsRequestBody>,
+/// Handler for `/search` route.
+pub async fn search_handler(
+    Json(body): Json<SearchRequestBody>,
 ) -> Result<Json<GQLResponse>, AppError> {
-    let search_request = SearchRequest {
-        operation_name: OperationName::eventSearchWithSeries.to_string(),
-        variables: Variables {
-            query: Some(body.query),
-            start_date_range: body.start_date.unwrap_or(eod()),
-            end_date_range: Some(body.end_date.unwrap_or(now())),
-            first: body.per_page.unwrap_or(40) as i32,
+    let search_request = SearchRequest::builder()
+        .operation_name(OperationName2::eventSearchWithSeries)
+        .variables(Variables {
+            query: Some(body.query.unwrap_or_default()),
+            start_date_range: "2024-09-08T18:16:46-04:00[US/Eastern]".into(),
             ..Default::default()
-        },
-        extensions: Extensions {
-            persisted_query: PersistedQuery {
-                sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
-                    .into(),
-                version: 1,
-            },
-        },
-    };
+        })
+        .build();
+    debug!("Search request: {:#?}", search_request);
+    // let search_request = SearchRequest::builder()
+    //     .operation_name(OperationName2::eventSearchWithSeries)
+    //     .variables(Variables {
+    //         query: Some(body.query),
+    //         start_date_range: body.start_date.unwrap_or(eod()),
+    //         end_date_range: Some(body.end_date.unwrap_or(now())),
+    //         first: body.per_page.unwrap_or(40) as i32,
+    //         ..Default::default()
+    //     })
+    //     .build();
 
     info!("Fetching events");
     let response = match search_request.fetch().await {
@@ -141,7 +127,8 @@ pub async fn recommended_events_handler(
             return Err(AppError(err));
         }
     };
-    info!("Events fetched:");
+    info!("Events fetched");
+    dbg!(&response);
     return Ok(Json(response));
 }
 
