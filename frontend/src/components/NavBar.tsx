@@ -1,26 +1,23 @@
 import "./NavBar.css";
 import "@rnwonder/solid-date-picker/dist/style.css";
-import { PickerValue } from "@rnwonder/solid-date-picker";
-import { createSignal } from "solid-js";
+import { createEffect, createSignal } from "solid-js";
 import { DatePickerComponent as DatePicker } from "./DatePicker";
-import { SearchForum as SearchBar } from "./SearchBar";
+import { SearchBar } from "./SearchBar";
+import { useAppState } from "~/state";
+import { useSearchParams } from "@solidjs/router";
 
 export default function () {
-  let datetime = new Date();
-  const [dateRange, setDateRange] = createSignal<PickerValue>({
-    value: {
-      startDateObject: {
-        day: datetime.getDate(),
-        month: datetime.getMonth(),
-        year: datetime.getFullYear(),
-      },
-      endDateObject: {
-        day: datetime.getDate(),
-        month: datetime.getMonth(),
-        year: datetime.getFullYear(),
-      },
-    },
-    label: `${datetime.getFullYear()}-${datetime.getMonth()}-${datetime.getDate()}`,
+  const [appState, setAppState] = useAppState();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [datePickerValue, setDatePickerValue] = createSignal(
+    appState.dateRange,
+  );
+
+  createEffect(() => {
+    setAppState("dateRange", datePickerValue());
+    const startDate = `${datePickerValue().value.startDateObject?.year}-${datePickerValue().value.startDateObject?.month ?? 0 + 1}-${datePickerValue().value.startDateObject?.day}[US/Eastern]`;
+    const endDate = `${datePickerValue().value.endDateObject?.year}-${datePickerValue().value.endDateObject?.month ?? 0 + 1}-${datePickerValue().value.endDateObject?.day}[US/Eastern]`;
+    setSearchParams({ startDate: startDate, endDate: endDate });
   });
 
   return (
@@ -30,17 +27,19 @@ export default function () {
         <ul class="dropdown menu" data-dropdown-menu>
           <img src="../icon.png" width="50" />
           <li class="menu-text">Fresh meat</li>
-          <li>
-            <a href="/">Today</a>
-          </li>
-          <li>
-            <DatePicker value={dateRange} setValue={setDateRange} />
-          </li>
+          {
+            // <li>
+            //   <a href="/">Today</a>
+            // </li>
+            // <li>
+            //   <DatePicker value={datePickerValue} setValue={setDatePickerValue} />
+            // </li>
+          }
         </ul>
       </div>
 
       <div class="top-bar-right">
-        <SearchBar />
+        <SearchBar dateRange={datePickerValue()} />
       </div>
     </div>
   );

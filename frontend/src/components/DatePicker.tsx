@@ -1,5 +1,5 @@
 import DatePicker, { PickerValue } from "@rnwonder/solid-date-picker";
-import { Accessor, Setter } from "solid-js";
+import { Accessor, createSignal, Setter } from "solid-js";
 
 /**
  * A date picker component
@@ -12,6 +12,17 @@ export function DatePickerComponent(props: {
 }) {
   return (
     <DatePicker
+      // onChange={(data) => {
+      //   if (data.type === "range") {
+      //     console.log(data.startDate, data.endDate);
+      //   }
+      //   if (data.type === "single") {
+      //     console.log(data.selectedDate);
+      //   }
+      //   if (data.type === "multiple") {
+      //     console.log(data.multipleDates);
+      //   }
+      // }}
       type="range"
       value={props.value}
       setValue={props.setValue}
