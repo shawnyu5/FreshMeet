@@ -1,12 +1,16 @@
 //! Types for meetup GQL2 API
 use crate::meetup::query::common::EventType;
 use crate::meetup::query::common::{Extensions, OperationName2, PersistedQuery};
-use anyhow::Result as anyhow_result;
-use chrono::{DateTime, FixedOffset, Utc};
+use crate::utils::now;
+use anyhow::anyhow;
+use anyhow::Result;
+use bon::bon;
+use chrono::DateTime;
 use markdown::to_html;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
+use tracing::error;
 
 use super::post;
 
@@ -17,6 +21,39 @@ pub struct SearchRequest {
     pub operation_name: String,
     pub extensions: Extensions,
     pub variables: Variables,
+}
+
+#[bon]
+impl SearchRequest {
+    #[builder]
+    pub fn new(
+        /// The operation name of this request
+        operation_name: OperationName2,
+        /// Variables of this request
+        ///
+        /// They configure values such as the search query, event start, end date, etc...
+        variables: Option<Variables>,
+    ) -> Self {
+        let hash = match operation_name {
+            OperationName2::recommendedEventsWithSeries => {
+                "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+            }
+            OperationName2::eventSearchWithSeries => {
+                "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
+            }
+        };
+
+        return Self {
+            operation_name: operation_name.to_string(),
+            extensions: Extensions {
+                persisted_query: PersistedQuery {
+                    sha256_hash: hash.into(),
+                    version: 1,
+                },
+            },
+            variables: variables.unwrap_or_default(),
+        };
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -38,31 +75,19 @@ pub struct Variables {
     pub do_promote_paypal_events: bool,
     pub city: String,
     pub number_of_events_for_series: i32,
-    /// Search query
-    ///
-    /// Only applicable with operation `eventSearchWithSeries`
+    /// Search query. Only applicable with SearchRequest operation `eventSearchWithSeries`
     pub query: Option<String>,
 }
 
 impl Default for Variables {
     fn default() -> Self {
-        // Get the current UTC date and time
-        let utc: DateTime<Utc> = Utc::now();
-        // Create a fixed offset representing -04:00 (Eastern Daylight Time)
-        let offset = FixedOffset::east_opt(-4 * 3600).unwrap();
-        // Convert the UTC time to the specified offset
-        let local_time: DateTime<FixedOffset> = utc.with_timezone(&offset);
-        // Format the local time in the desired format
-        let start_time = local_time.format("%Y-%m-%dT%H:%M:%S-04:00").to_string();
-        // let end_time = local_time.format("%Y-%m-%dT23:59:59-04:00").to_string();
-
         Self {
             first: 40,
             lat: 43.7400016784668,
             lon: -79.36000061035156,
             city: "Toronto".into(),
             sort_field: "RELEVANCE".into(),
-            start_date_range: start_time,
+            start_date_range: now(),
             end_date_range: None,
             after: None,
             event_type: EventType::default().to_string(),
@@ -77,7 +102,16 @@ impl Default for Variables {
 
 impl SearchRequest {
     /// Send the API request
-    pub async fn fetch(&self) -> anyhow_result<GQLResponse> {
+    pub async fn fetch(&self) -> Result<GQLResponse> {
+        if self.operation_name == OperationName2::eventSearchWithSeries.to_string()
+            && self.variables.query.is_none()
+        {
+            error!(
+                "When operation name is {operation_name}, a query must be included.",
+                operation_name = self.operation_name
+            );
+            return Err(anyhow!("Missing query"));
+        }
         let response = post::<SearchRequest, GQLResponse>(self).await;
         return response;
     }
@@ -86,16 +120,23 @@ impl SearchRequest {
 impl Default for SearchRequest {
     fn default() -> Self {
         return Self {
-            extensions: Extensions {
-                persisted_query: PersistedQuery {
-                    sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
-                        .to_string(),
-                    version: 1,
-                },
-            },
+            extensions: Default::default(),
             operation_name: OperationName2::recommendedEventsWithSeries.to_string(),
             variables: Variables::default(),
         };
+    }
+}
+
+impl Default for Extensions {
+    fn default() -> Self {
+        Self {
+            persisted_query: PersistedQuery {
+                // sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
+                sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+                    .to_string(),
+                version: 1,
+            },
+        }
     }
 }
 
@@ -137,6 +178,7 @@ pub struct GQLResponse {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Data {
+    #[serde(alias = "results")]
     pub result: MeetupResult,
 }
 
@@ -326,4 +368,16 @@ pub struct Metadata {
     pub rec_source: String,
     #[serde(rename = "__typename")]
     pub typename: String,
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    /// Validate we can build a simple request
+    fn can_build_request() {
+        let _ = SearchRequest::builder()
+            .operation_name(OperationName2::recommendedEventsWithSeries)
+            .build();
+    }
 }

@@ -11,7 +11,7 @@ pub fn now() -> String {
     // Convert UTC to EST
     let est_now = utc_now
         .with_timezone(&est_offset)
-        .format("%Y-%m-%dT%H:%M:%S-04:00")
+        .format("%Y-%m-%dT%H:%M:%S-04:00[US/Eastern]")
         .to_string();
 
     // let date = Local::now().format("%Y-%m-%dT%H:%M:%S-04:00").to_string();
@@ -29,7 +29,7 @@ pub fn eod() -> String {
     // Convert UTC to EST
     let est_eod = utc_now
         .with_timezone(&est_offset)
-        .format("%Y-%m-%dT23:59:59-04:00")
+        .format("%Y-%m-%dT23:59:59-04:00[US/Eastern]")
         .to_string();
     // let eod = Local::now().format("%Y-%m-%dT23:59:59-04:00").to_string();
     debug!("End of date time: {est_eod}");
