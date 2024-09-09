@@ -2,7 +2,7 @@
 
 use std::cmp::Ordering;
 
-use crate::meetup::query::common::{Extensions, OperationName, OperationName2, PersistedQuery};
+use crate::meetup::query::common::OperationName2;
 use crate::meetup::query::request::gql2::Variables;
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
 use crate::utils::{eod, now};
@@ -10,15 +10,11 @@ use crate::utils::{eod, now};
 use axum::{extract::Query, Json};
 
 use chrono::DateTime;
-use reqwest::StatusCode;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info};
 
-use crate::meetup::{
-    request_builder::Builder,
-    response::{Event, PageInfo},
-};
+use crate::meetup::response::{Event, PageInfo};
 
 use super::AppError;
 
@@ -121,7 +117,25 @@ pub async fn search_handler(
 
     info!("Fetching events");
     let response = match search_request.fetch().await {
-        Ok(res) => res,
+        Ok(mut res) => {
+            // Sort by events starting first
+            res.data.result.edges.sort_by(|a, b| {
+                let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
+                    .expect("Failed to parse meetup start date time");
+                let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
+                    .expect("Failed to parse meetup start date time");
+
+                if a_date > b_date {
+                    Ordering::Greater
+                } else {
+                    Ordering::Less
+                }
+            });
+
+            res.format_start_date();
+            res.description_to_html();
+            res
+        }
         Err(err) => {
             error!("Error: {}", err);
             return Err(AppError(err));

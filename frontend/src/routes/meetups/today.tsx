@@ -27,16 +27,20 @@ export default function () {
   const [appState, setAppState] = useAppState();
 
   const [eventResource] = createResource(async () => {
-    const dateRange = appState.dateRange;
-    const startDate = `${dateRange.value.startDateObject?.year}-${dateRange.value.startDateObject?.month ?? 0 + 1}-${dateRange.value.startDateObject?.day}[US/Estern]`;
-    const endDate = `${dateRange.value.endDateObject?.year}-${dateRange.value.endDateObject?.month ?? 0 + 1}-${dateRange.value.endDateObject?.day}[US/Estern]`;
+    const startDate = searchParams.startDate;
+    const endDate = searchParams.endDate;
+    // const dateRange = appState.dateRange;
+    // const startDate = `${dateRange.value.startDateObject?.year}-${dateRange.value.startDateObject?.month ?? 0 + 1}-${dateRange.value.startDateObject?.day}[US/Estern]`;
+    // const endDate = `${dateRange.value.endDateObject?.year}-${dateRange.value.endDateObject?.month ?? 0 + 1}-${dateRange.value.endDateObject?.day}[US/Estern]`;
 
     if (searchParams.query) {
-      logger.info(`Search query found: '${searchParams.query}'. Using search query`);
+      logger.info(
+        `Search query found: '${searchParams.query}'. Using search query`,
+      );
       const events = await searchMeetups(
         searchParams.query || null,
-        startDate,
-        endDate,
+        startDate as string,
+        endDate as string,
         100,
       );
       setAppState("events", events);

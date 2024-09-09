@@ -6,6 +6,9 @@ let datetime = new Date();
 let month = datetime.getMonth() + 1;
 
 export type State = {
+  /**
+   * @deprecated - get this from the query param, instead of the app state
+   */
   dateRange: PickerValue;
   /**
    * @deprecated - get this from the query param, instead of the app state
