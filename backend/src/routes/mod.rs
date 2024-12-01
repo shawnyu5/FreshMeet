@@ -8,7 +8,7 @@ use axum::{
 };
 
 use hyper::StatusCode;
-use meetup::search_handler;
+use meetup::{recommended_meetups_handler, search_handler};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tokio::{fs::File, io::AsyncReadExt};
@@ -33,6 +33,7 @@ pub fn app() -> Router {
         // .route("/meetup/search", post(search))
         // .route("/meetup/suggested", get(suggested_events))
         .route("/today", get(meetups_today_handler))
+        .route("/recommended", get(recommended_meetups_handler))
         .route("/search", post(search_handler))
         .layer(tracing)
         .layer(cors);

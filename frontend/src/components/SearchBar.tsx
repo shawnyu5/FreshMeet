@@ -3,7 +3,7 @@ import { useSearchParams } from "@solidjs/router";
 import axios, { AxiosResponse } from "axios";
 import { createResource, createSignal } from "solid-js";
 import { loadConfig } from "~/config";
-import logger from "~/logger";
+import log from "~/logger";
 import { MeetupEvents } from "~/routes/meetups/types";
 import { State, useAppState } from "~/state";
 
@@ -17,8 +17,6 @@ export function SearchBar(props: { dateRange: PickerValue }) {
       onSubmit={(e) => {
         onSubmit(e, searchQuery(), props.dateRange);
         setAppState("query", searchQuery());
-        // let params = searchParams;
-        // params.query = searchQuery();
         setSearchParams({ query: searchQuery() });
       }}
     >
@@ -50,7 +48,7 @@ async function onSubmit(e: Event, searchQuery: string, dateRange: PickerValue) {
   const startDate = `${dateRange.value.startDateObject?.year}-${dateRange.value.startDateObject?.month ?? 0 + 1}-${dateRange.value.startDateObject?.day}[US/Estern]`;
   const endDate = `${dateRange.value.endDateObject?.year}-${dateRange.value.endDateObject?.month ?? 0 + 1}-${dateRange.value.endDateObject?.day}[US/Estern]`;
 
-  logger.info("handling forum submission");
+  log.info("handling forum submission");
   let response: AxiosResponse<MeetupEvents> = await axios.post(
     `${loadConfig().apiUrl}/search`,
     {

@@ -20,6 +20,7 @@ export type State = {
 const [appState, setAppState] = createStore<State>({
   /**
    * Date range for events to occur in
+  * @deprecated - this should be stored in the query param
    */
   dateRange: {
     value: {
@@ -36,23 +37,20 @@ const [appState, setAppState] = createStore<State>({
     },
     label: `${datetime.getFullYear()}-${month}-${datetime.getDate()}`,
   },
+  /**
+   * Search query of the search bar
+   */
   query: null,
+  /**
+   * Meetup events currently displayed
+   */
   events: null,
 });
 
 /**
- * Updates the date range for meetup events to occur in global state.
+ * @deprecated - all information in state should come from the query param
  *
- * At the same time corrects the month by adding one to it. Since node JS `Date()` object uses 0 indexed months
- *
- * @param val - the date range to set
- *
- * @deprecated use the store setter to set the date range directly
  */
-export function setDateRange(val: PickerValue) {
-  setAppState("dateRange", val);
-}
-
 export const useAppState = (): [typeof appState, typeof setAppState] => [
   appState,
   setAppState,

@@ -36,10 +36,10 @@ impl SearchRequest {
     ) -> Self {
         let hash = match operation_name {
             OperationName2::recommendedEventsWithSeries => {
-                "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+                "d3b3542df9c417007a7e6083b931d2ed67073f4d74891c3f14da403164e56469"
             }
             OperationName2::eventSearchWithSeries => {
-                "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
+                "b98fc059f4379053221befe6b201591ba98e3a8b06c9ede0b3c129c3b605d7c4"
             }
         };
 
@@ -112,8 +112,16 @@ impl SearchRequest {
             );
             return Err(anyhow!("Missing query"));
         }
-        let response = post::<SearchRequest, GQLResponse>(self).await;
-        return response;
+        let response = post::<SearchRequest, GQLResponse>(self).await?;
+        // If we get data back, then the request is successful
+        // If not data, then return the error message. Something went wrong...
+        if response.data.is_some() {
+            return Ok(response);
+        } else {
+            return Err(anyhow!(
+                serde_json::to_string(&response.errors).unwrap_or_default()
+            ));
+        }
     }
 }
 
@@ -131,9 +139,10 @@ impl Default for Extensions {
     fn default() -> Self {
         Self {
             persisted_query: PersistedQuery {
-                // sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
-                sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+                sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
                     .to_string(),
+                // sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+                // sha256_hash: "".to_string(),
                 version: 1,
             },
         }
@@ -144,6 +153,8 @@ impl GQLResponse {
     /// Parses all node descriptions as markdown
     pub fn description_to_html(&mut self) {
         self.data
+            .as_mut()
+            .unwrap()
             .result
             .edges
             .iter_mut()
@@ -157,6 +168,8 @@ impl GQLResponse {
     /// Formats all event start dates to a more human readable format
     pub fn format_start_date(&mut self) {
         self.data
+            .as_mut()
+            .unwrap()
             .result
             .edges
             .iter_mut()
@@ -172,7 +185,11 @@ impl GQLResponse {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GQLResponse {
-    pub data: Data,
+    pub data: Option<Data>,
+    // TODO: handle when request returns an error
+    // "{\"errors\":[{\"message\":\"PersistedQueryNotFound\",\"locations\":[],\"extensions\":{\"persistedQueryId\":\"0f0332e9a4b01456580c1f669f26edc053d5
+    // 0382b3e338d5ca580f194a27feab\",\"generatedBy\":\"graphql-java\",\"classification\":\"PersistedQueryNotFound\"}}],\"data\":null}"
+    pub errors: Option<Vec<Value>>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
