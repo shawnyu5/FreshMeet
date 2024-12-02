@@ -14,9 +14,11 @@ RUN cargo chef cook --release --recipe-path recipe.json
 COPY . .
 RUN cargo build --release --bin fresh_meet
 
-FROM debian:bookworm-slim AS runtime
+FROM debian:stable-20241111-slim AS runtime
 WORKDIR /fresh_meet/
 COPY --from=builder fresh_meet/target/release/fresh_meet .
-RUN apt-get update && apt-get -y install pkg-config openssl libssl-dev --no-install-recommends
+COPY ./Cargo.toml .
+RUN ls
+RUN apt-get update && apt-get -y install pkg-config openssl libssl-dev ca-certificates --no-install-recommends
 EXPOSE 8000
 CMD ["./fresh_meet"]
