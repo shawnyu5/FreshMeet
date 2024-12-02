@@ -17,5 +17,6 @@ RUN cargo build --release --bin fresh_meet
 FROM debian:bookworm-slim AS runtime
 WORKDIR /fresh_meet/
 COPY --from=builder fresh_meet/target/release/fresh_meet .
+RUN apt-get update && apt-get -y install pkg-config openssl libssl-dev --no-install-recommends
 EXPOSE 8000
 CMD ["./fresh_meet"]
