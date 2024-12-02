@@ -1,24 +1,21 @@
-FROM rust:latest AS build
+# FROM rust:latest AS build
+FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
 WORKDIR /fresh_meet/
-RUN apt-get update && apt-get -y install pkg-config openssl libssl-dev --no-install-recommends
 
-COPY Cargo.toml .
-# COPY rust-toolchain.toml .
+FROM chef AS planner
+COPY . .
+RUN cargo chef prepare --recipe-path recipe.json
 
-# create a dummy file to force cargo to build the dependencies
-RUN mkdir src \
-   && echo "// dummy file" > src/lib.rs \
-   && cargo build --lib --release
+FROM chef AS builder
+COPY --from=planner /fresh_meet/recipe.json recipe.json
+# Build dependencies - this is the caching Docker layer!
+RUN cargo chef cook --release --recipe-path recipe.json
+# Build application
+COPY . .
+RUN cargo build --release --bin fresh_meet
 
-COPY src src
-RUN cargo build --release
-
-FROM rust:latest
-
+FROM debian:bookworm-slim AS runtime
 WORKDIR /fresh_meet/
-COPY --from=build fresh_meet/target/release/fresh_meet .
-
-# ENV ROCKET_ADDRESS=0.0.0.0
+COPY --from=builder fresh_meet/target/release/fresh_meet .
 EXPOSE 8000
-# ENTRYPOINT ["./networking_accumlator"]
 CMD ["./fresh_meet"]
