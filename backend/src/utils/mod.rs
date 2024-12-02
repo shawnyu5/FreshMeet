@@ -14,7 +14,6 @@ pub fn now() -> String {
         .format("%Y-%m-%dT%H:%M:%S-04:00[US/Eastern]")
         .to_string();
 
-    // let date = Local::now().format("%Y-%m-%dT%H:%M:%S-04:00").to_string();
     debug!("Current date time: {est_now}");
     return est_now;
 }

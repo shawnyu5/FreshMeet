@@ -1,0 +1,742 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "fresh_meet",
+    "description": "",
+    "license": {
+      "name": ""
+    },
+    "version": "0.1.0-develop"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [],
+        "operationId": "app_version",
+        "responses": {
+          "200": {
+            "description": "Version of the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recommended": {
+      "get": {
+        "tags": [],
+        "summary": "Gets recommended meetups",
+        "operationId": "recommended_meetups_handler",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found recommended meetups successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GQLResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch meetups",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "tags": [],
+        "summary": "Searches meetups",
+        "operationId": "search_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned searched meetups",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GQLResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to search for meetups",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/today": {
+      "get": {
+        "tags": [],
+        "summary": "Get meetups for today",
+        "operationId": "meetups_today_handler",
+        "parameters": [
+          {
+            "name": "after",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found meetups for today successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GQLResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch meetups for today",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CovidPrecautions": {
+        "type": "object",
+        "required": [
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "venueType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "Data": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/MeetupResult"
+          }
+        }
+      },
+      "Edge": {
+        "type": "object",
+        "required": [
+          "node",
+          "metadata",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/Metadata"
+          },
+          "node": {
+            "$ref": "#/components/schemas/Node"
+          }
+        }
+      },
+      "Edge2": {
+        "type": "object",
+        "required": [
+          "node",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "node": {
+            "$ref": "#/components/schemas/Node2"
+          }
+        }
+      },
+      "Events": {
+        "type": "object",
+        "required": [
+          "edges",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Edge2"
+            }
+          }
+        }
+      },
+      "FeaturedEventPhoto": {
+        "type": "object",
+        "required": [
+          "baseUrl",
+          "highResUrl",
+          "id",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "baseUrl": {
+            "type": "string"
+          },
+          "highResUrl": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "FeeSettings": {
+        "type": "object",
+        "required": [
+          "accepts",
+          "currency",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "accepts": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "GQLResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Data"
+              }
+            ]
+          },
+          "errors": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {}
+          }
+        }
+      },
+      "Group": {
+        "type": "object",
+        "required": [
+          "id",
+          "isNewGroup",
+          "isPrivate",
+          "name",
+          "timezone",
+          "urlname",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isNewGroup": {
+            "type": "boolean"
+          },
+          "isPrivate": {
+            "type": "boolean"
+          },
+          "keyGroupPhoto": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KeyGroupPhoto"
+              }
+            ]
+          },
+          "membershipMetadata": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/MembershipMetadata"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "urlname": {
+            "type": "string"
+          }
+        }
+      },
+      "Group2": {
+        "type": "object",
+        "required": [
+          "urlname",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "urlname": {
+            "type": "string"
+          }
+        }
+      },
+      "HomeResponse": {
+        "type": "object",
+        "required": [
+          "version"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "KeyGroupPhoto": {
+        "type": "object",
+        "required": [
+          "baseUrl",
+          "highResUrl",
+          "id",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "baseUrl": {
+            "type": "string"
+          },
+          "highResUrl": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "MeetupResult": {
+        "type": "object",
+        "required": [
+          "pageInfo",
+          "totalCount",
+          "edges",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "edges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Edge"
+            }
+          },
+          "pageInfo": {
+            "$ref": "#/components/schemas/PageInfo"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "MembershipMetadata": {
+        "type": "object",
+        "required": [
+          "role",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      },
+      "Metadata": {
+        "type": "object",
+        "required": [
+          "recId",
+          "recSource",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "recId": {
+            "type": "string"
+          },
+          "recSource": {
+            "type": "string"
+          }
+        }
+      },
+      "Node": {
+        "type": "object",
+        "required": [
+          "dateTime",
+          "description",
+          "eventType",
+          "eventUrl",
+          "id",
+          "isAttending",
+          "isOnline",
+          "isSaved",
+          "covidPrecautions",
+          "group",
+          "maxTickets",
+          "rsvps",
+          "title",
+          "socialLabels",
+          "__typename",
+          "rsvpState"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "covidPrecautions": {
+            "$ref": "#/components/schemas/CovidPrecautions"
+          },
+          "dateTime": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "eventUrl": {
+            "type": "string"
+          },
+          "featuredEventPhoto": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FeaturedEventPhoto"
+              }
+            ]
+          },
+          "feeSettings": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FeeSettings"
+              }
+            ]
+          },
+          "group": {
+            "$ref": "#/components/schemas/Group"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isAttending": {
+            "type": "boolean"
+          },
+          "isOnline": {
+            "type": "boolean"
+          },
+          "isSaved": {
+            "type": "boolean"
+          },
+          "maxTickets": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "rsvpState": {
+            "type": "string"
+          },
+          "rsvps": {
+            "$ref": "#/components/schemas/Rsvps"
+          },
+          "series": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Series"
+              }
+            ]
+          },
+          "socialLabels": {
+            "type": "array",
+            "items": {}
+          },
+          "title": {
+            "type": "string"
+          },
+          "venue": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Venue"
+              }
+            ]
+          }
+        }
+      },
+      "Node2": {
+        "type": "object",
+        "required": [
+          "id",
+          "dateTime",
+          "isAttending",
+          "group",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "dateTime": {
+            "type": "string"
+          },
+          "group": {
+            "$ref": "#/components/schemas/Group2"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isAttending": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageInfo": {
+        "type": "object",
+        "required": [
+          "hasNextPage",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "endCursor": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Rsvps": {
+        "type": "object",
+        "required": [
+          "totalCount",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "SearchRequestBody": {
+        "type": "object",
+        "description": "Body for `/search` route",
+        "properties": {
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "End date of event"
+          },
+          "per_page": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Events to return per page",
+            "minimum": 0
+          },
+          "query": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Search query"
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Start date of event"
+          }
+        }
+      },
+      "Series": {
+        "type": "object",
+        "required": [
+          "events",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "events": {
+            "$ref": "#/components/schemas/Events"
+          }
+        }
+      },
+      "Venue": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "lat",
+          "lon",
+          "city",
+          "state",
+          "country",
+          "__typename"
+        ],
+        "properties": {
+          "__typename": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "lat": {
+            "type": "number",
+            "format": "double"
+          },
+          "lon": {
+            "type": "number",
+            "format": "double"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

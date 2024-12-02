@@ -8,15 +8,19 @@ use axum::{
 };
 
 use hyper::StatusCode;
-use meetup::search_handler;
+use meetup::{recommended_meetups_handler, search_handler};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tokio::{fs::File, io::AsyncReadExt};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
+use utoipa::{OpenApi, ToSchema};
 
 use self::meetup::meetups_today_handler;
+use meetup::{
+    __path_meetups_today_handler, __path_recommended_meetups_handler, __path_search_handler,
+};
 
 pub fn app() -> Router {
     let cors = CorsLayer::new()
@@ -33,10 +37,20 @@ pub fn app() -> Router {
         // .route("/meetup/search", post(search))
         // .route("/meetup/suggested", get(suggested_events))
         .route("/today", get(meetups_today_handler))
+        .route("/recommended", get(recommended_meetups_handler))
         .route("/search", post(search_handler))
         .layer(tracing)
         .layer(cors);
 }
+
+#[derive(OpenApi)]
+#[openapi(paths(
+    recommended_meetups_handler,
+    meetups_today_handler,
+    search_handler,
+    app_version
+))]
+pub struct APIDoc;
 
 #[derive(Debug)]
 pub struct AppError(pub anyhow::Error);
@@ -62,11 +76,18 @@ where
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, JsonSchema)]
+#[derive(Serialize, Deserialize, Clone, JsonSchema, ToSchema)]
 pub struct HomeResponse {
     pub version: String,
 }
 
+#[utoipa::path(
+    get,
+    path = "/",
+    responses(
+        (status = 200, description = "Version of the server", body = HomeResponse)
+    )
+)]
 pub async fn app_version() -> Result<Json<HomeResponse>, AppError> {
     /// Simplified `Cargo.toml` structure
     #[derive(Deserialize)]

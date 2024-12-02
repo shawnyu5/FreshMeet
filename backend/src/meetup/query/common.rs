@@ -21,6 +21,7 @@ impl Display for EventType {
 }
 
 /// Types of oepration names for requests to the Meetup api
+#[deprecated(note = "Use OperationName2 for the more up to date event names")]
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[allow(non_camel_case_types)]
 pub enum OperationName {

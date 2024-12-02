@@ -2,7 +2,7 @@
 
 use std::cmp::Ordering;
 
-use crate::meetup::query::common::{Extensions, OperationName, OperationName2, PersistedQuery};
+use crate::meetup::query::common::OperationName2;
 use crate::meetup::query::request::gql2::Variables;
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
 use crate::utils::{eod, now};
@@ -10,15 +10,13 @@ use crate::utils::{eod, now};
 use axum::{extract::Query, Json};
 
 use chrono::DateTime;
-use reqwest::StatusCode;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, ToSchema};
+
 use tracing::{debug, error, info};
 
-use crate::meetup::{
-    request_builder::Builder,
-    response::{Event, PageInfo},
-};
+use crate::meetup::response::{Event, PageInfo};
 
 use super::AppError;
 
@@ -30,13 +28,24 @@ pub struct Response {
 }
 
 /// Query parameters for `/today` route
-#[derive(Debug, Deserialize, JsonSchema)]
+#[derive(Debug, Deserialize, JsonSchema, IntoParams)]
 pub struct MeetupsTodayQueryParams {
     pub after: Option<String>,
 }
 
-/// Handles `/today` route
 /// Get meetups for today
+#[utoipa::path(
+    get,
+    path = "/today",
+    responses(
+        (status = 200, description = "Found meetups for today successfully", body = GQLResponse),
+        (status = 500, description = "Failed to fetch meetups for today", body = String)
+    ),
+    params(
+        MeetupsTodayQueryParams
+    )
+)]
+#[deprecated = "This route has been replaced by `/recommended`"]
 pub async fn meetups_today_handler(
     query: Query<MeetupsTodayQueryParams>,
 ) -> Result<Json<GQLResponse>, AppError> {
@@ -56,7 +65,80 @@ pub async fn meetups_today_handler(
         Ok(res) => {
             let mut json = Json(res);
             // Sort by events starting first
-            json.data.result.edges.sort_by(|a, b| {
+            debug_assert!(
+                json.data.is_some(),
+                "There should always be data here. Something is wrong if there is no data"
+            );
+            // There should always be data here, so we can safely unwrap
+            json.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
+                let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
+                    .expect("Failed to parse meetup start date time");
+                let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
+                    .expect("Failed to parse meetup start date time");
+
+                if a_date > b_date {
+                    Ordering::Greater
+                } else {
+                    Ordering::Less
+                }
+            });
+
+            json.format_start_date();
+            json.description_to_html();
+
+            Ok(json)
+        }
+        Err(e) => {
+            error!("Error: {}", e);
+            Err(AppError(e))
+        }
+    }
+}
+
+/// Query parameters for `/today` route
+#[derive(Debug, Deserialize, JsonSchema, IntoParams)]
+#[serde(rename_all = "camelCase")]
+pub struct RecommendedMeetupsQueryParams {
+    pub start_date: String,
+    pub end_date: String,
+}
+
+/// Gets recommended meetups
+#[utoipa::path(
+    get,
+    path = "/recommended",
+    responses(
+        (status = 200, description = "Found recommended meetups successfully", body = GQLResponse),
+        (status = 500, description = "Failed to fetch meetups", body = String)
+    ),
+    params(
+        RecommendedMeetupsQueryParams
+    )
+)]
+pub async fn recommended_meetups_handler(
+    query: Query<RecommendedMeetupsQueryParams>,
+) -> Result<Json<GQLResponse>, AppError> {
+    match SearchRequest::builder()
+        .operation_name(OperationName2::recommendedEventsWithSeries)
+        .variables(Variables {
+            first: 200,
+            start_date_range: query.start_date.clone(),
+            end_date_range: Some(query.end_date.clone()),
+            ..Default::default()
+        })
+        .build()
+        .fetch()
+        .await
+    {
+        Ok(res) => {
+            let mut json = Json(res);
+            // Sort by events starting first
+            debug_assert!(
+                json.data.is_some(),
+                "There should always be data here. Something is wrong if there is no data"
+            );
+            // There should always be data here, so we can safely unwrap
+            json.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
                 let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
                     .expect("Failed to parse meetup start date time");
                 let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
@@ -81,9 +163,7 @@ pub async fn meetups_today_handler(
 }
 
 /// Body for `/search` route
-///
-/// * `query`:
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, ToSchema)]
 pub struct SearchRequestBody {
     /// Search query
     query: Option<String>,
@@ -95,7 +175,17 @@ pub struct SearchRequestBody {
     per_page: Option<u32>,
 }
 
-/// Handler for `/search` route.
+/// Searches meetups
+#[utoipa::path(
+    get,
+    path = "/search",
+    responses(
+        (status = 200, description = "Successfully returned searched meetups", body = GQLResponse),
+        (status = 500, description = "Failed to search for meetups", body = String)
+    ),
+    request_body = SearchRequestBody
+
+)]
 pub async fn search_handler(
     Json(body): Json<SearchRequestBody>,
 ) -> Result<Json<GQLResponse>, AppError> {
@@ -121,7 +211,29 @@ pub async fn search_handler(
 
     info!("Fetching events");
     let response = match search_request.fetch().await {
-        Ok(res) => res,
+        Ok(mut res) => {
+            // Sort by events starting first
+            debug_assert!(
+                res.data.is_some(),
+                "There should always be data here. Something is wrong if there is no data"
+            );
+            res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
+                let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
+                    .expect("Failed to parse meetup start date time");
+                let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
+                    .expect("Failed to parse meetup start date time");
+
+                if a_date > b_date {
+                    Ordering::Greater
+                } else {
+                    Ordering::Less
+                }
+            });
+
+            res.format_start_date();
+            res.description_to_html();
+            res
+        }
         Err(err) => {
             error!("Error: {}", err);
             return Err(AppError(err));

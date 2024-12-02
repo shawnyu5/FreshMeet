@@ -5,7 +5,8 @@
       "dev": "vinxi dev",
       "build": "vinxi build",
       "start": "vinxi start",
-      "version": "vinxi version"
+      "version": "vinxi version",
+      "test": "vitest"
    },
    "dependencies": {
       "@rnwonder/solid-date-picker": "^1.4.1",
@@ -16,7 +17,7 @@
       "logger": "^0.0.1",
       "marked": "^13.0.3",
       "pino": "^9.3.2",
-      "pino-pretty": "^11.2.2",
+      "pino-pretty": "^11.3.0",
       "solid-js": "^1.8.18",
       "typescript": "^5.5.4",
       "vinxi": "^0.4.1",
@@ -24,5 +25,12 @@
    },
    "engines": {
       "node": ">=18"
+   },
+   "devDependencies": {
+      "@solidjs/testing-library": "^0.8.10",
+      "@testing-library/jest-dom": "^6.6.3",
+      "@testing-library/user-event": "^14.5.2",
+      "jsdom": "^25.0.1",
+      "vitest": "^2.1.6"
    }
 }

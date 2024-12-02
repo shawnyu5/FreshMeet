@@ -11,6 +11,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
 use tracing::error;
+use utoipa::ToSchema;
 
 use super::post;
 
@@ -36,10 +37,10 @@ impl SearchRequest {
     ) -> Self {
         let hash = match operation_name {
             OperationName2::recommendedEventsWithSeries => {
-                "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+                "d3b3542df9c417007a7e6083b931d2ed67073f4d74891c3f14da403164e56469"
             }
             OperationName2::eventSearchWithSeries => {
-                "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
+                "b98fc059f4379053221befe6b201591ba98e3a8b06c9ede0b3c129c3b605d7c4"
             }
         };
 
@@ -112,8 +113,16 @@ impl SearchRequest {
             );
             return Err(anyhow!("Missing query"));
         }
-        let response = post::<SearchRequest, GQLResponse>(self).await;
-        return response;
+        let response = post::<SearchRequest, GQLResponse>(self).await?;
+        // If we get data back, then the request is successful
+        // If not data, then return the error message. Something went wrong...
+        if response.data.is_some() {
+            return Ok(response);
+        } else {
+            return Err(anyhow!(
+                serde_json::to_string(&response.errors).unwrap_or_default()
+            ));
+        }
     }
 }
 
@@ -131,9 +140,10 @@ impl Default for Extensions {
     fn default() -> Self {
         Self {
             persisted_query: PersistedQuery {
-                // sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
-                sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+                sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
                     .to_string(),
+                // sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
+                // sha256_hash: "".to_string(),
                 version: 1,
             },
         }
@@ -144,6 +154,8 @@ impl GQLResponse {
     /// Parses all node descriptions as markdown
     pub fn description_to_html(&mut self) {
         self.data
+            .as_mut()
+            .unwrap()
             .result
             .edges
             .iter_mut()
@@ -157,6 +169,8 @@ impl GQLResponse {
     /// Formats all event start dates to a more human readable format
     pub fn format_start_date(&mut self) {
         self.data
+            .as_mut()
+            .unwrap()
             .result
             .edges
             .iter_mut()
@@ -169,20 +183,24 @@ impl GQLResponse {
     }
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct GQLResponse {
-    pub data: Data,
+    pub data: Option<Data>,
+    // TODO: handle when request returns an error
+    // "{\"errors\":[{\"message\":\"PersistedQueryNotFound\",\"locations\":[],\"extensions\":{\"persistedQueryId\":\"0f0332e9a4b01456580c1f669f26edc053d5
+    // 0382b3e338d5ca580f194a27feab\",\"generatedBy\":\"graphql-java\",\"classification\":\"PersistedQueryNotFound\"}}],\"data\":null}"
+    pub errors: Option<Vec<Value>>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Data {
     #[serde(alias = "results")]
     pub result: MeetupResult,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct MeetupResult {
     pub page_info: PageInfo,
@@ -192,7 +210,7 @@ pub struct MeetupResult {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct PageInfo {
     pub has_next_page: bool,
@@ -201,7 +219,7 @@ pub struct PageInfo {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Edge {
     pub node: Node,
@@ -210,7 +228,7 @@ pub struct Edge {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Node {
     pub date_time: String,
@@ -236,7 +254,7 @@ pub struct Node {
     pub series: Option<Series>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct FeaturedEventPhoto {
     pub base_url: String,
@@ -246,7 +264,7 @@ pub struct FeaturedEventPhoto {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct FeeSettings {
     pub accepts: String,
@@ -255,7 +273,7 @@ pub struct FeeSettings {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct CovidPrecautions {
     pub venue_type: Option<String>,
@@ -263,7 +281,7 @@ pub struct CovidPrecautions {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Group {
     pub id: String,
@@ -278,7 +296,7 @@ pub struct Group {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct MembershipMetadata {
     pub role: String,
@@ -286,7 +304,7 @@ pub struct MembershipMetadata {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct KeyGroupPhoto {
     pub base_url: String,
@@ -296,7 +314,7 @@ pub struct KeyGroupPhoto {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Rsvps {
     pub total_count: i64,
@@ -304,7 +322,7 @@ pub struct Rsvps {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Venue {
     pub id: String,
@@ -318,7 +336,7 @@ pub struct Venue {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Series {
     pub events: Events,
@@ -326,7 +344,7 @@ pub struct Series {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Events {
     pub edges: Vec<Edge2>,
@@ -334,7 +352,7 @@ pub struct Events {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Edge2 {
     pub node: Node2,
@@ -342,7 +360,7 @@ pub struct Edge2 {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Node2 {
     pub id: String,
@@ -353,7 +371,7 @@ pub struct Node2 {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Group2 {
     pub urlname: String,
@@ -361,7 +379,7 @@ pub struct Group2 {
     pub typename: String,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Metadata {
     pub rec_id: String,
