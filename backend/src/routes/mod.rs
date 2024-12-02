@@ -15,6 +15,7 @@ use tokio::{fs::File, io::AsyncReadExt};
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
+use utoipa::ToSchema;
 
 use self::meetup::meetups_today_handler;
 
@@ -63,7 +64,7 @@ where
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, JsonSchema)]
+#[derive(Serialize, Deserialize, Clone, JsonSchema, ToSchema)]
 pub struct HomeResponse {
     pub version: String,
 }

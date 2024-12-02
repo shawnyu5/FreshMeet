@@ -2,17 +2,19 @@
 mod meetup;
 mod routes;
 mod utils;
-// use aide::{
-//     axum::{
-//         routing::{get, post},
-//         ApiRouter, IntoApiResponse,
-//     },
-//     openapi::{Info, OpenApi},
-// };
+use std::fs::File;
+use std::io::Write;
+
 use tokio::{net::TcpListener, signal};
 use tracing::{info, Level};
+use utoipa::OpenApi;
 
 use crate::routes::app;
+use crate::routes::meetup::__path_recommended_meetups_handler;
+
+#[derive(OpenApi)]
+#[openapi(paths(recommended_meetups_handler))]
+pub struct APIDoc;
 
 #[tokio::main]
 async fn main() {
@@ -22,6 +24,7 @@ async fn main() {
         .compact()
         .init();
 
+    generate_open_api_spec();
     let addr = "0.0.0.0:8000";
     let listener = TcpListener::bind(addr).await.unwrap();
     info!("Listening on {}", addr);
@@ -31,6 +34,16 @@ async fn main() {
         .unwrap();
 }
 
+/// Create a file and write generated open API spec to it
+fn generate_open_api_spec() {
+    let api_doc = APIDoc::openapi()
+        .to_pretty_json()
+        .expect("Failed to generate open API spec");
+    let mut file = File::create("open_api.json").expect("Failed to create open API spec file");
+    file.write_all(api_doc.as_bytes())
+        .expect("Failed to write open api spec to file");
+    info!("Created open_api.json")
+}
 async fn shutdown_signal() {
     let ctrl_c = async {
         signal::ctrl_c()

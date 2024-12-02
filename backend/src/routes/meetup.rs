@@ -12,6 +12,8 @@ use axum::{extract::Query, Json};
 use chrono::DateTime;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
+use utoipa::{IntoParams, OpenApi, ToSchema};
+
 use tracing::{debug, error, info};
 
 use crate::meetup::response::{Event, PageInfo};
@@ -84,15 +86,25 @@ pub async fn meetups_today_handler(
 }
 
 /// Query parameters for `/today` route
-#[derive(Debug, Deserialize, JsonSchema)]
+#[derive(Debug, Deserialize, JsonSchema, IntoParams)]
 #[serde(rename_all = "camelCase")]
 pub struct RecommendedMeetupsQueryParams {
     pub start_date: String,
     pub end_date: String,
 }
 
-/// Handles `/recommended` route
-/// Get meetups for today
+/// Gets recommended meetups
+#[utoipa::path(
+    get,
+    path = "/recommended",
+    responses(
+        (status = 200, description = "Found recommended meetups successfully", body = GQLResponse),
+        (status = 500, description = "Failed to fetch meetups", body = String)
+    ),
+    params(
+        RecommendedMeetupsQueryParams
+    )
+)]
 pub async fn recommended_meetups_handler(
     query: Query<RecommendedMeetupsQueryParams>,
 ) -> Result<Json<GQLResponse>, AppError> {
@@ -141,8 +153,6 @@ pub async fn recommended_meetups_handler(
 }
 
 /// Body for `/search` route
-///
-/// * `query`:
 #[derive(Serialize, Deserialize)]
 pub struct SearchRequestBody {
     /// Search query
@@ -155,7 +165,7 @@ pub struct SearchRequestBody {
     per_page: Option<u32>,
 }
 
-/// Handler for `/search` route.
+/// Searches meetups
 pub async fn search_handler(
     Json(body): Json<SearchRequestBody>,
 ) -> Result<Json<GQLResponse>, AppError> {
