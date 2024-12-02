@@ -12,7 +12,7 @@ use axum::{extract::Query, Json};
 use chrono::DateTime;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use utoipa::{IntoParams, OpenApi, ToSchema};
+use utoipa::{IntoParams, ToSchema};
 
 use tracing::{debug, error, info};
 
@@ -28,13 +28,23 @@ pub struct Response {
 }
 
 /// Query parameters for `/today` route
-#[derive(Debug, Deserialize, JsonSchema)]
+#[derive(Debug, Deserialize, JsonSchema, IntoParams)]
 pub struct MeetupsTodayQueryParams {
     pub after: Option<String>,
 }
 
-/// Handles `/today` route
 /// Get meetups for today
+#[utoipa::path(
+    get,
+    path = "/today",
+    responses(
+        (status = 200, description = "Found meetups for today successfully", body = GQLResponse),
+        (status = 500, description = "Failed to fetch meetups for today", body = String)
+    ),
+    params(
+        MeetupsTodayQueryParams
+    )
+)]
 #[deprecated = "This route has been replaced by `/recommended`"]
 pub async fn meetups_today_handler(
     query: Query<MeetupsTodayQueryParams>,
@@ -153,7 +163,7 @@ pub async fn recommended_meetups_handler(
 }
 
 /// Body for `/search` route
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, ToSchema)]
 pub struct SearchRequestBody {
     /// Search query
     query: Option<String>,
@@ -166,6 +176,16 @@ pub struct SearchRequestBody {
 }
 
 /// Searches meetups
+#[utoipa::path(
+    get,
+    path = "/search",
+    responses(
+        (status = 200, description = "Successfully returned searched meetups", body = GQLResponse),
+        (status = 500, description = "Failed to search for meetups", body = String)
+    ),
+    request_body = SearchRequestBody
+
+)]
 pub async fn search_handler(
     Json(body): Json<SearchRequestBody>,
 ) -> Result<Json<GQLResponse>, AppError> {

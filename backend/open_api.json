@@ -9,6 +9,24 @@
     "version": "0.1.0-develop"
   },
   "paths": {
+    "/": {
+      "get": {
+        "tags": [],
+        "operationId": "app_version",
+        "responses": {
+          "200": {
+            "description": "Version of the server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/recommended": {
       "get": {
         "tags": [],
@@ -54,6 +72,88 @@
             }
           }
         }
+      }
+    },
+    "/search": {
+      "get": {
+        "tags": [],
+        "summary": "Searches meetups",
+        "operationId": "search_handler",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned searched meetups",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GQLResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to search for meetups",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/today": {
+      "get": {
+        "tags": [],
+        "summary": "Get meetups for today",
+        "operationId": "meetups_today_handler",
+        "parameters": [
+          {
+            "name": "after",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Found meetups for today successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GQLResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch meetups for today",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
       }
     }
   },
@@ -269,6 +369,17 @@
             "type": "string"
           },
           "urlname": {
+            "type": "string"
+          }
+        }
+      },
+      "HomeResponse": {
+        "type": "object",
+        "required": [
+          "version"
+        ],
+        "properties": {
+          "version": {
             "type": "string"
           }
         }
@@ -531,6 +642,42 @@
           "totalCount": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "SearchRequestBody": {
+        "type": "object",
+        "description": "Body for `/search` route",
+        "properties": {
+          "end_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "End date of event"
+          },
+          "per_page": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32",
+            "description": "Events to return per page",
+            "minimum": 0
+          },
+          "query": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Search query"
+          },
+          "start_date": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Start date of event"
           }
         }
       },

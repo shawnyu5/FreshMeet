@@ -5,16 +5,13 @@ mod utils;
 use std::fs::File;
 use std::io::Write;
 
+use routes::APIDoc;
 use tokio::{net::TcpListener, signal};
 use tracing::{info, Level};
 use utoipa::OpenApi;
 
 use crate::routes::app;
 use crate::routes::meetup::__path_recommended_meetups_handler;
-
-#[derive(OpenApi)]
-#[openapi(paths(recommended_meetups_handler))]
-pub struct APIDoc;
 
 #[tokio::main]
 async fn main() {
