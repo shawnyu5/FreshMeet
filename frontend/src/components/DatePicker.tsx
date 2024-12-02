@@ -21,12 +21,17 @@ export function DatePickerComponent(props: {
       // label: "",
       label: `${year}-${month}-${day}`,
       value: {
-         selectedDateObject: {
+         startDateObject: {
             year,
             month,
             day
          },
-      },
+         endDateObject: {
+            year,
+            month,
+            day
+         },
+      }
    });
 
    // whenever picker value is updated. Convert the picker value into a string and set it in the setValue prop
@@ -34,7 +39,6 @@ export function DatePickerComponent(props: {
       log.info(
          `User selected picker value: ${JSON.stringify(pickerValue())}`,
       );
-      log.info(`Picker value to date: ${pickerValueToDate(pickerValue())}`)
       props.setValue(pickerValueToDate(pickerValue()));
    });
 
