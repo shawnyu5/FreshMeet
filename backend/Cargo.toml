@@ -13,6 +13,7 @@ chrono = "0.4.26"
 http-body = "1.0.1"
 hyper = "1.4.1"
 markdown = "1.0.0-alpha.18"
+rayon = "1.10.0"
 reqwest = { version = "0.11.18", features = ["blocking", "json"] }
 schemars = "0.8.21"
 serde = { version = "1.0.183", features = ["derive"] }

@@ -7,6 +7,7 @@ use anyhow::Result;
 use bon::bon;
 use chrono::DateTime;
 use markdown::to_html;
+use rayon::prelude::*;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
@@ -158,7 +159,7 @@ impl GQLResponse {
             .unwrap()
             .result
             .edges
-            .iter_mut()
+            .par_iter_mut()
             .map(|edge| {
                 let html = to_html(edge.node.description.as_str()).clone();
                 edge.node.description = html;
@@ -173,7 +174,7 @@ impl GQLResponse {
             .unwrap()
             .result
             .edges
-            .iter_mut()
+            .par_iter_mut()
             .map(|edge| {
                 let date = DateTime::parse_from_rfc3339(&edge.node.date_time)
                     .expect("Failed to parse meetup start date time");
