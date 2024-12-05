@@ -10,12 +10,12 @@ suite("pickerValueToDate", () => {
          value: {
             startDateObject: {
                year: 2024,
-               month: 10,
+               month: 9,
                day: 21
             },
             endDateObject: {
                year: 2024,
-               month: 10,
+               month: 9,
                day: 21
             }
          }
@@ -31,12 +31,12 @@ suite("pickerValueToDate", () => {
          value: {
             startDateObject: {
                year: 2024,
-               month: 12,
+               month: 11,
                day: 31
             },
             endDateObject: {
                year: 2024,
-               month: 12,
+               month: 11,
                day: 31
             }
          }

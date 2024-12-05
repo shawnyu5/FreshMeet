@@ -10,7 +10,8 @@ export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
   // The initial value of the date picker
   const [initialPickerValue, _setInitialPickerValue] = createSignal(
-    new NormalizedDate(),
+    // DatePicker relies on the Date object having 0 indexed months
+    new Date(),
   );
   // The selected dates of the date picker. The first date is the beginning, second is the end
   const [datePickerValue, setDatePickerValue] = createSignal<
