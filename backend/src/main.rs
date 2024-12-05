@@ -11,7 +11,6 @@ use tracing::{info, Level};
 use utoipa::OpenApi;
 
 use crate::routes::app;
-use crate::routes::meetup::__path_recommended_meetups_handler;
 
 #[tokio::main]
 async fn main() {
