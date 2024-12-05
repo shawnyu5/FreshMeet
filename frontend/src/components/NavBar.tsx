@@ -3,26 +3,32 @@ import "@rnwonder/solid-date-picker/dist/style.css";
 import { createEffect, createSignal } from "solid-js";
 import { DatePickerComponent as DatePicker } from "./DatePicker";
 import { useSearchParams } from "@solidjs/router";
-import log from "~/logger";
 import { dateToMeetupDate, NormalizedDate } from "~/utils";
+import log from "~/logger";
 
 export default function () {
-  const [_searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   // The initial value of the date picker
-  const [initialPickerValue, _setInitialPickerValue] = createSignal(new NormalizedDate());
+  const [initialPickerValue, _setInitialPickerValue] = createSignal(
+    new NormalizedDate(),
+  );
   // The selected dates of the date picker. The first date is the beginning, second is the end
-  const [datePickerValue, setDatePickerValue] = createSignal<[NormalizedDate, NormalizedDate]>([
-    new NormalizedDate(),
-    new NormalizedDate(),
-  ]);
+  const [datePickerValue, setDatePickerValue] = createSignal<
+    [NormalizedDate, NormalizedDate]
+  >([new NormalizedDate(), new NormalizedDate()]);
 
   // On every date picker selection, update the query param with the new selected value
   createEffect(() => {
     const [startDate, endDate] = datePickerValue();
-    setSearchParams({
-      startDate: dateToMeetupDate(startDate, false),
-      endDate: dateToMeetupDate(endDate, true),
-    });
+    if (
+      searchParams.startDate !== dateToMeetupDate(startDate, false) ||
+      searchParams.endDate !== dateToMeetupDate(endDate, true)
+    ) {
+      setSearchParams({
+        startDate: dateToMeetupDate(startDate, false),
+        endDate: dateToMeetupDate(endDate, true),
+      });
+    }
   });
 
   return (
