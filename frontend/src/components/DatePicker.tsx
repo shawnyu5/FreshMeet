@@ -56,12 +56,13 @@ export function DatePickerComponent(props: {
 export function pickerValueToDate(
    pickerValue: PickerValue,
 ): [NormalizedDate, NormalizedDate] {
-   const date = new NormalizedDate()
+   const date = new Date()
    // DatePicker relies on date months being 0 indexed
    const startDateObject = pickerValue.value.startDateObject;
    const endDateObject = pickerValue.value.endDateObject;
 
-   const startDate = new NormalizedDate(startDateObject?.year ?? date.getFullYear(), (startDateObject?.month ?? date.getMonth()), startDateObject?.day ?? date.getDate())
-   const endDate = new NormalizedDate(endDateObject?.year ?? date.getFullYear(), (endDateObject?.month ?? date.getMonth()), endDateObject?.day ?? date.getDate())
+   const startDate = new NormalizedDate(startDateObject?.year ?? date.getFullYear(), ((startDateObject?.month) ?? date.getMonth()) - 1, startDateObject?.day ?? date.getDate())
+   const endDate = new NormalizedDate(endDateObject?.year ?? date.getFullYear(), (endDateObject?.month ?? date.getMonth()) - 1, endDateObject?.day ?? date.getDate())
+   log.info(`Converting picker value to date: ${startDate} - ${endDate}`)
    return [startDate, endDate];
 }

@@ -1,6 +1,5 @@
 import { Navigate } from "@solidjs/router";
 
 export default function Home() {
-  return <Navigate href="/meetups/today" />;
+   return <Navigate href="/meetups"></Navigate>
 }
-

@@ -48,9 +48,15 @@ function isToday(date: NormalizedDate) {
  * A date class where month is 1 indexed instead of 0
  */
 export class NormalizedDate extends Date {
+   /**
+    * Returns 1 base indexed month
+    */
    getUTCMonth() {
       return super.getUTCMonth() + 1;
    }
+   /**
+    * Returns 1 base indexed month
+    */
    getMonth() {
       return super.getUTCMonth() + 1;
    }
