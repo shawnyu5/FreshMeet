@@ -3,18 +3,9 @@ on:
   push:
     branches:
       - master
-      - develop
     paths:
       - "backend/**"
       - ".github/workflows/**"
-
-  # pull_request:
-  #   branches:
-  #     - master
-  #     - develop
-  #   paths:
-  #     # - "backend/**"
-  #     - ".github/workflows/**"
 
 permissions: write-all
 
@@ -27,46 +18,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Semantic release
-        id: release
-        uses: codfish/semantic-release-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          branches: |
-            [
-              "master",
-              {
-                "name": "develop",
-                "prerelease": true
-              }
-
-            ]
-
-      # - run: echo ${{ github.ref_name }}
-
-      # - name: Update version in Cargo.toml
-      #   if: steps.release.outputs.new-release-published == 'true'
-      #   uses: ciiiii/toml-editor@1.0.0
-      #   with:
-      #     file: "backend/Cargo.toml"
-      #     key: "package.version"
-      #     value: ${{ steps.release.outputs.release-version }}
-
-      # TODO: Idk why I get permission denied here... AHHH
-      # - name: Commit changes
-      #   uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_message: "Update backend version in Cargo.toml"
-      #     branch: ${{ github.ref_name }}
-      #     create_branch: false
-
       - name: Setup flyctl
-        if: github.ref_name == 'master'
         uses: superfly/flyctl-actions/setup-flyctl@master
 
       - name: Deploy backend
-        if: github.ref_name == 'master'
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: cd backend && flyctl deploy --remote-only
