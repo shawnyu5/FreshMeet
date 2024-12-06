@@ -34,8 +34,6 @@ pub fn app() -> Router {
 
     return Router::new()
         .route("/", get(app_version))
-        // .route("/meetup/search", post(search))
-        // .route("/meetup/suggested", get(suggested_events))
         .route("/today", get(meetups_today_handler))
         .route("/recommended", get(recommended_meetups_handler))
         .route("/search", post(search_handler))
