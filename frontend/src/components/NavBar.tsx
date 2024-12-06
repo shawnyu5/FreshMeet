@@ -39,9 +39,11 @@ export default function () {
         <ul class="dropdown menu" data-dropdown-menu>
           <img src="../icon.png" width="50" />
           <li class="menu-text">Fresh meat</li>
-          <li>
-            <a href="/">Today</a>
-          </li>
+          {
+            // <li>
+            //   <a href="/">Today</a>
+            // </li>
+          }
           <li>
             <DatePicker
               value={initialPickerValue}
