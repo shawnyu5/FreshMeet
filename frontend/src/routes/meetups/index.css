@@ -1,0 +1,5 @@
+/* Align table row contents to the top of the table */
+th,
+td {
+   vertical-align: top;
+}
