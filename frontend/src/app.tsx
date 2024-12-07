@@ -20,7 +20,7 @@ export default function App() {
                   crossorigin="anonymous"
                ></script>
 
-               <Title>FreshMeet</Title>
+               <Title>FreshMeat</Title>
                <NavBar />
                <Suspense>{props.children}</Suspense>
             </MetaProvider>
