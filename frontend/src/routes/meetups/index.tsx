@@ -85,7 +85,7 @@ export default function () {
                         </a>
                       </td>
                       <td>{node.node.dateTime}</td>
-                      <td>{node.node.isAttending.toString()}</td>
+                      <td>{(node.node.isAttendingStr ?? node.node.isAttending).toString()}</td>
                       <td innerHTML={node.node.description}></td>
                     </tr>
                   )}
@@ -118,16 +118,17 @@ async function getRecommendedMeetups(
       },
     );
     log.debug(`Response data: ${response.data}`);
-    response.data.data.result.edges.map((edge) => {
-      if (edge.node.isAttending == true) {
-        // Doing some weird things here... ignore this
-        // @ts-ignore
-        edge.node.isAttending = "Attending! 😀";
-      } else if (edge.node.isAttending == false) {
-        // @ts-ignore
-        edge.node.isAttending = "Not attending... 🫠";
-      }
-    });
+    // // TODO: move this processing into the backend
+    // response.data.data.result.edges.map((edge) => {
+    //   if (edge.node.isAttending == true) {
+    //     // Doing some weird things here... ignore this
+    //     // @ts-ignore
+    //     edge.node.isAttending = "Attending! 😀";
+    //   } else if (edge.node.isAttending == false) {
+    //     // @ts-ignore
+    //     edge.node.isAttending = "Not attending... 🫠";
+    //   }
+    // });
 
     return response.data;
   } catch (err: unknown) {

@@ -200,6 +200,15 @@ impl Edge {
         let html = to_html(self.node.description.as_str()).clone();
         self.node.description = html;
     }
+
+    /// Populate `self.is_attending_str` based on `self.is_attending`
+    pub fn is_attending_to_str(&mut self) {
+        if self.node.is_attending {
+            self.node.is_attending_str = Some("Attending! 😀".to_string());
+        } else {
+            self.node.is_attending_str = Some("Not attending... 🫠".to_string());
+        }
+    }
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -258,6 +267,8 @@ pub struct Node {
     pub fee_settings: Option<FeeSettings>,
     pub id: String,
     pub is_attending: bool,
+    /// A string description of if this event will be attended or not
+    pub is_attending_str: Option<String>,
     pub is_online: bool,
     pub is_saved: bool,
     pub covid_precautions: CovidPrecautions,

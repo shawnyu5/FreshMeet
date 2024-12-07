@@ -34,6 +34,10 @@ export interface Node {
   feeSettings?: FeeSettings;
   id: string;
   isAttending: boolean;
+  /**
+   * A human friendly representation of if this event is being attended. Use self.isAttending as fall back
+   */
+  isAttendingStr: string | null;
   isOnline: boolean;
   isSaved: boolean;
   covidPrecautions: CovidPrecautions;
