@@ -153,6 +153,7 @@ impl Default for Extensions {
 
 impl GQLResponse {
     /// Parses all node descriptions as markdown
+    #[deprecated = "Use the method with the same name implemented on Edge"]
     pub fn description_to_html(&mut self) {
         self.data
             .as_mut()
@@ -168,6 +169,7 @@ impl GQLResponse {
     }
 
     /// Formats all event start dates to a more human readable format
+    #[deprecated = "Use the method with the same name implemented on Edge"]
     pub fn format_start_date(&mut self) {
         self.data
             .as_mut()
@@ -181,6 +183,22 @@ impl GQLResponse {
                 edge.node.date_time = date.format("%a %m-%d %I:%M%P").to_string();
             })
             .for_each(drop);
+    }
+}
+
+impl Edge {
+    /// Formats the event start date to a more human readable format
+    pub fn format_start_date(&mut self) {
+        // let date = DateTime::parse_from_rfc3339(&edge.node.date_time)
+        let date = DateTime::parse_from_rfc3339(&self.node.date_time)
+            .expect("Failed to parse meetup start date time");
+        self.node.date_time = date.format("%a %m-%d %I:%M%P").to_string();
+    }
+
+    /// Parses the event descriptions as markdown
+    pub fn description_to_html(&mut self) {
+        let html = to_html(self.node.description.as_str()).clone();
+        self.node.description = html;
     }
 }
 

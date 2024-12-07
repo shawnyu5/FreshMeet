@@ -1,24 +1,19 @@
 //! Route handlers for meetups
 
-use std::cmp::Ordering;
-
+use super::AppError;
 use crate::meetup::query::common::OperationName2;
 use crate::meetup::query::request::gql2::Variables;
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
+use crate::meetup::response::{Event, PageInfo};
 use crate::utils::{eod, now};
-
 use axum::{extract::Query, Json};
-
 use chrono::DateTime;
+use rayon::prelude::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use utoipa::{IntoParams, ToSchema};
-
+use std::cmp::Ordering;
 use tracing::{debug, error, info};
-
-use crate::meetup::response::{Event, PageInfo};
-
-use super::AppError;
+use utoipa::{IntoParams, ToSchema};
 
 /// response body for meetup search
 #[derive(Serialize, Deserialize, Debug)]
@@ -151,8 +146,18 @@ pub async fn recommended_meetups_handler(
                 }
             });
 
-            json.format_start_date();
-            json.description_to_html();
+            json.data
+                .as_mut()
+                .unwrap()
+                .result
+                .edges
+                .par_iter_mut()
+                .map(|edge| {
+                    edge.description_to_html();
+                    edge.format_start_date();
+                })
+                .for_each(drop);
+
             Ok(json)
         }
         Err(e) => {
@@ -409,4 +414,4 @@ pub async fn search_handler(
 //             second_request_body.data.ranked_events.edges
 //         );
 //     }
-// }
+//
