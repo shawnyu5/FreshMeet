@@ -155,6 +155,7 @@ pub async fn recommended_meetups_handler(
                 .map(|edge| {
                     edge.description_to_html();
                     edge.format_start_date();
+                    edge.is_attending_to_str();
                 })
                 .for_each(drop);
 

@@ -536,6 +536,13 @@
           "isAttending": {
             "type": "boolean"
           },
+          "isAttendingStr": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "A string description of if this event will be attended or not"
+          },
           "isOnline": {
             "type": "boolean"
           },
