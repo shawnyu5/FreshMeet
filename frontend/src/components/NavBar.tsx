@@ -38,7 +38,7 @@ export default function () {
       <div class="top-bar-left">
         <ul class="dropdown menu" data-dropdown-menu>
           <img src="../icon.png" width="50" />
-          <li class="menu-text">Fresh meat</li>
+          <li class="menu-text">Fresh meet</li>
           <li>
             <a href="/">Today</a>
           </li>
