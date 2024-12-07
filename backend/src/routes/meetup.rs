@@ -183,7 +183,7 @@ pub struct SearchRequestBody {
 
 /// Searches meetups
 #[utoipa::path(
-    get,
+    post,
     path = "/search",
     responses(
         (status = 200, description = "Successfully returned searched meetups", body = GQLResponse),
@@ -236,8 +236,18 @@ pub async fn search_handler(
                 }
             });
 
-            res.format_start_date();
-            res.description_to_html();
+            res.data
+                .as_mut()
+                .unwrap()
+                .result
+                .edges
+                .par_iter_mut()
+                .map(|edge| {
+                    edge.description_to_html();
+                    edge.format_start_date();
+                    edge.is_attending_to_str();
+                })
+                .for_each(drop);
             res
         }
         Err(err) => {
@@ -246,7 +256,6 @@ pub async fn search_handler(
         }
     };
     info!("Events fetched");
-    dbg!(&response);
     return Ok(Json(response));
 }
 

@@ -42,6 +42,8 @@ export default function () {
     const query = paramsSignal.query as string;
     if (query) {
       log.info(`Searching for events using query: '${query}'`);
+      log.info(`Start date: ${startDate}`)
+      log.info(`End date: ${endDate}`)
       const events = await searchMeetups(
         query,
         startDate as string,

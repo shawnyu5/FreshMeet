@@ -4,7 +4,7 @@ import { createEffect, createSignal } from "solid-js";
 import { DatePickerComponent as DatePicker } from "./DatePicker";
 import { useSearchParams } from "@solidjs/router";
 import { dateToMeetupDate, NormalizedDate } from "~/utils";
-import log from "~/logger";
+import { SearchBar } from "./SearchBar";
 
 export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -54,7 +54,7 @@ export default function () {
       <div class="top-bar-right">
         {
           // TODO: fix this. this component needs to accept the correct type as props
-          // <SearchBar dateRange={datePickerValue()} />
+          <SearchBar />
         }
       </div>
     </div>

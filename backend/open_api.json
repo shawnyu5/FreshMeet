@@ -75,7 +75,7 @@
       }
     },
     "/search": {
-      "get": {
+      "post": {
         "tags": [],
         "summary": "Searches meetups",
         "operationId": "search_handler",
