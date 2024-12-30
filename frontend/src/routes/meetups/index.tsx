@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import "./index.css"
+import "./index.css";
 import {
   createEffect,
   createResource,
@@ -11,7 +11,7 @@ import {
 } from "solid-js";
 import { loadConfig } from "~/config";
 import log from "~/logger";
-import { MeetupEvents } from "./types";
+import { MeetupEvents, MeetupEvents as RecommendedMeetups } from "./types";
 import { useSearchParams } from "@solidjs/router";
 
 /**
@@ -42,8 +42,8 @@ export default function () {
     const query = paramsSignal.query as string;
     if (query) {
       log.info(`Searching for events using query: '${query}'`);
-      log.info(`Start date: ${startDate}`)
-      log.info(`End date: ${endDate}`)
+      log.info(`Start date: ${startDate}`);
+      log.info(`End date: ${endDate}`);
       const events = await searchMeetups(
         query,
         startDate as string,
@@ -65,7 +65,7 @@ export default function () {
       <ErrorBoundary fallback={(err) => err}>
         <div id="meetup-today">
           <Show
-            when={eventResource()?.data.result.edges.length != 0}
+            when={eventResource()?.data?.result.edges.length != 0}
             fallback={<p>No Meetups for selected date... 🥲</p>}
           >
             <table class="hover">
@@ -78,7 +78,7 @@ export default function () {
                 </tr>
               </thead>
               <tbody>
-                <For each={eventResource()?.data.result.edges}>
+                <For each={eventResource()?.data?.result.edges}>
                   {(node, _idx) => (
                     <tr>
                       <td>
@@ -87,7 +87,11 @@ export default function () {
                         </a>
                       </td>
                       <td>{node.node.dateTime}</td>
-                      <td>{(node.node.isAttendingStr ?? node.node.isAttending).toString()}</td>
+                      <td>
+                        {(
+                          node.node.isAttendingStr ?? node.node.isAttending
+                        ).toString()}
+                      </td>
                       <td innerHTML={node.node.description}></td>
                     </tr>
                   )}
@@ -108,9 +112,9 @@ export default function () {
 async function getRecommendedMeetups(
   startDate: string,
   endDate: string,
-): Promise<MeetupEvents> {
+): Promise<RecommendedMeetups> {
   try {
-    let response: AxiosResponse<MeetupEvents> = await axios.get(
+    let response: AxiosResponse<RecommendedMeetups> = await axios.get(
       `${loadConfig().apiUrl}/recommended`,
       {
         params: {
@@ -120,18 +124,6 @@ async function getRecommendedMeetups(
       },
     );
     log.debug(`Response data: ${response.data}`);
-    // // TODO: move this processing into the backend
-    // response.data.data.result.edges.map((edge) => {
-    //   if (edge.node.isAttending == true) {
-    //     // Doing some weird things here... ignore this
-    //     // @ts-ignore
-    //     edge.node.isAttending = "Attending! 😀";
-    //   } else if (edge.node.isAttending == false) {
-    //     // @ts-ignore
-    //     edge.node.isAttending = "Not attending... 🫠";
-    //   }
-    // });
-
     return response.data;
   } catch (err: unknown) {
     log.error("Failed to make API request");
@@ -164,7 +156,7 @@ async function searchMeetups(
       },
     );
     log.debug(`Response data: ${response.data}`);
-    response.data.data.result.edges.map((edge) => {
+    response.data.data?.result.edges.map((edge) => {
       if (edge.node.isAttending == true) {
         // Doing some weird things here... ignore this
         // @ts-ignore
