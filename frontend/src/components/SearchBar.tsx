@@ -3,7 +3,7 @@ import { createSignal } from "solid-js";
 
 export function SearchBar() {
    const [searchParams, setSearchParams] = useSearchParams();
-  const [searchQuery, setSearchQuery] = createSignal(searchParams.query);
+  const [searchQuery, setSearchQuery] = createSignal(searchParams.query || "");
 
   return (
     <form

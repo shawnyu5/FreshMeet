@@ -53,7 +53,6 @@ export default function () {
 
       <div class="top-bar-right">
         {
-          // TODO: fix this. this component needs to accept the correct type as props
           <SearchBar />
         }
       </div>
