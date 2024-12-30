@@ -7,7 +7,6 @@ use anyhow::Result;
 use bon::bon;
 use chrono::DateTime;
 use markdown::to_html;
-use rayon::prelude::*;
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
@@ -148,41 +147,6 @@ impl Default for Extensions {
                 version: 1,
             },
         }
-    }
-}
-
-impl GQLResponse {
-    /// Parses all node descriptions as markdown
-    #[deprecated = "Use the method with the same name implemented on Edge"]
-    pub fn description_to_html(&mut self) {
-        self.data
-            .as_mut()
-            .unwrap()
-            .result
-            .edges
-            .par_iter_mut()
-            .map(|edge| {
-                let html = to_html(edge.node.description.as_str()).clone();
-                edge.node.description = html;
-            })
-            .for_each(drop);
-    }
-
-    /// Formats all event start dates to a more human readable format
-    #[deprecated = "Use the method with the same name implemented on Edge"]
-    pub fn format_start_date(&mut self) {
-        self.data
-            .as_mut()
-            .unwrap()
-            .result
-            .edges
-            .par_iter_mut()
-            .map(|edge| {
-                let date = DateTime::parse_from_rfc3339(&edge.node.date_time)
-                    .expect("Failed to parse meetup start date time");
-                edge.node.date_time = date.format("%a %m-%d %I:%M%P").to_string();
-            })
-            .for_each(drop);
     }
 }
 

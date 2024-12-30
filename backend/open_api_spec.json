@@ -115,48 +115,6 @@
           }
         }
       }
-    },
-    "/today": {
-      "get": {
-        "summary": "Get meetups for today",
-        "operationId": "meetups_today_handler",
-        "parameters": [
-          {
-            "name": "after",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": [
-                "string",
-                "null"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Found meetups for today successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GQLResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to fetch meetups for today",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true
-      }
     }
   },
   "components": {

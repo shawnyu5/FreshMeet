@@ -23,17 +23,17 @@ impl Default for EventKeywordSearchResponse {
     }
 }
 
-impl EventKeywordSearchResponse {
-    /// return all events from the search result
-    pub fn events(&self) -> Vec<Event> {
-        self.data
-            .results
-            .edges
-            .iter()
-            .map(|e| e.node.result.clone())
-            .collect()
-    }
-}
+// impl EventKeywordSearchResponse {
+//     /// return all events from the search result
+//     pub fn events(&self) -> Vec<Event> {
+//         self.data
+//             .results
+//             .edges
+//             .iter()
+//             .map(|e| e.node.result.clone())
+//             .collect()
+//     }
+// }
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct Data {
