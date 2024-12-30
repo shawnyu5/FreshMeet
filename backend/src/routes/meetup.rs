@@ -1,6 +1,5 @@
 //! Route handlers for meetups
 
-use super::AppError;
 use crate::meetup::query::common::OperationName2;
 use crate::meetup::query::request::gql2::Variables;
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
@@ -8,6 +7,7 @@ use crate::meetup::response::{Event, PageInfo};
 use crate::utils::{eod, now};
 use axum::{extract::Query, Json};
 use chrono::DateTime;
+use common_axum::axum::AppError;
 use rayon::prelude::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -29,6 +29,7 @@ pub struct MeetupsTodayQueryParams {
 }
 
 /// Get meetups for today
+#[deprecated = "This route has been replaced by `/recommended`"]
 #[utoipa::path(
     get,
     path = "/today",
@@ -40,7 +41,6 @@ pub struct MeetupsTodayQueryParams {
         MeetupsTodayQueryParams
     )
 )]
-#[deprecated = "This route has been replaced by `/recommended`"]
 pub async fn meetups_today_handler(
     query: Query<MeetupsTodayQueryParams>,
 ) -> Result<Json<GQLResponse>, AppError> {
