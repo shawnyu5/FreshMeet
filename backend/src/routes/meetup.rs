@@ -4,6 +4,7 @@ use crate::meetup::query::common::OperationName2;
 use crate::meetup::query::request::gql2::Variables;
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
 use crate::meetup::response::{Event, PageInfo};
+use crate::utils::{eod, now};
 use axum::{extract::Query, Json};
 use chrono::DateTime;
 use common_axum::axum::AppError;
@@ -107,13 +108,13 @@ pub struct SearchRequestBody {
     query: Option<String>,
     /// Start date of event
     start_date: Option<String>,
-    /// End date of event
-    end_date: Option<String>,
+    // /// End date of event
+    // end_date: Option<String>,
     /// Events to return per page
     per_page: Option<u32>,
 }
 
-/// Searches meetups
+/// Searches meetups. Event end date will not be set, only even start date will be taken into account.
 #[utoipa::path(
     post,
     path = "/search",
@@ -131,7 +132,7 @@ pub async fn search_handler(
         .operation_name(OperationName2::eventSearchWithSeries)
         .variables(Variables {
             query: Some(body.query.unwrap_or_default()),
-            start_date_range: "2024-09-08T18:16:46-04:00[US/Eastern]".into(),
+            start_date_range: body.start_date.unwrap_or(now()),
             ..Default::default()
         })
         .build();

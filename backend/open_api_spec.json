@@ -80,7 +80,7 @@
     },
     "/search": {
       "post": {
-        "summary": "Searches meetups",
+        "summary": "Searches meetups. Event end date will not be set, only even start date will be taken into account.",
         "operationId": "search_handler",
         "requestBody": {
           "content": {
@@ -616,13 +616,6 @@
         "type": "object",
         "description": "Body for `/search` route",
         "properties": {
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "End date of event"
-          },
           "per_page": {
             "type": [
               "integer",
