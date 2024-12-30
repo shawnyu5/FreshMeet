@@ -5,6 +5,7 @@ use serde::{de::DeserializeOwned, Serialize};
 use tracing::{debug, error};
 
 pub mod gql2;
+pub mod gql2_v2;
 
 /// Send a post request to the Meetup API
 ///

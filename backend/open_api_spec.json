@@ -78,6 +78,43 @@
         }
       }
     },
+    "/rsvp": {
+      "get": {
+        "operationId": "get_rsvp_events",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequestBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully returned RSVP events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GQLResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch RSVP events",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/search": {
       "post": {
         "summary": "Searches meetups. Event end date will not be set, only even start date will be taken into account.",

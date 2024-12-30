@@ -1,10 +1,10 @@
 //! Route handlers for meetups
 
 use crate::meetup::query::common::OperationName2;
-use crate::meetup::query::request::gql2::Variables;
-use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
+use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest, Variables};
+use crate::meetup::query::request::gql2_v2::RsvpVariables;
 use crate::meetup::response::{Event, PageInfo};
-use crate::utils::{eod, now};
+use crate::utils::now;
 use axum::{extract::Query, Json};
 use chrono::DateTime;
 use common_axum::axum::AppError;
@@ -58,7 +58,7 @@ pub async fn recommended_meetups_handler(
         .await
     {
         Ok(res) => {
-            let mut json = Json(res);
+            let mut json = res;
             // Sort by events starting first
             debug_assert!(
                 json.data.is_some(),
@@ -92,7 +92,7 @@ pub async fn recommended_meetups_handler(
                 })
                 .for_each(drop);
 
-            Ok(json)
+            Ok(Json(json))
         }
         Err(e) => {
             error!("Error: {}", e);
@@ -190,6 +190,23 @@ pub async fn search_handler(
     };
     info!("Events fetched");
     return Ok(Json(response));
+}
+
+#[utoipa::path(
+    get,
+    path = "/rsvp",
+    responses(
+        (status = 200, description = "Successfully returned RSVP events", body = GQLResponse),
+        (status = 500, description = "Failed to fetch RSVP events", body = String)
+    ),
+    request_body = SearchRequestBody
+
+)]
+pub async fn get_rsvp_events() -> Result<(), AppError> {
+    let request =
+        crate::meetup::query::request::gql2_v2::SearchRequest::<RsvpVariables>::builder().build();
+    dbg!(request.fetch().await);
+    return Ok(());
 }
 
 // #[cfg(test)]

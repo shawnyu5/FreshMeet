@@ -15,6 +15,8 @@ use utoipa::ToSchema;
 
 use super::post;
 
+// {"operationName":"getMyRsvps","variables":{"startDate":"2024-12-30T00:00:00-05:00","after":null,"first":20,"eventStatus":["UPCOMING"],"rsvpStatus":["YES","WAITLIST"]},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"76b2a1649b097ad05cecfff87cc3b038db1f69275129d6e8ad43bc9adbce67f8"}}}
+
 /// Represents the body of an API request to the Meetup graphql API
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -42,6 +44,9 @@ impl SearchRequest {
             OperationName2::eventSearchWithSeries => {
                 "b98fc059f4379053221befe6b201591ba98e3a8b06c9ede0b3c129c3b605d7c4"
             }
+            OperationName2::getMyRsvps => {
+                "76b2a1649b097ad05cecfff87cc3b038db1f69275129d6e8ad43bc9adbce67f8"
+            }
         };
 
         return Self {
@@ -55,6 +60,17 @@ impl SearchRequest {
             variables: variables.unwrap_or_default(),
         };
     }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct RsvpVariables {
+    pub start_date: String,
+    pub after: Option<String>,
+    pub first: i32,
+    pub event_status: Vec<String>,
+    pub rsvp_status: Vec<String>,
+    pub extensions: Extensions,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -114,6 +130,24 @@ impl SearchRequest {
             return Err(anyhow!("Missing query"));
         }
         let response = post::<SearchRequest, GQLResponse>(self).await?;
+        //         {
+        //     "data": {
+        //         "self": {
+        //             "id": "284126435",
+        //             "upcomingEvents": {
+        //                 "totalCount": 0,
+        //                 "pageInfo": {
+        //                     "hasNextPage": false,
+        //                     "endCursor": null,
+        //                     "__typename": "PageInfo"
+        //                 },
+        //                 "edges": [],
+        //                 "__typename": "MemberRsvpConnection"
+        //             },
+        //             "__typename": "Member"
+        //         }
+        //     }
+        // }
         // If we get data back, then the request is successful
         // If not data, then return the error message. Something went wrong...
         if response.data.is_some() {

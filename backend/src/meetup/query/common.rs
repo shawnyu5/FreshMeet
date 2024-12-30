@@ -22,12 +22,15 @@ impl Display for EventType {
 
 /// Types of oepration names for requests to the Meetup api gql2
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[non_exhaustive]
 #[allow(non_camel_case_types)]
 pub enum OperationName2 {
     /// Get recommended events
     recommendedEventsWithSeries,
     /// Search for events with a query
     eventSearchWithSeries,
+    /// Get events that have been RSVPed
+    getMyRsvps,
 }
 
 impl Display for OperationName2 {
@@ -37,6 +40,7 @@ impl Display for OperationName2 {
                 write!(f, "recommendedEventsWithSeries")
             }
             OperationName2::eventSearchWithSeries => write!(f, "eventSearchWithSeries"),
+            OperationName2::getMyRsvps => write!(f, "getMyRsvps"),
         }
     }
 }
