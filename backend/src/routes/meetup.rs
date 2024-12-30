@@ -1,6 +1,5 @@
 //! Route handlers for meetups
 
-use super::AppError;
 use crate::meetup::query::common::OperationName2;
 use crate::meetup::query::request::gql2::Variables;
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest};
@@ -8,6 +7,7 @@ use crate::meetup::response::{Event, PageInfo};
 use crate::utils::{eod, now};
 use axum::{extract::Query, Json};
 use chrono::DateTime;
+use common_axum::axum::AppError;
 use rayon::prelude::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -20,74 +20,6 @@ use utoipa::{IntoParams, ToSchema};
 pub struct Response {
     pub page_info: PageInfo,
     pub nodes: Vec<Event>,
-}
-
-/// Query parameters for `/today` route
-#[derive(Debug, Deserialize, JsonSchema, IntoParams)]
-pub struct MeetupsTodayQueryParams {
-    pub after: Option<String>,
-}
-
-/// Get meetups for today
-#[utoipa::path(
-    get,
-    path = "/today",
-    responses(
-        (status = 200, description = "Found meetups for today successfully", body = GQLResponse),
-        (status = 500, description = "Failed to fetch meetups for today", body = String)
-    ),
-    params(
-        MeetupsTodayQueryParams
-    )
-)]
-#[deprecated = "This route has been replaced by `/recommended`"]
-pub async fn meetups_today_handler(
-    query: Query<MeetupsTodayQueryParams>,
-) -> Result<Json<GQLResponse>, AppError> {
-    match SearchRequest::builder()
-        .operation_name(OperationName2::recommendedEventsWithSeries)
-        .variables(Variables {
-            first: 100,
-            after: query.after.clone(),
-            start_date_range: now(),
-            end_date_range: Some(eod()),
-            ..Default::default()
-        })
-        .build()
-        .fetch()
-        .await
-    {
-        Ok(res) => {
-            let mut json = Json(res);
-            // Sort by events starting first
-            debug_assert!(
-                json.data.is_some(),
-                "There should always be data here. Something is wrong if there is no data"
-            );
-            // There should always be data here, so we can safely unwrap
-            json.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
-                let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
-                    .expect("Failed to parse meetup start date time");
-                let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
-                    .expect("Failed to parse meetup start date time");
-
-                if a_date > b_date {
-                    Ordering::Greater
-                } else {
-                    Ordering::Less
-                }
-            });
-
-            json.format_start_date();
-            json.description_to_html();
-
-            Ok(json)
-        }
-        Err(e) => {
-            error!("Error: {}", e);
-            Err(AppError(e))
-        }
-    }
 }
 
 /// Query parameters for `/today` route
@@ -133,6 +65,7 @@ pub async fn recommended_meetups_handler(
                 "There should always be data here. Something is wrong if there is no data"
             );
             // There should always be data here, so we can safely unwrap
+
             json.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
                 let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
                     .expect("Failed to parse meetup start date time");
@@ -175,13 +108,13 @@ pub struct SearchRequestBody {
     query: Option<String>,
     /// Start date of event
     start_date: Option<String>,
-    /// End date of event
-    end_date: Option<String>,
+    // /// End date of event
+    // end_date: Option<String>,
     /// Events to return per page
     per_page: Option<u32>,
 }
 
-/// Searches meetups
+/// Searches meetups. Event end date will not be set, only even start date will be taken into account.
 #[utoipa::path(
     post,
     path = "/search",
@@ -199,7 +132,7 @@ pub async fn search_handler(
         .operation_name(OperationName2::eventSearchWithSeries)
         .variables(Variables {
             query: Some(body.query.unwrap_or_default()),
-            start_date_range: "2024-09-08T18:16:46-04:00[US/Eastern]".into(),
+            start_date_range: body.start_date.unwrap_or(now()),
             ..Default::default()
         })
         .build();

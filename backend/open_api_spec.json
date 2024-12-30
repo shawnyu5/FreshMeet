@@ -1,17 +1,12 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "fresh_meet",
-    "description": "",
-    "license": {
-      "name": ""
-    },
-    "version": "0.1.0-develop"
+    "title": "freshmeet backend",
+    "version": "0.1.3"
   },
   "paths": {
     "/": {
       "get": {
-        "tags": [],
         "operationId": "app_version",
         "responses": {
           "200": {
@@ -23,19 +18,28 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Failed to get the vesion of the server",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       }
     },
     "/recommended": {
       "get": {
-        "tags": [],
         "summary": "Gets recommended meetups",
         "operationId": "recommended_meetups_handler",
         "parameters": [
           {
             "name": "startDate",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "string"
@@ -43,7 +47,7 @@
           },
           {
             "name": "endDate",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "string"
@@ -76,8 +80,7 @@
     },
     "/search": {
       "post": {
-        "tags": [],
-        "summary": "Searches meetups",
+        "summary": "Searches meetups. Event end date will not be set, only even start date will be taken into account.",
         "operationId": "search_handler",
         "requestBody": {
           "content": {
@@ -111,49 +114,6 @@
             }
           }
         }
-      }
-    },
-    "/today": {
-      "get": {
-        "tags": [],
-        "summary": "Get meetups for today",
-        "operationId": "meetups_today_handler",
-        "parameters": [
-          {
-            "name": "after",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": [
-                "string",
-                "null"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Found meetups for today successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GQLResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to fetch meetups for today",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true
       }
     }
   },
@@ -656,13 +616,6 @@
         "type": "object",
         "description": "Body for `/search` route",
         "properties": {
-          "end_date": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "End date of event"
-          },
           "per_page": {
             "type": [
               "integer",

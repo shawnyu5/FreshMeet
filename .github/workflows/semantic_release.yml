@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - develop
 jobs:
   semantic_release:
     name: Semantic release
@@ -20,10 +19,6 @@ jobs:
         with:
           branches: |
             [
-              "master",
-              {
-                "name": "develop",
-                "prerelease": true
-              }
+              "master"
             ]
 

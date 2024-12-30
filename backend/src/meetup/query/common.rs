@@ -20,36 +20,6 @@ impl Display for EventType {
     }
 }
 
-/// Types of oepration names for requests to the Meetup api
-#[deprecated(note = "Use OperationName2 for the more up to date event names")]
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[allow(non_camel_case_types)]
-pub enum OperationName {
-    /// search for events by keywords
-    eventKeywordSearch,
-    /// get suggested events
-    getYourEventsSuggestedEvents,
-    /// search by category
-    categorySearch,
-    /// Search for events with a query
-    eventSearchWithSeries,
-}
-
-impl Display for OperationName {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            OperationName::eventKeywordSearch => write!(f, "eventKeywordSearch"),
-            OperationName::getYourEventsSuggestedEvents => {
-                write!(f, "getYourEventsSuggestedEvents")
-            }
-            OperationName::categorySearch => {
-                write!(f, "categorySearch")
-            }
-            OperationName::eventSearchWithSeries => write!(f, "eventSearchWithSeries"),
-        }
-    }
-}
-
 /// Types of oepration names for requests to the Meetup api gql2
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[allow(non_camel_case_types)]
