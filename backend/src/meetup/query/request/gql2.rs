@@ -181,10 +181,12 @@ impl Edge {
 
     /// Populate `self.is_attending_str` based on `self.is_attending`
     pub fn is_attending_to_str(&mut self) {
+        // 🔖
+        let book_mark: &str = if self.node.is_saved { "🔖" } else { "" };
         if self.node.is_attending {
-            self.node.is_attending_str = Some("Attending! 😀".to_string());
+            self.node.is_attending_str = Some(format!("{book_mark}Attending! 😀"));
         } else {
-            self.node.is_attending_str = Some("Not attending... 🫠".to_string());
+            self.node.is_attending_str = Some(format!("{book_mark}Not attending... 🫠"));
         }
     }
 }

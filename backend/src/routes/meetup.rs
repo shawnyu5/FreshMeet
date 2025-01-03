@@ -78,6 +78,13 @@ pub async fn recommended_meetups_handler(
             });
 
             res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
+                if a.node.is_saved {
+                    return Ordering::Less;
+                } else {
+                    return Ordering::Greater;
+                }
+            });
+            res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
                 if a.node.is_attending {
                     return Ordering::Less;
                 } else {
