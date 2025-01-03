@@ -14,12 +14,6 @@ import log from "~/logger";
 import { MeetupEvents, MeetupEvents as RecommendedMeetups } from "./types";
 import { useSearchParams } from "@solidjs/router";
 
-/**
- * Render the markdown in the description
- *
- * @returns a `td` element containing the description
- */
-
 export default function () {
   const [searchParams, _setSearchParams] = useSearchParams();
   // Create a signal that is derived from searchParams
