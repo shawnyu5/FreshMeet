@@ -1,12 +1,11 @@
 pub mod meetup;
 
-use crate::routes::meetup::__path_get_rsvp_events;
 use axum::Router;
 use common_axum::axum::{
     __path_app_version, app_version, attach_tracing_cors_middleware,
     generate_open_api_spec_from_open_api,
 };
-use meetup::{__path_recommended_meetups_handler, __path_search_handler, get_rsvp_events};
+use meetup::{__path_recommended_meetups_handler, __path_search_handler};
 use meetup::{recommended_meetups_handler, search_handler};
 use tracing::info;
 use utoipa_axum::{router::OpenApiRouter, routes};
@@ -17,7 +16,7 @@ pub fn app() -> Router {
         // .routes(routes!(meetups_today_handler))
         .routes(routes!(recommended_meetups_handler))
         .routes(routes!(search_handler))
-        .routes(routes!(get_rsvp_events))
+        // .routes(routes!(get_rsvp_events))
         .split_for_parts();
 
     api_spec.info.title = "freshmeet backend".to_string();

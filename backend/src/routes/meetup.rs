@@ -2,7 +2,6 @@
 
 use crate::meetup::query::common::OperationName2;
 use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest, Variables};
-use crate::meetup::query::request::gql2_v2::RsvpVariables;
 use crate::meetup::response::{Event, PageInfo};
 use crate::utils::now;
 use axum::{extract::Query, Json};
@@ -57,16 +56,15 @@ pub async fn recommended_meetups_handler(
         .fetch()
         .await
     {
-        Ok(res) => {
-            let mut json = res;
+        Ok(mut res) => {
+            // let mut res = res;
             // Sort by events starting first
             debug_assert!(
-                json.data.is_some(),
+                res.data.is_some(),
                 "There should always be data here. Something is wrong if there is no data"
             );
             // There should always be data here, so we can safely unwrap
-
-            json.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
+            res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
                 let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
                     .expect("Failed to parse meetup start date time");
                 let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
@@ -79,7 +77,15 @@ pub async fn recommended_meetups_handler(
                 }
             });
 
-            json.data
+            res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
+                if a.node.is_attending {
+                    return Ordering::Less;
+                } else {
+                    return Ordering::Greater;
+                }
+            });
+
+            res.data
                 .as_mut()
                 .unwrap()
                 .result
@@ -92,7 +98,7 @@ pub async fn recommended_meetups_handler(
                 })
                 .for_each(drop);
 
-            Ok(Json(json))
+            Ok(Json(res))
         }
         Err(e) => {
             error!("Error: {}", e);
@@ -192,22 +198,22 @@ pub async fn search_handler(
     return Ok(Json(response));
 }
 
-#[utoipa::path(
-    get,
-    path = "/rsvp",
-    responses(
-        (status = 200, description = "Successfully returned RSVP events", body = GQLResponse),
-        (status = 500, description = "Failed to fetch RSVP events", body = String)
-    ),
-    request_body = SearchRequestBody
+// #[instrument(skip_all)]
+// #[utoipa::path(
+//     get,
+//     path = "/rsvp",
+//     responses(
+//         (status = 200, description = "Successfully returned RSVP events", body = RsvpResponse),
+//         (status = 500, description = "Failed to fetch RSVP events", body = String)
+//     ),
+//     request_body = SearchRequestBody
 
-)]
-pub async fn get_rsvp_events() -> Result<(), AppError> {
-    let request =
-        crate::meetup::query::request::gql2_v2::SearchRequest::<RsvpVariables>::builder().build();
-    dbg!(request.fetch().await);
-    return Ok(());
-}
+// )]
+// pub async fn get_rsvp_events() -> Result<Json<GQLResponse>, app_error_v2::AppError> {
+//     let request = RsvpEvents::builder().build();
+//     let rsvp_events = request.rsvp().await?;
+//     return Ok(Json());
+// }
 
 // #[cfg(test)]
 // mod tests {

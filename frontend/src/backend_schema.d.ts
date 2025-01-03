@@ -46,28 +46,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Searches meetups */
+        /** Searches meetups. Event end date will not be set, only even start date will be taken into account. */
         post: operations["search_handler"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/today": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get meetups for today
-         * @deprecated
-         */
-        get: operations["meetups_today_handler"];
-        put?: never;
-        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -79,42 +59,35 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         CovidPrecautions: {
-            __typename: string;
             venueType?: string | null;
         };
-        Data: {
-            result: components["schemas"]["MeetupResult"];
-        };
         Edge: {
-            __typename: string;
             metadata: components["schemas"]["Metadata"];
             node: components["schemas"]["Node"];
         };
         Edge2: {
-            __typename: string;
             node: components["schemas"]["Node2"];
         };
         Events: {
-            __typename: string;
             edges: components["schemas"]["Edge2"][];
         };
         FeaturedEventPhoto: {
-            __typename: string;
             baseUrl: string;
             highResUrl: string;
             id: string;
         };
         FeeSettings: {
-            __typename: string;
             accepts: string;
             currency: string;
         };
+        GQLData: {
+            result: components["schemas"]["MeetupResult"];
+        };
         GQLResponse: {
-            data?: null | components["schemas"]["Data"];
+            data?: null | components["schemas"]["GQLData"];
             errors?: unknown[] | null;
         };
         Group: {
-            __typename: string;
             id: string;
             isNewGroup: boolean;
             isPrivate: boolean;
@@ -125,36 +98,30 @@ export interface components {
             urlname: string;
         };
         Group2: {
-            __typename: string;
             urlname: string;
         };
         HomeResponse: {
             version: string;
         };
         KeyGroupPhoto: {
-            __typename: string;
             baseUrl: string;
             highResUrl: string;
             id: string;
         };
         MeetupResult: {
-            __typename: string;
             edges: components["schemas"]["Edge"][];
             pageInfo: components["schemas"]["PageInfo"];
             /** Format: int64 */
             totalCount: number;
         };
         MembershipMetadata: {
-            __typename: string;
             role: string;
         };
         Metadata: {
-            __typename: string;
             recId: string;
             recSource: string;
         };
         Node: {
-            __typename: string;
             covidPrecautions: components["schemas"]["CovidPrecautions"];
             dateTime: string;
             description: string;
@@ -179,26 +146,21 @@ export interface components {
             venue?: null | components["schemas"]["Venue"];
         };
         Node2: {
-            __typename: string;
             dateTime: string;
             group: components["schemas"]["Group2"];
             id: string;
             isAttending: boolean;
         };
         PageInfo: {
-            __typename: string;
             endCursor?: string | null;
             hasNextPage: boolean;
         };
         Rsvps: {
-            __typename: string;
             /** Format: int64 */
             totalCount: number;
         };
         /** @description Body for `/search` route */
         SearchRequestBody: {
-            /** @description End date of event */
-            end_date?: string | null;
             /**
              * Format: int32
              * @description Events to return per page
@@ -210,11 +172,9 @@ export interface components {
             start_date?: string | null;
         };
         Series: {
-            __typename: string;
             events: components["schemas"]["Events"];
         };
         Venue: {
-            __typename: string;
             city: string;
             country: string;
             id: string;
@@ -318,37 +278,6 @@ export interface operations {
                 };
             };
             /** @description Failed to search for meetups */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "text/plain": string;
-                };
-            };
-        };
-    };
-    meetups_today_handler: {
-        parameters: {
-            query?: {
-                after?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Found meetups for today successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GQLResponse"];
-                };
-            };
-            /** @description Failed to fetch meetups for today */
             500: {
                 headers: {
                     [name: string]: unknown;

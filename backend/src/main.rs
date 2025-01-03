@@ -13,7 +13,7 @@ use tracing::{info, Level};
 async fn main() -> Result<()> {
     tracing_subscriber::fmt()
         .with_target(false)
-        .with_max_level(Level::INFO)
+        .with_max_level(Level::DEBUG)
         .compact()
         .init();
 

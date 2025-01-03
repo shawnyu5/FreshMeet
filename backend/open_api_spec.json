@@ -78,43 +78,6 @@
         }
       }
     },
-    "/rsvp": {
-      "get": {
-        "operationId": "get_rsvp_events",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SearchRequestBody"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successfully returned RSVP events",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GQLResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Failed to fetch RSVP events",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/search": {
       "post": {
         "summary": "Searches meetups. Event end date will not be set, only even start date will be taken into account.",
@@ -158,13 +121,7 @@
     "schemas": {
       "CovidPrecautions": {
         "type": "object",
-        "required": [
-          "__typename"
-        ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "venueType": {
             "type": [
               "string",
@@ -173,28 +130,13 @@
           }
         }
       },
-      "Data": {
-        "type": "object",
-        "required": [
-          "result"
-        ],
-        "properties": {
-          "result": {
-            "$ref": "#/components/schemas/MeetupResult"
-          }
-        }
-      },
       "Edge": {
         "type": "object",
         "required": [
           "node",
-          "metadata",
-          "__typename"
+          "metadata"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "metadata": {
             "$ref": "#/components/schemas/Metadata"
           },
@@ -206,13 +148,9 @@
       "Edge2": {
         "type": "object",
         "required": [
-          "node",
-          "__typename"
+          "node"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "node": {
             "$ref": "#/components/schemas/Node2"
           }
@@ -221,13 +159,9 @@
       "Events": {
         "type": "object",
         "required": [
-          "edges",
-          "__typename"
+          "edges"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "edges": {
             "type": "array",
             "items": {
@@ -241,13 +175,9 @@
         "required": [
           "baseUrl",
           "highResUrl",
-          "id",
-          "__typename"
+          "id"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "baseUrl": {
             "type": "string"
           },
@@ -263,18 +193,25 @@
         "type": "object",
         "required": [
           "accepts",
-          "currency",
-          "__typename"
+          "currency"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "accepts": {
             "type": "string"
           },
           "currency": {
             "type": "string"
+          }
+        }
+      },
+      "GQLData": {
+        "type": "object",
+        "required": [
+          "result"
+        ],
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/MeetupResult"
           }
         }
       },
@@ -287,7 +224,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/Data"
+                "$ref": "#/components/schemas/GQLData"
               }
             ]
           },
@@ -308,13 +245,9 @@
           "isPrivate",
           "name",
           "timezone",
-          "urlname",
-          "__typename"
+          "urlname"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "id": {
             "type": "string"
           },
@@ -358,13 +291,9 @@
       "Group2": {
         "type": "object",
         "required": [
-          "urlname",
-          "__typename"
+          "urlname"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "urlname": {
             "type": "string"
           }
@@ -386,13 +315,9 @@
         "required": [
           "baseUrl",
           "highResUrl",
-          "id",
-          "__typename"
+          "id"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "baseUrl": {
             "type": "string"
           },
@@ -409,13 +334,9 @@
         "required": [
           "pageInfo",
           "totalCount",
-          "edges",
-          "__typename"
+          "edges"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "edges": {
             "type": "array",
             "items": {
@@ -434,13 +355,9 @@
       "MembershipMetadata": {
         "type": "object",
         "required": [
-          "role",
-          "__typename"
+          "role"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "role": {
             "type": "string"
           }
@@ -450,13 +367,9 @@
         "type": "object",
         "required": [
           "recId",
-          "recSource",
-          "__typename"
+          "recSource"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "recId": {
             "type": "string"
           },
@@ -482,13 +395,9 @@
           "rsvps",
           "title",
           "socialLabels",
-          "__typename",
           "rsvpState"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "covidPrecautions": {
             "$ref": "#/components/schemas/CovidPrecautions"
           },
@@ -591,13 +500,9 @@
           "id",
           "dateTime",
           "isAttending",
-          "group",
-          "__typename"
+          "group"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "dateTime": {
             "type": "string"
           },
@@ -615,13 +520,9 @@
       "PageInfo": {
         "type": "object",
         "required": [
-          "hasNextPage",
-          "__typename"
+          "hasNextPage"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "endCursor": {
             "type": [
               "string",
@@ -636,13 +537,9 @@
       "Rsvps": {
         "type": "object",
         "required": [
-          "totalCount",
-          "__typename"
+          "totalCount"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "totalCount": {
             "type": "integer",
             "format": "int64"
@@ -681,13 +578,9 @@
       "Series": {
         "type": "object",
         "required": [
-          "events",
-          "__typename"
+          "events"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "events": {
             "$ref": "#/components/schemas/Events"
           }
@@ -702,13 +595,9 @@
           "lon",
           "city",
           "state",
-          "country",
-          "__typename"
+          "country"
         ],
         "properties": {
-          "__typename": {
-            "type": "string"
-          },
           "city": {
             "type": "string"
           },

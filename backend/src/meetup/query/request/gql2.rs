@@ -15,8 +15,6 @@ use utoipa::ToSchema;
 
 use super::post;
 
-// {"operationName":"getMyRsvps","variables":{"startDate":"2024-12-30T00:00:00-05:00","after":null,"first":20,"eventStatus":["UPCOMING"],"rsvpStatus":["YES","WAITLIST"]},"extensions":{"persistedQuery":{"version":1,"sha256Hash":"76b2a1649b097ad05cecfff87cc3b038db1f69275129d6e8ad43bc9adbce67f8"}}}
-
 /// Represents the body of an API request to the Meetup graphql API
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
@@ -130,24 +128,6 @@ impl SearchRequest {
             return Err(anyhow!("Missing query"));
         }
         let response = post::<SearchRequest, GQLResponse>(self).await?;
-        //         {
-        //     "data": {
-        //         "self": {
-        //             "id": "284126435",
-        //             "upcomingEvents": {
-        //                 "totalCount": 0,
-        //                 "pageInfo": {
-        //                     "hasNextPage": false,
-        //                     "endCursor": null,
-        //                     "__typename": "PageInfo"
-        //                 },
-        //                 "edges": [],
-        //                 "__typename": "MemberRsvpConnection"
-        //             },
-        //             "__typename": "Member"
-        //         }
-        //     }
-        // }
         // If we get data back, then the request is successful
         // If not data, then return the error message. Something went wrong...
         if response.data.is_some() {
@@ -212,7 +192,7 @@ impl Edge {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct GQLResponse {
-    pub data: Option<Data>,
+    pub data: Option<GQLData>,
     // TODO: handle when request returns an error
     // "{\"errors\":[{\"message\":\"PersistedQueryNotFound\",\"locations\":[],\"extensions\":{\"persistedQueryId\":\"0f0332e9a4b01456580c1f669f26edc053d5
     // 0382b3e338d5ca580f194a27feab\",\"generatedBy\":\"graphql-java\",\"classification\":\"PersistedQueryNotFound\"}}],\"data\":null}"
@@ -221,7 +201,7 @@ pub struct GQLResponse {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
-pub struct Data {
+pub struct GQLData {
     #[serde(alias = "results")]
     pub result: MeetupResult,
 }
@@ -232,8 +212,6 @@ pub struct MeetupResult {
     pub page_info: PageInfo,
     pub total_count: i64,
     pub edges: Vec<Edge>,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -241,8 +219,6 @@ pub struct MeetupResult {
 pub struct PageInfo {
     pub has_next_page: bool,
     pub end_cursor: Option<String>,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -250,8 +226,6 @@ pub struct PageInfo {
 pub struct Edge {
     pub node: Node,
     pub metadata: Metadata,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -276,8 +250,6 @@ pub struct Node {
     pub title: String,
     pub venue: Option<Venue>,
     pub social_labels: Vec<Value>,
-    #[serde(rename = "__typename")]
-    pub typename: String,
     pub rsvp_state: String,
     pub series: Option<Series>,
 }
@@ -288,8 +260,6 @@ pub struct FeaturedEventPhoto {
     pub base_url: String,
     pub high_res_url: String,
     pub id: String,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -297,16 +267,12 @@ pub struct FeaturedEventPhoto {
 pub struct FeeSettings {
     pub accepts: String,
     pub currency: String,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct CovidPrecautions {
     pub venue_type: Option<String>,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -320,16 +286,12 @@ pub struct Group {
     pub name: String,
     pub timezone: String,
     pub urlname: String,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct MembershipMetadata {
     pub role: String,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -338,16 +300,12 @@ pub struct KeyGroupPhoto {
     pub base_url: String,
     pub high_res_url: String,
     pub id: String,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Rsvps {
     pub total_count: i64,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -360,32 +318,24 @@ pub struct Venue {
     pub city: String,
     pub state: String,
     pub country: String,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Series {
     pub events: Events,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Events {
     pub edges: Vec<Edge2>,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Edge2 {
     pub node: Node2,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -395,16 +345,12 @@ pub struct Node2 {
     pub date_time: String,
     pub is_attending: bool,
     pub group: Group2,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Group2 {
     pub urlname: String,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
@@ -412,8 +358,6 @@ pub struct Group2 {
 pub struct Metadata {
     pub rec_id: String,
     pub rec_source: String,
-    #[serde(rename = "__typename")]
-    pub typename: String,
 }
 
 #[cfg(test)]
