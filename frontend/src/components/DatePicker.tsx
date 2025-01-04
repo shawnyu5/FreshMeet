@@ -1,5 +1,11 @@
 import DatePicker, { PickerValue } from "@rnwonder/solid-date-picker";
-import { Accessor, createEffect, createSignal, Setter } from "solid-js";
+import {
+  Accessor,
+  createEffect,
+  createSignal,
+  onMount,
+  Setter,
+} from "solid-js";
 import log from "~/logger";
 import { NormalizedDate } from "~/utils";
 
@@ -9,41 +15,59 @@ import { NormalizedDate } from "~/utils";
  * @param setValue - a signal setter that will contain the beginning and end date of the picker
  */
 export function DatePickerComponent(props: {
-   value: Accessor<Date>;
-   setValue: Setter<[NormalizedDate, NormalizedDate]>;
+  value: Accessor<[Date, Date]>;
+  setValue: Setter<[Date, Date]>;
 }) {
-   const year = props.value().getFullYear();
-   const month = props.value().getMonth();
-   const day = props.value().getDate();
+  const startDate = props.value()[0];
+  const endDate = props.value()[1];
 
-   // The picker will start by having the current date selected
-   const [pickerValue, setPickerValue] = createSignal<PickerValue>({
-      label: `${year}/${month + 1}/${day}`,
+  // The picker will start by having the date range selected from the value props
+  const [pickerValue, setPickerValue] = createSignal<PickerValue>({
+    label: `${startDate.getFullYear()}/${startDate.getMonth() + 1}/${startDate.getDate()}`,
+    value: {
+      startDateObject: {
+        year: startDate.getFullYear(),
+        month: startDate.getMonth(),
+        day: startDate.getDate(),
+      },
+      endDateObject: {
+        year: endDate.getFullYear(),
+        month: endDate.getMonth(),
+        day: endDate.getDate(),
+      },
+    },
+  });
+
+  onMount(() => {
+    const startDate = props.value()[0];
+    const endDate = props.value()[1];
+
+    setPickerValue({
+      label: `${startDate.getFullYear()}/${startDate.getMonth() + 1}/${startDate.getDate()}`,
       value: {
-         startDateObject: {
-            year,
-            month,
-            day
-         },
-         endDateObject: {
-            year,
-            month,
-            day
-         },
-      }
-   });
+        startDateObject: {
+          year: startDate.getFullYear(),
+          month: startDate.getMonth(),
+          day: startDate.getDate(),
+        },
+        endDateObject: {
+          year: endDate.getFullYear(),
+          month: endDate.getMonth(),
+          day: endDate.getDate(),
+        },
+      },
+    });
+  });
 
-   // whenever picker value is updated. Convert the picker value into a string and set it in the setValue prop
-   createEffect(() => {
-      log.info(
-         `User selected picker value: ${JSON.stringify(pickerValue())}`,
-      );
-      props.setValue(pickerValueToDate(pickerValue()));
-   });
+  // whenever picker value is updated. Convert the picker value into a string and set it in the setValue prop
+  createEffect(() => {
+    log.info(`User selected picker value: ${JSON.stringify(pickerValue())}`);
+    props.setValue(pickerValueToDate(pickerValue()));
+  });
 
-   return (
-      <DatePicker type="range" value={pickerValue} setValue={setPickerValue} />
-   );
+  return (
+    <DatePicker type="range" value={pickerValue} setValue={setPickerValue} />
+  );
 }
 
 /**
@@ -53,15 +77,23 @@ export function DatePickerComponent(props: {
  * @returns 2 Date objects, of the start and end date of the PickerValue
  */
 export function pickerValueToDate(
-   pickerValue: PickerValue,
+  pickerValue: PickerValue,
 ): [NormalizedDate, NormalizedDate] {
-   const date = new Date()
-   // DatePicker relies on date months being 0 indexed
-   const startDateObject = pickerValue.value.startDateObject;
-   const endDateObject = pickerValue.value.endDateObject;
+  const date = new Date();
+  // DatePicker relies on date months being 0 indexed
+  const startDateObject = pickerValue.value.startDateObject;
+  const endDateObject = pickerValue.value.endDateObject;
 
-   const startDate = new NormalizedDate(startDateObject?.year ?? date.getFullYear(), ((startDateObject?.month) ?? date.getMonth()), startDateObject?.day ?? date.getDate())
-   const endDate = new NormalizedDate(endDateObject?.year ?? date.getFullYear(), (endDateObject?.month ?? date.getMonth()), endDateObject?.day ?? date.getDate())
-   log.info(`Converting picker value to date: ${startDate} - ${endDate}`)
-   return [startDate, endDate];
+  const startDate = new NormalizedDate(
+    startDateObject?.year ?? date.getFullYear(),
+    startDateObject?.month ?? date.getMonth(),
+    startDateObject?.day ?? date.getDate(),
+  );
+  const endDate = new NormalizedDate(
+    endDateObject?.year ?? date.getFullYear(),
+    endDateObject?.month ?? date.getMonth(),
+    endDateObject?.day ?? date.getDate(),
+  );
+  log.info(`Converting picker value to date: ${startDate} - ${endDate}`);
+  return [startDate, endDate];
 }
