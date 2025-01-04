@@ -1,4 +1,6 @@
 //! Types for meetup GQL2 API
+use std::cmp::Ordering;
+
 use crate::meetup::query::common::EventType;
 use crate::meetup::query::common::{Extensions, OperationName2, PersistedQuery};
 use crate::utils::now;
@@ -7,6 +9,7 @@ use anyhow::Result;
 use bon::bon;
 use chrono::DateTime;
 use markdown::to_html;
+use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
@@ -199,6 +202,65 @@ pub struct GQLResponse {
     // "{\"errors\":[{\"message\":\"PersistedQueryNotFound\",\"locations\":[],\"extensions\":{\"persistedQueryId\":\"0f0332e9a4b01456580c1f669f26edc053d5
     // 0382b3e338d5ca580f194a27feab\",\"generatedBy\":\"graphql-java\",\"classification\":\"PersistedQueryNotFound\"}}],\"data\":null}"
     pub errors: Option<Vec<Value>>,
+}
+
+impl GQLResponse {
+    /// Sort the meetups with events starting the soonest first
+    pub fn sort_by_start_date(&mut self) {
+        self.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
+            let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
+                .expect("Failed to parse meetup start date time");
+            let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
+                .expect("Failed to parse meetup start date time");
+
+            if a_date > b_date {
+                Ordering::Greater
+            } else {
+                Ordering::Less
+            }
+        });
+    }
+
+    /// Sort events by placing saved events first
+    pub fn sort_by_is_saved(&mut self) {
+        self.data.as_mut().unwrap().result.edges.sort_by(|a, _| {
+            if a.node.is_saved {
+                return Ordering::Less;
+            } else {
+                return Ordering::Greater;
+            }
+        });
+    }
+
+    /// Sort events by placing events that is attending first
+    pub fn sort_by_is_attending(&mut self) {
+        self.data.as_mut().unwrap().result.edges.sort_by(|a, _| {
+            if a.node.is_attending {
+                return Ordering::Less;
+            } else {
+                return Ordering::Greater;
+            }
+        });
+    }
+
+    /// Format all events by doing the following:
+    /// - Compiles the description of the event to HTML
+    /// - Formats the starting date of the meetup in a human readable format
+    /// - Populates `is_attending_str` for all events
+    pub fn format(&mut self) {
+        self.data
+            .as_mut()
+            .unwrap()
+            .result
+            .edges
+            .par_iter_mut()
+            .map(|edge| {
+                edge.description_to_html();
+                edge.format_start_date();
+                edge.is_attending_to_str();
+            })
+            .for_each(drop);
+    }
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]

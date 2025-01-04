@@ -13,10 +13,8 @@ use utoipa_axum::{router::OpenApiRouter, routes};
 pub fn app() -> Router {
     let (router, mut api_spec) = OpenApiRouter::new()
         .routes(routes!(app_version))
-        // .routes(routes!(meetups_today_handler))
         .routes(routes!(recommended_meetups_handler))
         .routes(routes!(search_handler))
-        // .routes(routes!(get_rsvp_events))
         .split_for_parts();
 
     api_spec.info.title = "freshmeet backend".to_string();

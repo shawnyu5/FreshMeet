@@ -57,53 +57,15 @@ pub async fn recommended_meetups_handler(
         .await
     {
         Ok(mut res) => {
-            // let mut res = res;
             // Sort by events starting first
             debug_assert!(
                 res.data.is_some(),
                 "There should always be data here. Something is wrong if there is no data"
             );
-            // There should always be data here, so we can safely unwrap
-            res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
-                let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
-                    .expect("Failed to parse meetup start date time");
-                let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
-                    .expect("Failed to parse meetup start date time");
-
-                if a_date > b_date {
-                    Ordering::Greater
-                } else {
-                    Ordering::Less
-                }
-            });
-
-            res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
-                if a.node.is_saved {
-                    return Ordering::Less;
-                } else {
-                    return Ordering::Greater;
-                }
-            });
-            res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
-                if a.node.is_attending {
-                    return Ordering::Less;
-                } else {
-                    return Ordering::Greater;
-                }
-            });
-
-            res.data
-                .as_mut()
-                .unwrap()
-                .result
-                .edges
-                .par_iter_mut()
-                .map(|edge| {
-                    edge.description_to_html();
-                    edge.format_start_date();
-                    edge.is_attending_to_str();
-                })
-                .for_each(drop);
+            res.sort_by_start_date();
+            res.sort_by_is_saved();
+            res.sort_by_is_attending();
+            res.format();
 
             Ok(Json(res))
         }
@@ -169,31 +131,10 @@ pub async fn search_handler(
                 res.data.is_some(),
                 "There should always be data here. Something is wrong if there is no data"
             );
-            res.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
-                let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
-                    .expect("Failed to parse meetup start date time");
-                let b_date = DateTime::parse_from_rfc3339(&b.node.date_time)
-                    .expect("Failed to parse meetup start date time");
-
-                if a_date > b_date {
-                    Ordering::Greater
-                } else {
-                    Ordering::Less
-                }
-            });
-
-            res.data
-                .as_mut()
-                .unwrap()
-                .result
-                .edges
-                .par_iter_mut()
-                .map(|edge| {
-                    edge.description_to_html();
-                    edge.format_start_date();
-                    edge.is_attending_to_str();
-                })
-                .for_each(drop);
+            res.sort_by_is_saved();
+            res.sort_by_is_attending();
+            res.sort_by_start_date();
+            res.format();
             res
         }
         Err(err) => {
