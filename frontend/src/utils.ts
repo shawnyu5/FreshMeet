@@ -5,7 +5,7 @@ import log from "./logger";
 * @param eod - if the EOD time should be used. Defaults to using the current time
  * @returns the date object in a format for the meetup API to consume, in the format "2024-11-10T19:04:01-04:00\[US/Eastern\]"
  */
-export function dateToMeetupDate(date: NormalizedDate, eod = false): string {
+export function dateToMeetupDate(date: NormalizedDate, eod): string {
    const year = date.getFullYear();
    const month = date.getMonth()
    const day = date.getDate()

@@ -18,8 +18,7 @@ export function DatePickerComponent(props: {
 
    // The picker will start by having the current date selected
    const [pickerValue, setPickerValue] = createSignal<PickerValue>({
-      // label: "",
-      label: `${year}-${month + 1}-${day}`,
+      label: `${year}/${month + 1}/${day}`,
       value: {
          startDateObject: {
             year,
