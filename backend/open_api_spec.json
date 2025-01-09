@@ -433,6 +433,12 @@
               }
             ]
           },
+          "googleMapsUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "group": {
             "$ref": "#/components/schemas/Group"
           },

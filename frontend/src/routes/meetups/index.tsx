@@ -79,6 +79,15 @@ export default function () {
                         <a target="_blank" href={node.node.eventUrl}>
                           {node.node.title}
                         </a>
+                        <Show when={node.node.googleMapsUrl}>
+                          <hr />
+                          Location: <a
+                            target="_blank"
+                            href={node.node.googleMapsUrl ?? ""}
+                          >
+                            {node.node.venue?.name}
+                          </a>
+                        </Show>
                       </td>
                       <td>{node.node.dateTime}</td>
                       <td>

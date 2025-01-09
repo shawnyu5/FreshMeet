@@ -5,12 +5,9 @@ use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest, Variables}
 use crate::meetup::response::{Event, PageInfo};
 use crate::utils::now;
 use axum::{extract::Query, Json};
-use chrono::DateTime;
 use common_axum::axum::AppError;
-use rayon::prelude::*;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::cmp::Ordering;
 use tracing::{debug, error, info};
 use utoipa::{IntoParams, ToSchema};
 
@@ -62,11 +59,11 @@ pub async fn recommended_meetups_handler(
                 res.data.is_some(),
                 "There should always be data here. Something is wrong if there is no data"
             );
-            res.sort_by_start_date();
-            res.sort_by_is_saved();
-            res.sort_by_is_attending();
+            res.sort();
+            res.generate_google_maps_url();
             res.format();
 
+            debug!("Events response: {:#?}", res);
             Ok(Json(res))
         }
         Err(e) => {
@@ -131,9 +128,7 @@ pub async fn search_handler(
                 res.data.is_some(),
                 "There should always be data here. Something is wrong if there is no data"
             );
-            res.sort_by_is_saved();
-            res.sort_by_is_attending();
-            res.sort_by_start_date();
+            res.sort();
             res.format();
             res
         }

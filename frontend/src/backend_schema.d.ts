@@ -129,6 +129,7 @@ export interface components {
             eventUrl: string;
             featuredEventPhoto?: null | components["schemas"]["FeaturedEventPhoto"];
             feeSettings?: null | components["schemas"]["FeeSettings"];
+            googleMapsUrl?: string | null;
             group: components["schemas"]["Group"];
             id: string;
             isAttending: boolean;

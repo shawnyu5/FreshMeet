@@ -1,5 +1,6 @@
 //! Types for meetup GQL2 API
 use std::cmp::Ordering;
+use std::fmt::Display;
 
 use crate::meetup::query::common::EventType;
 use crate::meetup::query::common::{Extensions, OperationName2, PersistedQuery};
@@ -14,6 +15,7 @@ use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
 use tracing::error;
+use urlencoding::encode;
 use utoipa::ToSchema;
 
 use super::post;
@@ -61,17 +63,6 @@ impl SearchRequest {
             variables: variables.unwrap_or_default(),
         };
     }
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct RsvpVariables {
-    pub start_date: String,
-    pub after: Option<String>,
-    pub first: i32,
-    pub event_status: Vec<String>,
-    pub rsvp_status: Vec<String>,
-    pub extensions: Extensions,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -198,15 +189,19 @@ impl Edge {
 #[serde(rename_all = "camelCase")]
 pub struct GQLResponse {
     pub data: Option<GQLData>,
-    // TODO: handle when request returns an error
     // "{\"errors\":[{\"message\":\"PersistedQueryNotFound\",\"locations\":[],\"extensions\":{\"persistedQueryId\":\"0f0332e9a4b01456580c1f669f26edc053d5
     // 0382b3e338d5ca580f194a27feab\",\"generatedBy\":\"graphql-java\",\"classification\":\"PersistedQueryNotFound\"}}],\"data\":null}"
     pub errors: Option<Vec<Value>>,
 }
 
 impl GQLResponse {
+    pub fn sort(&mut self) {
+        self.sort_by_start_date();
+        self.sort_by_is_saved();
+        self.sort_by_is_attending();
+    }
     /// Sort the meetups with events starting the soonest first
-    pub fn sort_by_start_date(&mut self) {
+    fn sort_by_start_date(&mut self) {
         self.data.as_mut().unwrap().result.edges.sort_by(|a, b| {
             let a_date = DateTime::parse_from_rfc3339(&a.node.date_time)
                 .expect("Failed to parse meetup start date time");
@@ -222,7 +217,7 @@ impl GQLResponse {
     }
 
     /// Sort events by placing saved events first
-    pub fn sort_by_is_saved(&mut self) {
+    fn sort_by_is_saved(&mut self) {
         self.data.as_mut().unwrap().result.edges.sort_by(|a, _| {
             if a.node.is_saved {
                 return Ordering::Less;
@@ -233,7 +228,7 @@ impl GQLResponse {
     }
 
     /// Sort events by placing events that is attending first
-    pub fn sort_by_is_attending(&mut self) {
+    fn sort_by_is_attending(&mut self) {
         self.data.as_mut().unwrap().result.edges.sort_by(|a, _| {
             if a.node.is_attending {
                 return Ordering::Less;
@@ -258,6 +253,24 @@ impl GQLResponse {
                 edge.description_to_html();
                 edge.format_start_date();
                 edge.is_attending_to_str();
+            })
+            .for_each(drop);
+    }
+
+    pub fn generate_google_maps_url(&mut self) {
+        self.data
+            .as_mut()
+            .unwrap()
+            .result
+            .edges
+            .par_iter_mut()
+            .map(|edge| {
+                if edge.node.venue.is_some() {
+                    edge.node.google_maps_url = Some(format!(
+                        "https://www.google.com/maps/dir/?api=1&destination={dest}",
+                        dest = encode(&edge.node.venue.clone().unwrap_or_default().to_string())
+                    ))
+                }
             })
             .for_each(drop);
     }
@@ -296,6 +309,7 @@ pub struct Edge {
 #[serde(rename_all = "camelCase")]
 pub struct Node {
     pub date_time: String,
+    pub google_maps_url: Option<String>,
     pub description: String,
     pub event_type: String,
     pub event_url: String,
@@ -382,6 +396,12 @@ pub struct Venue {
     pub city: String,
     pub state: String,
     pub country: String,
+}
+
+impl Display for Venue {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        return write!(f, "{lat},{lon}", lat = self.lat, lon = self.lon);
+    }
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]
