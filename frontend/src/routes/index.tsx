@@ -1,5 +1,7 @@
-import { Navigate } from "@solidjs/router";
+import { Navigate, useLocation } from "@solidjs/router";
 
 export default function Home() {
-   return <Navigate href="/meetups"></Navigate>
+   const location = useLocation()
+   const params = new URLSearchParams(location.search)
+   return <Navigate href={`/meetups?${params}`}></Navigate>
 }

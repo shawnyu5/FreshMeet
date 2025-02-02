@@ -8,13 +8,13 @@ use crate::utils::now;
 use anyhow::anyhow;
 use anyhow::Result;
 use bon::bon;
-use chrono::DateTime;
+use chrono::{Date, DateTime, Utc};
 use markdown::to_html;
 use rayon::iter::{IntoParallelRefMutIterator, ParallelIterator};
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::Value;
-use tracing::error;
+use tracing::{debug, error};
 use urlencoding::encode;
 use utoipa::ToSchema;
 
@@ -52,6 +52,7 @@ impl SearchRequest {
             }
         };
 
+        debug!("Request variables: {:#?}", variables);
         return Self {
             operation_name: operation_name.to_string(),
             extensions: Extensions {
@@ -69,12 +70,14 @@ impl SearchRequest {
 #[serde(rename_all = "camelCase")]
 pub struct Variables {
     /// Number of results to return
+    /// 200 is the max number of results to return
     pub first: i32,
     pub lat: f64,
     pub lon: f64,
     pub sort_field: String,
     pub start_date_range: String,
     pub end_date_range: Option<String>,
+    pub series_start_date: String,
     /// The after cursor
     pub after: Option<String>,
     /// Type of event
@@ -88,16 +91,38 @@ pub struct Variables {
     pub query: Option<String>,
 }
 
+// Variables {
+//     first: 30,
+//     lat: 43.7400016784668,
+//     lon: -79.36000061035156,
+//     sort_field: "RELEVANCE",
+//     startDateRange: "2025-02-02T00:00:00-05:00"
+//     start_date_range: "2025-02-02T00:00:00-05:00",
+//     endDateRange: "2025-02-02T23:59:00-05:00"
+//     end_date_range: Some(
+//         "2025-02-02T11:59:00-05:00",
+//     ),
+//     series_start_date: "2025-02-02",
+//     after: None,
+//     event_type: "PHYSICAL",
+//     index_alias: "popular_events_nearby_current",
+//     do_consolidate_events: true,
+//     do_promote_paypal_events: false,
+//     city: "Toronto",
+//     number_of_events_for_series: 5,
+//     query: None
+// }
 impl Default for Variables {
     fn default() -> Self {
         Self {
             first: 40,
-            lat: 43.7400016784668,
-            lon: -79.36000061035156,
+            lat: 40.71,
+            lon: -74.01,
             city: "Toronto".into(),
             sort_field: "RELEVANCE".into(),
             start_date_range: now(),
             end_date_range: None,
+            series_start_date: Utc::now().format("%Y-%m-%d").to_string(),
             after: None,
             event_type: EventType::default().to_string(),
             index_alias: "popular_events_nearby_current".into(),

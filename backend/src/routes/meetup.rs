@@ -5,8 +5,9 @@ use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest, Variables}
 use crate::meetup::response::{Event, PageInfo};
 use crate::utils::now;
 use axum::{extract::Query, Json};
+use chrono::{DateTime, Utc};
+use chrono_tz::America::New_York;
 use common_axum::axum::AppError;
-use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info};
 use utoipa::{IntoParams, ToSchema};
@@ -19,11 +20,11 @@ pub struct Response {
 }
 
 /// Query parameters for `/today` route
-#[derive(Debug, Deserialize, JsonSchema, IntoParams)]
+#[derive(Debug, Deserialize, IntoParams)]
 #[serde(rename_all = "camelCase")]
 pub struct RecommendedMeetupsQueryParams {
-    pub start_date: String,
-    pub end_date: String,
+    pub start_date: DateTime<Utc>,
+    pub end_date: DateTime<Utc>,
 }
 
 /// Gets recommended meetups
@@ -45,8 +46,12 @@ pub async fn recommended_meetups_handler(
         .operation_name(OperationName2::recommendedEventsWithSeries)
         .variables(Variables {
             first: 200,
-            start_date_range: query.start_date.clone(),
-            end_date_range: Some(query.end_date.clone()),
+            start_date_range: query
+                .start_date
+                .with_timezone(&New_York)
+                .to_rfc3339()
+                .clone(),
+            end_date_range: Some(query.end_date.with_timezone(&New_York).to_rfc3339().clone()),
             ..Default::default()
         })
         .build()
@@ -63,7 +68,11 @@ pub async fn recommended_meetups_handler(
             res.generate_google_maps_url();
             res.format();
 
-            debug!("Events response: {:#?}", res);
+            if let Some(data) = &res.data {
+                debug!("Number of events: {}", data.result.total_count);
+                debug!("After cursor: {:?}", data.result.page_info.end_cursor);
+            }
+
             Ok(Json(res))
         }
         Err(e) => {

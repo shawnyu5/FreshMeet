@@ -25,8 +25,8 @@ export default function () {
   });
 
   const [eventResource] = createResource(paramsSignal, async (paramsSignal) => {
-    const startDate = paramsSignal.startDate as string;
-    const endDate = paramsSignal.endDate as string;
+    const startDate = new Date(paramsSignal.startDate as string);
+    const endDate = new Date(paramsSignal.endDate as string);
 
     // If start or end date is null, it means date selection is in progress. Don't refetch events
     if (startDate == null || endDate == null) {
@@ -38,12 +38,7 @@ export default function () {
       log.info(`Searching for events using query: '${query}'`);
       log.info(`Start date: ${startDate}`);
       log.info(`End date: ${endDate}`);
-      const events = await searchMeetups(
-        query,
-        startDate as string,
-        endDate as string,
-        100,
-      );
+      const events = await searchMeetups(query, startDate, endDate, 100);
       return events;
     } else {
       log.info(
@@ -132,16 +127,16 @@ export default function () {
  * @param after - after cursor
  */
 async function getRecommendedMeetups(
-  startDate: string,
-  endDate: string,
+  startDate: Date,
+  endDate: Date,
 ): Promise<RecommendedMeetups> {
   try {
     let response: AxiosResponse<RecommendedMeetups> = await axios.get(
       `${loadConfig().apiUrl}/recommended`,
       {
         params: {
-          startDate,
-          endDate,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
         },
       },
     );
@@ -163,8 +158,8 @@ async function getRecommendedMeetups(
  */
 async function searchMeetups(
   query: string | null,
-  startDate: string,
-  endDate: string,
+  startDate: Date,
+  endDate: Date,
   perPage: number,
 ): Promise<MeetupEvents> {
   try {
