@@ -81,7 +81,8 @@ export default function () {
                         </a>
                         <Show when={node.node.googleMapsUrl}>
                           <hr />
-                          Location: <a
+                          Location:{" "}
+                          <a
                             target="_blank"
                             href={node.node.googleMapsUrl ?? ""}
                           >
@@ -95,7 +96,25 @@ export default function () {
                           node.node.isAttendingStr ?? node.node.isAttending
                         ).toString()}
                       </td>
-                      <td innerHTML={node.node.description}></td>
+                      <td>
+                        {
+                          // <td innerHTML={node.node.description}></td>
+                        }
+                        <details>
+                          <summary
+                            innerHTML={node.node.description
+                              .split("\n")
+                              .slice(0, 2)
+                              .join("\n")}
+                          />
+                          <div
+                            innerHTML={node.node.description
+                              .split("\n")
+                              .slice(3)
+                              .join("\n")}
+                          />
+                        </details>
+                      </td>
                     </tr>
                   )}
                 </For>
