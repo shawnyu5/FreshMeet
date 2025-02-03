@@ -43,8 +43,8 @@ export default function () {
   // On every date picker selection, update the query param with the new selected value
   createEffect(() => {
     const [startDate, endDate] = datePickerValue();
-    const startDateParam = startDate.toString();
-    const endDateParam = endDate.toString();
+    const startDateParam = startDate.toDateString();
+    const endDateParam = endDate.toDateString();
     log.info(
       `Setting query params from date picker update: ${startDateParam}, ${endDateParam}`,
     );

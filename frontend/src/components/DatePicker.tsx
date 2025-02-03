@@ -88,15 +88,11 @@ export function pickerValueToDate(
     startDateObject?.year ?? date.getFullYear(),
     startDateObject?.month ?? date.getMonth(),
     startDateObject?.day ?? date.getDate(),
-    0,
-    0,
   );
   const endDate = new NormalizedDate(
     endDateObject?.year ?? date.getFullYear(),
     endDateObject?.month ?? date.getMonth(),
     endDateObject?.day ?? date.getDate(),
-    23,
-    59,
   );
   log.info(`Converting picker value to date: ${startDate} - ${endDate}`);
   return [startDate, endDate];

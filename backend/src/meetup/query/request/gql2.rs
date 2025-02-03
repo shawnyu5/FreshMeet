@@ -66,52 +66,6 @@ impl SearchRequest {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct Variables {
-    /// Number of results to return
-    /// 200 is the max number of results to return
-    pub first: i32,
-    pub lat: f64,
-    pub lon: f64,
-    pub sort_field: String,
-    pub start_date_range: String,
-    pub end_date_range: Option<String>,
-    pub series_start_date: String,
-    /// The after cursor
-    pub after: Option<String>,
-    /// Type of event
-    pub event_type: String,
-    pub index_alias: String,
-    pub do_consolidate_events: bool,
-    pub do_promote_paypal_events: bool,
-    pub city: String,
-    pub number_of_events_for_series: i32,
-    /// Search query. Only applicable with SearchRequest operation `eventSearchWithSeries`
-    pub query: Option<String>,
-}
-
-// Variables {
-//     first: 30,
-//     lat: 43.7400016784668,
-//     lon: -79.36000061035156,
-//     sort_field: "RELEVANCE",
-//     startDateRange: "2025-02-02T00:00:00-05:00"
-//     start_date_range: "2025-02-02T00:00:00-05:00",
-//     endDateRange: "2025-02-02T23:59:00-05:00"
-//     end_date_range: Some(
-//         "2025-02-02T11:59:00-05:00",
-//     ),
-//     series_start_date: "2025-02-02",
-//     after: None,
-//     event_type: "PHYSICAL",
-//     index_alias: "popular_events_nearby_current",
-//     do_consolidate_events: true,
-//     do_promote_paypal_events: false,
-//     city: "Toronto",
-//     number_of_events_for_series: 5,
-//     query: None
-// }
 impl Default for Variables {
     fn default() -> Self {
         Self {
@@ -175,8 +129,6 @@ impl Default for Extensions {
             persisted_query: PersistedQuery {
                 sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
                     .to_string(),
-                // sha256_hash: "0f0332e9a4b01456580c1f669f26edc053d50382b3e338d5ca580f194a27feab"
-                // sha256_hash: "".to_string(),
                 version: 1,
             },
         }
@@ -208,6 +160,31 @@ impl Edge {
             self.node.is_attending_str = Some(format!("{book_mark}Not attending... 🫠"));
         }
     }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct Variables {
+    /// Number of results to return
+    /// 200 is the max number of results to return
+    pub first: i32,
+    pub lat: f64,
+    pub lon: f64,
+    pub sort_field: String,
+    pub start_date_range: String,
+    pub end_date_range: Option<String>,
+    pub series_start_date: String,
+    /// The after cursor
+    pub after: Option<String>,
+    /// Type of event
+    pub event_type: String,
+    pub index_alias: String,
+    pub do_consolidate_events: bool,
+    pub do_promote_paypal_events: bool,
+    pub city: String,
+    pub number_of_events_for_series: i32,
+    /// Search query. Only applicable with SearchRequest operation `eventSearchWithSeries`
+    pub query: Option<String>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, ToSchema)]

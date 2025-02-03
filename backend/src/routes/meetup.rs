@@ -5,7 +5,7 @@ use crate::meetup::query::request::gql2::{GQLResponse, SearchRequest, Variables}
 use crate::meetup::response::{Event, PageInfo};
 use crate::utils::now;
 use axum::{extract::Query, Json};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Timelike, Utc};
 use chrono_tz::America::New_York;
 use common_axum::axum::AppError;
 use serde::{Deserialize, Serialize};
@@ -42,16 +42,26 @@ pub struct RecommendedMeetupsQueryParams {
 pub async fn recommended_meetups_handler(
     query: Query<RecommendedMeetupsQueryParams>,
 ) -> Result<Json<GQLResponse>, AppError> {
+    let start_date_range = query
+        .start_date
+        .with_timezone(&New_York)
+        .with_hour(0)
+        .expect("Failed to set start time to beginning of day")
+        .to_rfc3339();
+
+    let end_date_range = query
+        .end_date
+        .with_timezone(&New_York)
+        .with_hour(23)
+        .expect("Failed to set end time to end of day")
+        .to_rfc3339();
+
     match SearchRequest::builder()
         .operation_name(OperationName2::recommendedEventsWithSeries)
         .variables(Variables {
             first: 200,
-            start_date_range: query
-                .start_date
-                .with_timezone(&New_York)
-                .to_rfc3339()
-                .clone(),
-            end_date_range: Some(query.end_date.with_timezone(&New_York).to_rfc3339().clone()),
+            start_date_range,
+            end_date_range: Some(end_date_range),
             ..Default::default()
         })
         .build()
