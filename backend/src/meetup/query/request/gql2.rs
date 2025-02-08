@@ -70,8 +70,8 @@ impl Default for Variables {
     fn default() -> Self {
         Self {
             first: 40,
-            lat: 40.71,
-            lon: -74.01,
+            lat: 43.7400016784668,
+            lon: -79.36000061035156,
             city: "Toronto".into(),
             sort_field: "RELEVANCE".into(),
             start_date_range: now(),
