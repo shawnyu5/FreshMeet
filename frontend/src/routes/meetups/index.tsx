@@ -6,8 +6,10 @@ import {
   createSignal,
   ErrorBoundary,
   For,
+  Match,
   Show,
   Suspense,
+  Switch,
 } from "solid-js";
 import { loadConfig } from "~/config";
 import log from "~/logger";
@@ -92,23 +94,31 @@ export default function () {
                         ).toString()}
                       </td>
                       <td>
-                        {
-                          // <td innerHTML={node.node.description}></td>
-                        }
-                        <details>
-                          <summary
-                            innerHTML={node.node.description
-                              .split("\n")
-                              .slice(0, 2)
-                              .join("\n")}
-                          />
-                          <div
-                            innerHTML={node.node.description
-                              .split("\n")
-                              .slice(3)
-                              .join("\n")}
-                          />
-                        </details>
+                        <Switch>
+                          <Match
+                            when={node.node.description.split("\n").length > 3}
+                          >
+                            <details>
+                              <summary
+                                innerHTML={node.node.description
+                                  .split("\n")
+                                  .slice(0, 2)
+                                  .join("\n")}
+                              />
+                              <div
+                                innerHTML={node.node.description
+                                  .split("\n")
+                                  .slice(3)
+                                  .join("\n")}
+                              />
+                            </details>
+                          </Match>
+                          <Match
+                            when={node.node.description.split("\n").length <= 3}
+                          >
+                            <div innerHTML={node.node.description} />
+                          </Match>
+                        </Switch>
                       </td>
                     </tr>
                   )}
