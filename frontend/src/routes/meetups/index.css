@@ -3,3 +3,11 @@ th,
 td {
    vertical-align: top;
 }
+
+table {
+   min-width: max-content;
+}
+
+summary {
+   min-width: max-content;
+}
