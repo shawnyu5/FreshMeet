@@ -24,6 +24,12 @@ export default function () {
       log.info(`Found existing start / end date in query param:`);
       log.info(`Start date: ${startDateParam}`);
       log.info(`End date: ${endDateParam}`);
+
+      if (new Date(startDateParam) < new Date()) {
+        log.info("Start date param is in the past. Setting to current date");
+        startDateParam = new Date().toDateString();
+        endDateParam = new Date().toDateString();
+      }
       setDatePickerValue([new Date(startDateParam), new Date(endDateParam)]);
     } else {
       log.info(
