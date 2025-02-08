@@ -1,0 +1,76 @@
+name: Semantic release and deploy backend
+on:
+  push:
+    branches:
+      - "master"
+
+jobs:
+  release_deploy:
+    name: Semantic release and deploy backend
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Semantic release dry run
+        id: dry_run
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: codfish/semantic-release-action@v3
+        with:
+          dry-run: true
+
+      - name: Next release version
+        run: |
+          echo ${{ steps.dry_run.outputs.release-version }}
+
+      - name: Update version in Cargo.toml
+        if: steps.dry_run.outputs.new-release-published == 'true'
+        uses: sandstromviktor/toml-editor@2.0.0
+        with:
+          file: "backend/Cargo.toml"
+          key: "package.version"
+          value: "${{ steps.dry_run.outputs.release-version }}"
+
+      - name: Setup rust toolling
+        if: steps.dry_run.outputs.new-release-published == 'true'
+        uses: moonrepo/setup-rust@v1
+
+      - name: Re generate cargo lock file
+        if: steps.dry_run.outputs.new-release-published == 'true'
+        run: |
+          cd backend
+          cargo generate-lockfile
+
+      # - name: Commit changes
+      #   if: steps.dry_run.outputs.new-release-published == 'true'
+      #   continue-on-error: true
+      #   uses: EndBug/add-and-commit@v9
+      #   with:
+      #     add: "."
+      #     message: "chore: update application version [skip ci]"
+      #     push: true
+      #     pull: "--rebase --autostash"
+
+      # - name: Git pull
+      #   if: steps.dry_run.outputs.new-release-published == 'true'
+      #   continue-on-error: true
+      #   run: git pull --rebase --autostash
+
+      - name: Semantic release
+        if: steps.dry_run.outputs.new-release-published == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: codfish/semantic-release-action@v3
+
+      - name: Setup flyctl
+        if: steps.dry_run.outputs.new-release-published == 'true'
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy backend
+        if: steps.dry_run.outputs.new-release-published == 'true'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          cd backend
+          flyctl deploy --remote-only --config fly.prod.toml
