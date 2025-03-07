@@ -50,6 +50,9 @@ where
         }
     };
 
+    // let txt = &response.text().await?;
+    // let mut file = File::create("res.json")?;
+    // file.write_all(txt.as_bytes())?;
     // dbg!(&response.text().await?);
     // return Err(anyhow!("AHHH"));
 
