@@ -42,7 +42,7 @@ impl SearchRequest {
     ) -> Self {
         let hash = match operation_name {
             OperationName2::recommendedEventsWithSeries => {
-                "d3b3542df9c417007a7e6083b931d2ed67073f4d74891c3f14da403164e56469"
+                "178a5949877be0a10fe15215ac7a63af505ebf5da05fd28440c4ad5060302ad2"
             }
             OperationName2::eventSearchWithSeries => {
                 "b98fc059f4379053221befe6b201591ba98e3a8b06c9ede0b3c129c3b605d7c4"
@@ -127,7 +127,7 @@ impl Default for Extensions {
     fn default() -> Self {
         Self {
             persisted_query: PersistedQuery {
-                sha256_hash: "fd6fff9c7ce5b9dc3fb4ce26b7fb060f6c230b1ae53352a726e9869308c899ef"
+                sha256_hash: "178a5949877be0a10fe15215ac7a63af505ebf5da05fd28440c4ad5060302ad2"
                     .to_string(),
                 version: 1,
             },
