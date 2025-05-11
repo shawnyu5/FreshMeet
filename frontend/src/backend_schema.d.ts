@@ -115,7 +115,7 @@ export interface components {
             totalCount: number;
         };
         MembershipMetadata: {
-            role: string;
+            role?: string | null;
         };
         Metadata: {
             recId: string;
@@ -227,8 +227,12 @@ export interface operations {
     recommended_meetups_handler: {
         parameters: {
             query: {
+                /** @description Start date of event */
                 startDate: string;
+                /** @description End date of event */
                 endDate: string;
+                /** @description After cursor */
+                after?: string | null;
             };
             header?: never;
             path?: never;

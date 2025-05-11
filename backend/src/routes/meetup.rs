@@ -23,8 +23,12 @@ pub struct Response {
 #[derive(Debug, Deserialize, IntoParams)]
 #[serde(rename_all = "camelCase")]
 pub struct RecommendedMeetupsQueryParams {
+    /// Start date of event
     pub start_date: DateTime<Utc>,
+    /// End date of event
     pub end_date: DateTime<Utc>,
+    /// After cursor
+    pub after: Option<String>,
 }
 
 /// Gets recommended meetups
@@ -62,6 +66,7 @@ pub async fn recommended_meetups_handler(
             first: 200,
             start_date_range,
             end_date_range: Some(end_date_range),
+            after: query.after.clone(),
             ..Default::default()
         })
         .build()

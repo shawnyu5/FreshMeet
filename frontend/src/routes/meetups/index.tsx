@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { appendLocalStorage } from "~/localStorage";
 import "./index.css";
 import {
   createEffect,
@@ -7,6 +8,7 @@ import {
   ErrorBoundary,
   For,
   Match,
+  onMount,
   Show,
   Suspense,
   Switch,
@@ -15,11 +17,22 @@ import { loadConfig } from "~/config";
 import log from "~/logger";
 import { MeetupEvents, MeetupEvents as RecommendedMeetups } from "./types";
 import { useSearchParams } from "@solidjs/router";
+import { PaginationButton } from "~/routes/meetups/PaginationButtons";
+
+/*
+The key in local storage used to store end cursors used for pagination
+**/
+const endCursorsLocalStorageKey = "endCursors";
 
 export default function () {
   const [searchParams, _setSearchParams] = useSearchParams();
   // Create a signal that is derived from searchParams
   const [paramsSignal, setParamsSignal] = createSignal(searchParams);
+
+  // On page load, we need to clear the local storage, otherwise it will keep growing
+  onMount(() => {
+    localStorage.setItem(endCursorsLocalStorageKey, "");
+  });
 
   // Update the signal whenever searchParams changes
   createEffect(() => {
@@ -125,6 +138,10 @@ export default function () {
                 </For>
               </tbody>
             </table>
+            <PaginationButton text="Next" onClick={() => {
+
+            }}/>
+            <PaginationButton text="Previous"/>
           </Show>
         </div>
       </ErrorBoundary>
@@ -134,11 +151,14 @@ export default function () {
 
 /**
  * Fetch list of meetups recommended meetups for the current date
- * @param after - after cursor
+ * @param startDate - the start date
+ * @param endDate - the end date
+ * @param after - the after cursor
  */
 async function getRecommendedMeetups(
   startDate: Date,
   endDate: Date,
+  after: string = "",
 ): Promise<RecommendedMeetups> {
   try {
     let response: AxiosResponse<RecommendedMeetups> = await axios.get(
@@ -147,10 +167,18 @@ async function getRecommendedMeetups(
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
+          after: after,
         },
       },
     );
     log.debug(`Response data: ${response.data}`);
+    if (response.data.data?.result.pageInfo.endCursor) {
+      const localStorage = appendLocalStorage(
+        endCursorsLocalStorageKey,
+        response.data.data?.result.pageInfo.endCursor,
+      );
+      log.info(`Local storage end coursors: ${localStorage}`);
+    }
     return response.data;
   } catch (err: unknown) {
     log.error("Failed to make API request");

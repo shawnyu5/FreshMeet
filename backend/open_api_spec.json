@@ -40,6 +40,7 @@
           {
             "name": "startDate",
             "in": "query",
+            "description": "Start date of event",
             "required": true,
             "schema": {
               "type": "string",
@@ -49,10 +50,23 @@
           {
             "name": "endDate",
             "in": "query",
+            "description": "End date of event",
             "required": true,
             "schema": {
               "type": "string",
               "format": "date-time"
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "description": "After cursor",
+            "required": false,
+            "schema": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           }
         ],
